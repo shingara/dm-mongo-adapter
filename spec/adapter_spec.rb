@@ -10,7 +10,7 @@ describe DataMapper::Adapters::MongoAdapter do
       :database => 'dm-mongo-test'
     )
 
-    db = XGen::Mongo::Driver::Mongo.new.db('dm-mongo-test')
+    db = XGen::Mongo::Driver::Connection.new.db('dm-mongo-test')
     db.drop_collection('heffalumps')
   end
 

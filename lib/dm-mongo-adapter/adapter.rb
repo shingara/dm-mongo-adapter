@@ -18,7 +18,7 @@ module DataMapper
       def update(attributes, collection)
         with_connection(collection.query.model) do |connection|
           collection.each do |resource|
-            connection.modify(key(resource), resource.attributes(:field).merge(attributes_as_fields(attributes)))
+            connection.update(key(resource), resource.attributes(:field).merge(attributes_as_fields(attributes)))
           end.size
         end
       end
@@ -44,7 +44,7 @@ module DataMapper
         # TODO: Thread.current[:dm_mongo_connection_stack] stuff in case you multi-thread this mofo?
         def with_connection(model)
           begin
-            driver     = XGen::Mongo::Driver::Mongo.new(*@options.values_at(:host, :port))
+            driver     = XGen::Mongo::Driver::Connection.new(*@options.values_at(:host, :port))
             connection = driver.db(@options.fetch(:path, @options[:database])) # TODO: :pk => @options[:pk]
             yield connection.collection(model.storage_name(name))
           rescue Exception => exception
