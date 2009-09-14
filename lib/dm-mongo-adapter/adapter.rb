@@ -40,19 +40,41 @@ module DataMapper
           super.to_mash.symbolize_keys
         end
 
-        #--
-        # TODO: Thread.current[:dm_mongo_connection_stack] stuff in case you multi-thread this mofo?
+        # TODO: document
+        # @api private
         def with_connection(model)
           begin
-            driver     = XGen::Mongo::Driver::Connection.new(*@options.values_at(:host, :port))
-            connection = driver.db(@options.fetch(:path, @options[:database])) # TODO: :pk => @options[:pk]
+            connection = open_connection
             yield connection.collection(model.storage_name(name))
           rescue Exception => exception
             DataMapper.logger.error(exception.to_s)
             raise exception
           ensure
-            connection.close if connection
+            close_connection(connection) if connection
           end
+        end
+
+        # TODO: document
+        # @api private
+        def open_connection
+          connection = connection_stack.last || XGen::Mongo::Driver::Connection.new(
+            *@options.values_at(:host, :port)).db(@options.fetch(:path, @options[:database])) # TODO: :pk => @options[:pk]
+          connection_stack << connection
+          connection
+        end
+
+        # TODO: document
+        # @api private
+        def close_connection(connection)
+          connection_stack.pop
+          connection.close if connection_stack.empty?
+        end
+
+        # TODO: document
+        # @api private
+        def connection_stack
+          connection_stack_for = Thread.current[:dm_mongo_connection_stack] ||= {}
+          connection_stack_for[self] ||= []
         end
     end # Adapter
   end # Mongo
