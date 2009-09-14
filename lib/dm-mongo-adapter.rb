@@ -2,6 +2,8 @@ require 'dm-core'
 require 'mongo'
 require 'json'
 
-require 'dm-mongo-adapter/query'
-require 'dm-mongo-adapter/adapter'
-require 'dm-mongo-adapter/types'
+dir = Pathname(__FILE__).dirname.expand_path / 'dm-mongo-adapter'
+
+require dir / 'query'
+require dir / 'adapter'
+require dir / 'types'
