@@ -13,20 +13,6 @@ share_examples_for 'An Adapter' do
 
   before :all do
     raise '+@adapter+ should be defined in before block' unless instance_variable_get('@adapter')
-
-    class ::Heffalump
-      include DataMapper::Resource
-
-      property :id,        DataMapper::Mongo::Types::ObjectID, :key => true, :field => '_id'
-      property :color,     String
-      property :num_spots, Integer
-      property :striped,   Boolean
-    end
-
-    # create all tables and constraints before each spec
-    if @repository.respond_to?(:auto_migrate!)
-      Heffalump.auto_migrate!
-    end
   end
 
   if adapter_supports?(:create)
@@ -279,6 +265,34 @@ share_examples_for 'An Adapter' do
         it 'should be able to limit the objects' do
           Heffalump.all(:limit => 2).length.should == 2
         end
+      end
+    end
+
+    describe 'order' do
+      before :all do
+        @colors = ['red', 'green', 'blue']
+        @colors.each_with_index {|color, index| Heffalump.create(:color => color, :num_spots => index+1)}
+        @colors.sort.each_with_index {|color, index| Heffalump.create(:color => color, :num_spots => index+1)}
+      end
+
+      it 'should sort ascending by default' do
+        Heffalump.all(:order => [:color]).map(&:color).should eql((@colors*2).sort)
+      end
+
+      it 'should sort descending' do
+        Heffalump.all(:order => [:color.desc]).map(&:color).should eql((@colors*2).sort{|x,y| y<=>x})
+      end
+
+      it 'should sort by more then one property, all ascending' do
+        Heffalump.all(:order => [:color, :num_spots]).map{|h| [h.color, h.num_spots]}.should eql(
+          [['blue', 1], ['blue', 3], ['green', 2], ['green', 2], ['red', 1], ['red', 3]]
+        )
+      end
+
+      it 'should sort by more then one property, one ascending, one descending' do
+        Heffalump.all(:order => [:color, :num_spots.desc]).map{|h| [h.color, h.num_spots]}.should eql(
+          [['blue', 3], ['blue', 1], ['green', 2], ['green', 2], ['red', 3], ['red', 1]]
+        )
       end
     end
   else

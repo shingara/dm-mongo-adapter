@@ -57,7 +57,7 @@ module DataMapper
         # TODO: document
         # @api private
         def open_connection
-          connection = connection_stack.last || XGen::Mongo::Driver::Connection.new(
+          connection = connection_stack.last || ::Mongo::Connection.new(
             *@options.values_at(:host, :port)).db(@options.fetch(:path, @options[:database])) # TODO: :pk => @options[:pk]
           connection_stack << connection
           connection

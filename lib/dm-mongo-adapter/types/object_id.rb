@@ -3,7 +3,7 @@ module DataMapper
     module Types
       class ObjectID < DataMapper::Type
         primitive ::Object
-        default lambda{|r, p| XGen::Mongo::Driver::ObjectID.new}
+        default lambda{|r, p| ::Mongo::ObjectID.new}
 
         def self.load(value, property)
           typecast(value, property)
@@ -17,8 +17,8 @@ module DataMapper
           if value.nil?
             nil
           elsif value.is_a?(String)
-            XGen::Mongo::Driver::ObjectID.from_string(value)
-          elsif value.is_a?(XGen::Mongo::Driver::ObjectID)
+            ::Mongo::ObjectID.from_string(value)
+          elsif value.is_a?(::Mongo::ObjectID)
             value
           else
             raise ArgumentError.new('+value+ must be nil, String or ObjectID')

@@ -5,7 +5,7 @@ module DataMapper
       include DataMapper::Query::Conditions
 
       def initialize(connection, query)
-        assert_kind_of 'connection', connection, XGen::Mongo::Driver::Collection
+        assert_kind_of 'connection', connection, ::Mongo::Collection
         assert_kind_of 'query', query, DataMapper::Query
         @connection, @query, @statements = connection, query, {}
       end
@@ -16,7 +16,6 @@ module DataMapper
         options[:sort]  = sort_statement(@query.order) unless @query.order.empty?
 
         condition_statement(@query.conditions)
-        DataMapper.logger.info("Mongo ~ #{@statements.inspect}")
         @connection.find(@statements, options).to_a
       end
 
@@ -68,9 +67,8 @@ module DataMapper
         end
 
         def sort_statement(conditions)
-          conditions.inject(OrderedHash.new) do |hash, condition|
-            hash[condition.target.field] = condition.operator == :asc ? 1 : -1
-            hash
+          conditions.inject([]) do |sort_arr, condition|
+           sort_arr << [condition.target.field, condition.operator == :asc ? 'ascending' : 'descending']
           end
         end
 
@@ -81,4 +79,3 @@ module DataMapper
     end # Query
   end # Mongo
 end # DataMapper
-
