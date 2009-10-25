@@ -16,6 +16,7 @@ module DataMapper
         options[:sort]  = sort_statement(@query.order) unless @query.order.empty?
 
         condition_statement(@query.conditions)
+        
         @connection.find(@statements, options).to_a
       end
 
@@ -43,22 +44,20 @@ module DataMapper
 
           operator = if affirmative
             case comparison
-              when value.kind_of?(Range) && value.exclude_end? then {'$gte' => value.first, '$lt' => value.last}
-              when EqualToComparison                           then value
-              when GreaterThanComparison                       then {'$gt'  => value}
-              when LessThanComparison                          then {'$lt'  => value}
-              when GreaterThanOrEqualToComparison              then {'$gte' => value}
-              when LessThanOrEqualToComparison                 then {'$lte' => value}
-              when InclusionComparison                         then {'$in'  => value}
-              when RegexpComparison                            then value
-              when LikeComparison                              then like_comparison_regexp(value)
+              when EqualToComparison              then value
+              when GreaterThanComparison          then {'$gt'  => value}
+              when LessThanComparison             then {'$lt'  => value}
+              when GreaterThanOrEqualToComparison then {'$gte' => value}
+              when LessThanOrEqualToComparison    then {'$lte' => value}
+              when InclusionComparison            then value.kind_of?(Range) ? range_comparison(value) : {'$in'  => value}
+              when RegexpComparison               then value
+              when LikeComparison                 then like_comparison_regexp(value)
               else raise NotImplementedError
             end
           else
             case comparison
-              when value.kind_of?(Range) && value.exclude_end? then {'$lte' => value.first, '$gt' => value.last}
-              when EqualToComparison                           then {'$ne'  => value}
-              when InclusionComparison                         then {'$nin' => value}
+              when EqualToComparison              then {'$ne'  => value}
+              when InclusionComparison            then value.kind_of?(Range) ? range_comparison(value, false) : {'$nin' => value}
               else raise NotImplementedError
             end
           end
@@ -75,6 +74,14 @@ module DataMapper
         def like_comparison_regexp(value)
           # TODO: %% isn't supported. It isn't in LikeComparison's matches? fyi.
           Regexp.new(value.to_s.gsub(/^([^%])/, '^\\1').gsub(/([^%])$/, '\\1$').gsub(/%/, '.*').gsub('_', '.'))
+        end
+
+        def range_comparison(range, affirmative=true)
+          if affirmative
+            {'$gte' => range.first, range.exclude_end? ? '$lt' : '$lte' => range.last}
+          else
+            {'$nin' => range.to_a}
+          end
         end
     end # Query
   end # Mongo
