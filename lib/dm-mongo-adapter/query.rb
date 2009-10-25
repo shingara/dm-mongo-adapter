@@ -49,7 +49,7 @@ module DataMapper
               when LessThanComparison             then {'$lt'  => value}
               when GreaterThanOrEqualToComparison then {'$gte' => value}
               when LessThanOrEqualToComparison    then {'$lte' => value}
-              when InclusionComparison            then value.kind_of?(Range) ? range_comparison(value) : {'$in'  => value}
+              when InclusionComparison            then value.kind_of?(Range) ? range_comparison(field, value) : {'$in'  => value}
               when RegexpComparison               then value
               when LikeComparison                 then like_comparison_regexp(value)
               else raise NotImplementedError
@@ -57,12 +57,12 @@ module DataMapper
           else
             case comparison
               when EqualToComparison              then {'$ne'  => value}
-              when InclusionComparison            then value.kind_of?(Range) ? range_comparison(value, false) : {'$nin' => value}
+              when InclusionComparison            then value.kind_of?(Range) ? range_comparison(field, value, false) : {'$nin' => value}
               else raise NotImplementedError
             end
           end
 
-          @statements.update(field.to_sym => operator)
+          @statements.update(operator.is_a?(Hash) && operator.has_key?('$where') ? operator : {field.to_sym => operator})
         end
 
         def sort_statement(conditions)
@@ -76,11 +76,11 @@ module DataMapper
           Regexp.new(value.to_s.gsub(/^([^%])/, '^\\1').gsub(/([^%])$/, '\\1$').gsub(/%/, '.*').gsub('_', '.'))
         end
 
-        def range_comparison(range, affirmative=true)
+        def range_comparison(field, range, affirmative=true)
           if affirmative
             {'$gte' => range.first, range.exclude_end? ? '$lt' : '$lte' => range.last}
           else
-            {'$nin' => range.to_a}
+            {'$where' => "this.#{field} < #{range.first} || this.#{field} #{range.exclude_end? ? '>=' : '>'} #{range.last}"}
           end
         end
     end # Query
