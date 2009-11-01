@@ -3,6 +3,8 @@ module DataMapper
     module Types
       class ObjectID < DataMapper::Type
         primitive ::Object
+        key true
+        field "_id"
 
         def self.load(value, property)
           typecast(value, property)

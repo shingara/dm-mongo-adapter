@@ -4,7 +4,7 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe DataMapper::Adapters::MongoAdapter do
   before do
-    Heffalump.property :id, DataMapper::Mongo::Types::ObjectID, :key => true, :field => '_id'
+    Heffalump.property :id, DataMapper::Mongo::Types::ObjectID
   end
 
   before :all do
@@ -20,10 +20,6 @@ describe DataMapper::Adapters::MongoAdapter do
       :database => 'dm-mongo-test'
     )
   end
-
-#  after :all do
-#    @db.drop_collection('heffalumps')
-#  end
 
   it_should_behave_like 'An Adapter'
 end
