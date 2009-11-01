@@ -1,14 +1,10 @@
-require 'dm-core/spec/adapter_shared_spec'
+require '/home/solnic/workspace/dm-core/lib/dm-core/spec/adapter_shared_spec'
+
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe DataMapper::Adapters::MongoAdapter do
-  class ::Heffalump
-    include DataMapper::Resource
-
-    property :id,        DataMapper::Mongo::Types::ObjectID, :key => true, :field => '_id'
-    property :color,     String
-    property :num_spots, Integer
-    property :striped,   Boolean
+  before do
+    Heffalump.property :id, DataMapper::Mongo::Types::ObjectID, :key => true, :field => '_id'
   end
 
   before :all do
@@ -25,9 +21,9 @@ describe DataMapper::Adapters::MongoAdapter do
     )
   end
 
-  after :all do
-    @db.drop_collection('heffalumps')
-  end
+#  after :all do
+#    @db.drop_collection('heffalumps')
+#  end
 
   it_should_behave_like 'An Adapter'
 end

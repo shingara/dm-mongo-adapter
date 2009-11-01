@@ -3,7 +3,6 @@ module DataMapper
     module Types
       class ObjectID < DataMapper::Type
         primitive ::Object
-        default lambda{|r, p| ::Mongo::ObjectID.new}
 
         def self.load(value, property)
           typecast(value, property)

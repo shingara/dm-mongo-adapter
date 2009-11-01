@@ -4,7 +4,7 @@ module DataMapper
       def create(resources)
         resources.map do |resource|
           with_collection(resource.model) do |collection|
-            collection.insert(resource.attributes(:field).to_mash.symbolize_keys)
+            resource.model.key.set!(resource, [collection.insert(resource.attributes(:field).except('_id'))])
           end
         end.size
       end
@@ -33,11 +33,7 @@ module DataMapper
 
       private
         def key(resource)
-          resource.model.key(name).map(&:field).zip(resource.key).to_mash.symbolize_keys
-        end
-
-        def attributes_as_fields(attributes)
-          super.to_mash.symbolize_keys
+          resource.model.key(name).map(&:field).zip(resource.key).to_hash
         end
 
         # TODO: document
