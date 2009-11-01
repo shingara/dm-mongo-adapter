@@ -1,6 +1,8 @@
+gem 'dm-core', '~> 0.10.2'
+gem 'mongo', '~> 0.16'
+
 require 'dm-core'
 require 'mongo'
-require 'json'
 
 dir = Pathname(__FILE__).dirname.expand_path / 'dm-mongo-adapter'
 
