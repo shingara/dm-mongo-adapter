@@ -4,10 +4,10 @@ module DataMapper
       include Extlib::Assertions
       include DataMapper::Query::Conditions
 
-      def initialize(connection, query)
-        assert_kind_of 'connection', connection, ::Mongo::Collection
+      def initialize(collection, query)
+        assert_kind_of 'collection', collection, ::Mongo::Collection
         assert_kind_of 'query', query, DataMapper::Query
-        @connection, @query, @statements = connection, query, {}
+        @collection, @query, @statements = collection, query, {}
       end
 
       def read
@@ -17,7 +17,7 @@ module DataMapper
 
         condition_statement(@query.conditions)
         
-        @connection.find(@statements, options).to_a
+        @collection.find(@statements, options).to_a
       end
 
       private

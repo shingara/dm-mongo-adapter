@@ -3,30 +3,30 @@ module DataMapper
     class Adapter < DataMapper::Adapters::AbstractAdapter
       def create(resources)
         resources.map do |resource|
-          with_connection(resource.model) do |connection|
-            connection.insert(resource.attributes(:field).to_mash.symbolize_keys)
+          with_collection(resource.model) do |collection|
+            collection.insert(resource.attributes(:field).to_mash.symbolize_keys)
           end
         end.size
       end
 
       def read(query)
-        with_connection(query.model) do |connection|
-          Query.new(connection, query).read
+        with_collection(query.model) do |collection|
+          Query.new(collection, query).read
         end
       end
 
-      def update(attributes, collection)
-        with_connection(collection.query.model) do |connection|
-          collection.each do |resource|
-            connection.update(key(resource), resource.attributes(:field).merge(attributes_as_fields(attributes)))
+      def update(attributes, resources)
+        with_collection(resources.query.model) do |collection|
+          resources.each do |resource|
+            collection.update(key(resource), resource.attributes(:field).merge(attributes_as_fields(attributes)))
           end.size
         end
       end
 
-      def delete(collection)
-        with_connection(collection.query.model) do |connection|
-          collection.each do |resource|
-            connection.remove(key(resource))
+      def delete(resources)
+        with_collection(resources.query.model) do |collection|
+          resources.each do |resource|
+            collection.remove(key(resource))
           end.size
         end
       end
@@ -42,15 +42,27 @@ module DataMapper
 
         # TODO: document
         # @api private
-        def with_connection(model)
+        def with_connection
           begin
-            connection = open_connection
-            yield connection.collection(model.storage_name(name))
+            yield connection = open_connection
           rescue Exception => exception
             DataMapper.logger.error(exception.to_s)
             raise exception
           ensure
             close_connection(connection) if connection
+          end
+        end
+
+        # TODO: document
+        # @api private
+        def with_collection(model)
+          begin
+            with_connection do |connection|
+              yield connection.collection(model.storage_name(name))
+            end
+          rescue Exception => exception
+            DataMapper.logger.error(exception.to_s)
+            raise exception
           end
         end
 
