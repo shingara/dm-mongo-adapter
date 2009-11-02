@@ -15,13 +15,13 @@ module DataMapper
         options[:limit] = @query.limit if @query.limit
         options[:sort]  = sort_statement(@query.order) unless @query.order.empty?
 
-        condition_statement(@query.conditions)
+        conditions_statement(@query.conditions)
 
         @collection.find(@statements, options).to_a
       end
 
       private
-        def condition_statement(conditions, affirmative = true)
+        def conditions_statement(conditions, affirmative = true)
           case conditions
             when AbstractOperation  then operation_statement(conditions, affirmative)
             when AbstractComparison then comparison_statement(conditions, affirmative)
@@ -30,8 +30,8 @@ module DataMapper
 
         def operation_statement(operation, affirmative = true)
           case operation
-            when NotOperation then condition_statement(operation.first, !affirmative)
-            when AndOperation then operation.each{|op| condition_statement(op, affirmative)}
+            when NotOperation then conditions_statement(operation.first, !affirmative)
+            when AndOperation then operation.each{|op| conditions_statement(op, affirmative)}
             when OrOperation  then raise NotImplementedError
           end
         end
@@ -39,6 +39,10 @@ module DataMapper
         #--
         # TODO: Rather than raise an error do what we can in a $where operation or in memory.
         def comparison_statement(comparison, affirmative = true)
+          if comparison.relationship?
+            return conditions_statement(comparison.foreign_key_mapping, affirmative)
+          end
+
           field = comparison.subject.field
           value = comparison.value
 
@@ -62,7 +66,9 @@ module DataMapper
             end
           end
 
-          @statements.update(operator.is_a?(Hash) && operator.has_key?('$where') ? operator : {field.to_sym => operator})
+          statement = operator.is_a?(Hash) && operator.has_key?('$where') ? operator : {field.to_sym => operator}
+
+          @statements.update(statement)
         end
 
         def sort_statement(conditions)
