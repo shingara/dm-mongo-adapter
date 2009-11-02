@@ -4,7 +4,7 @@
 
 == WARNING
 
-This adapter is shit, I'm just trying to make a start. Steal what you can or write something better :)
+This adapter is a work-in-progress, so stay tuned :)
 
 == TODO
 
@@ -24,8 +24,8 @@ conditions plus a Javascript $where clause when required would be much better.
 == Dependencies
 
 Ruby::
-* dm-core ~> 0.10.0
-* mongo   ~> 0.8
+* dm-core ~> 0.10.2
+* mongo   ~> 0.16
 
 == Install
 
