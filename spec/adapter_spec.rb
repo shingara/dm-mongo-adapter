@@ -23,6 +23,59 @@ describe DataMapper::Adapters::MongoAdapter do
 
   it_should_behave_like 'An Adapter'
 
+  describe "embedded objects as properties" do
+    before :all do
+      class Zoo
+        include DataMapper::Mongo::Resource
+
+        property :id, ObjectID
+        property :animals, Array
+        property :address, Hash
+      end
+    end
+
+    describe "using arrays" do
+      it "should save a resource" do
+        zoo = Zoo.new
+        zoo.animals = [:marty, :alex, :gloria]
+
+        lambda {
+          zoo.save
+        }.should_not raise_error
+      end
+
+      it "should be able to search with 'equal to' criterium" do
+        penguins = [:skipper, :kowalski, :private, :rico]
+        Zoo.create(:animals => penguins)
+
+        zoo = Zoo.first(:animals => penguins)
+        zoo.should_not be_nil
+        zoo.animals.should eql(penguins)
+      end
+    end
+
+    describe "using hashes" do
+      it "should save a resource" do
+        zoo = Zoo.new
+        zoo.address = {:street => 'Street 1', :telephone => '123-45-67'}
+
+        lambda {
+          zoo.save
+        }.should_not raise_error
+      end
+
+     it "should be able to search with 'equal to' criterium" do
+        address = ['street' => 'Street 2']
+        Zoo.create(:address => address)
+
+        zoo = Zoo.first(:address => address)
+
+        zoo.should_not be_nil
+        zoo.address.should eql(address)
+      end
+    end
+  end
+
   describe "associations" do
     before :all do
       class User
