@@ -23,6 +23,21 @@ describe DataMapper::Adapters::MongoAdapter do
 
   it_should_behave_like 'An Adapter'
 
+  describe "queries" do
+    before :all do
+      @red   = Heffalump.create(:color => 'red', :num_spots => 2)
+      @green = Heffalump.create(:color => 'green', :num_spots => 3)
+      @blue  = Heffalump.create(:color => 'blue', :num_spots => 5)
+    end
+
+    it "should be able to search for objects matching conditions for the same property" do
+      col = Heffalump.all(:num_spots.gt => 2, :num_spots.not => 3)
+
+      col.size.should == 1
+      col.first.should eql(@blue)
+    end
+  end
+
   describe "embedded objects as properties" do
     before :all do
       class Zoo

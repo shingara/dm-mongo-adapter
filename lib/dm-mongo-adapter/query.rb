@@ -7,7 +7,7 @@ module DataMapper
       def initialize(collection, query)
         assert_kind_of 'collection', collection, ::Mongo::Collection
         assert_kind_of 'query', query, DataMapper::Query
-        @collection, @query, @statements = collection, query, {}
+        @collection, @query, @statements, @conditions = collection, query, {}, Conditions.new
       end
 
       def read
@@ -17,78 +17,78 @@ module DataMapper
 
         conditions_statement(@query.conditions)
 
-        @collection.find(@statements, options).to_a
+        @statements.merge!(@conditions.to_statement) unless @conditions.empty?
+
+        @conditions.filter_collection!(@collection.find(@statements, options).to_a)
       end
 
       private
-        def conditions_statement(conditions, affirmative = true)
-          case conditions
-            when AbstractOperation  then operation_statement(conditions, affirmative)
-            when AbstractComparison then comparison_statement(conditions, affirmative)
-          end
+      
+      def conditions_statement(conditions, affirmative = true)
+        case conditions
+        when AbstractOperation  then operation_statement(conditions, affirmative)
+        when AbstractComparison then comparison_statement(conditions, affirmative)
+        end
+      end
+
+      def operation_statement(operation, affirmative = true)
+        case operation
+        when NotOperation then conditions_statement(operation.first, !affirmative)
+        when AndOperation then operation.each{|op| conditions_statement(op, affirmative)}
+        when OrOperation  then operation.each{|op| @conditions.add(op, affirmative)}
+        end
+      end
+
+      def comparison_statement(comparison, affirmative = true)
+        if comparison.relationship?
+          return conditions_statement(comparison.foreign_key_mapping, affirmative)
         end
 
-        def operation_statement(operation, affirmative = true)
-          case operation
-            when NotOperation then conditions_statement(operation.first, !affirmative)
-            when AndOperation then operation.each{|op| conditions_statement(op, affirmative)}
-            when OrOperation  then raise NotImplementedError
-          end
+        field = comparison.subject.field
+        value = comparison.value
+
+        # these comparisons should be handled by the conditions object, because:
+        #
+        # * $nin with range requires $where clause
+        # * negated regexp comparison is currently not supported by mongo, see: http://jira.mongodb.org/browse/SERVER-251
+       if (comparison.kind_of?(InclusionComparison) && value.kind_of?(Range) && !affirmative) ||
+          (comparison.kind_of?(RegexpComparison) && !affirmative)
+          @conditions.add(comparison, affirmative)
+          return
         end
 
-        #--
-        # TODO: Rather than raise an error do what we can in a $where operation or in memory.
-        def comparison_statement(comparison, affirmative = true)
-          if comparison.relationship?
-            return conditions_statement(comparison.foreign_key_mapping, affirmative)
-          end
-
-          field = comparison.subject.field
-          value = comparison.value
-
-          operator = if affirmative
-            case comparison
-              when EqualToComparison              then value
-              when GreaterThanComparison          then {'$gt'  => value}
-              when LessThanComparison             then {'$lt'  => value}
-              when GreaterThanOrEqualToComparison then {'$gte' => value}
-              when LessThanOrEqualToComparison    then {'$lte' => value}
-              when InclusionComparison            then value.kind_of?(Range) ? range_comparison(field, value) : {'$in'  => value}
-              when RegexpComparison               then value
-              when LikeComparison                 then like_comparison_regexp(value)
-              else raise NotImplementedError
-            end
+        operator = if affirmative
+          case comparison
+            when EqualToComparison              then value
+            when GreaterThanComparison          then {'$gt'  => value}
+            when LessThanComparison             then {'$lt'  => value}
+            when GreaterThanOrEqualToComparison then {'$gte' => value}
+            when LessThanOrEqualToComparison    then {'$lte' => value}
+            when InclusionComparison            then value.kind_of?(Range) ?
+              {'$gte' => value.first, value.exclude_end? ? '$lt' : '$lte' => value.last}  : {'$in'  => value}
+            when RegexpComparison               then value
+            when LikeComparison                 then comparison.send(:expected_value)
           else
-            case comparison
-              when EqualToComparison              then {'$ne'  => value}
-              when InclusionComparison            then value.kind_of?(Range) ? range_comparison(field, value, false) : {'$nin' => value}
-              else raise NotImplementedError
-            end
+            raise NotImplementedError
           end
-
-          statement = operator.is_a?(Hash) && operator.has_key?('$where') ? operator : {field.to_sym => operator}
-
-          @statements.update(statement)
-        end
-
-        def sort_statement(conditions)
-          conditions.inject([]) do |sort_arr, condition|
-           sort_arr << [condition.target.field, condition.operator == :asc ? 'ascending' : 'descending']
-          end
-        end
-
-        def like_comparison_regexp(value)
-          # TODO: %% isn't supported. It isn't in LikeComparison's matches? fyi.
-          Regexp.new(value.to_s.gsub(/^([^%])/, '^\\1').gsub(/([^%])$/, '\\1$').gsub(/%/, '.*').gsub('_', '.'))
-        end
-
-        def range_comparison(field, range, affirmative=true)
-          if affirmative
-            {'$gte' => range.first, range.exclude_end? ? '$lt' : '$lte' => range.last}
+        else
+          case comparison
+            when EqualToComparison              then {'$ne'  => value}
+            when InclusionComparison            then {'$nin' => value}
           else
-            {'$where' => "this.#{field} < #{range.first} || this.#{field} #{range.exclude_end? ? '>=' : '>'} #{range.last}"}
+            raise NotImplementedError
           end
         end
+
+        operator.is_a?(Hash) ?
+          (@statements[field.to_sym] ||= {}).merge!(operator) : @statements[field.to_sym] = operator
+      end
+
+      def sort_statement(conditions)
+        conditions.inject([]) do |sort_arr, condition|
+          sort_arr << [condition.target.field, condition.operator == :asc ? 'ascending' : 'descending']
+        end
+      end
     end # Query
   end # Mongo
 end # DataMapper
