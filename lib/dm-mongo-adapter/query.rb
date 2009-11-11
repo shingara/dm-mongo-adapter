@@ -7,7 +7,7 @@ module DataMapper
       def initialize(collection, query)
         assert_kind_of 'collection', collection, ::Mongo::Collection
         assert_kind_of 'query', query, DataMapper::Query
-        @collection, @query, @statements, @conditions = collection, query, {}, Conditions.new
+        @collection, @query, @statements, @conditions = collection, query, {}, Conditions.new(query.conditions)
       end
 
       def read
@@ -16,8 +16,6 @@ module DataMapper
         options[:sort]  = sort_statement(@query.order) unless @query.order.empty?
 
         conditions_statement(@query.conditions)
-
-        @statements.merge!(@conditions.to_statement) unless @conditions.empty?
 
         @conditions.filter_collection!(@collection.find(@statements, options).to_a)
       end
@@ -35,7 +33,7 @@ module DataMapper
         case operation
         when NotOperation then conditions_statement(operation.first, !affirmative)
         when AndOperation then operation.each{|op| conditions_statement(op, affirmative)}
-        when OrOperation  then operation.each{|op| @conditions.add(op, affirmative)}
+        when OrOperation  then operation.each{|op| conditions_statement(op, affirmative)}
         end
       end
 
@@ -46,16 +44,6 @@ module DataMapper
 
         field = comparison.subject.field
         value = comparison.value
-
-        # these comparisons should be handled by the conditions object, because:
-        #
-        # * $nin with range requires $where clause
-        # * negated regexp comparison is currently not supported by mongo, see: http://jira.mongodb.org/browse/SERVER-251
-       if (comparison.kind_of?(InclusionComparison) && value.kind_of?(Range) && !affirmative) ||
-          (comparison.kind_of?(RegexpComparison) && !affirmative)
-          @conditions.add(comparison, affirmative)
-          return
-        end
 
         operator = if affirmative
           case comparison

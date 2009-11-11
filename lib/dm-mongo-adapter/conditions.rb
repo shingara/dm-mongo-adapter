@@ -1,76 +1,54 @@
 module DataMapper
   module Mongo
     class Conditions
-      def initialize
-        @comparisons = []
-        @conditions  = []
-      end
+      include DataMapper::Query::Conditions
 
-      def to_statement
-        { '$where' => @conditions.join(' || ') }
-      end
+      attr_reader :operation
       
-      def empty?
-        @conditions.empty?
+      def initialize(query_operation)
+        @operation = verify_operation(query_operation)
       end
 
-      def filter_collection!(canditates)
-        canditates if @comparisons.empty?
-
-        collection = []
-        canditates.each do |record|
-          collection << record if @comparisons.all? do |filter|
-            !record[filter.subject.field].nil? &&
-            filter.negated? ? !filter.matches?(record) : filter.matches?(record)
-          end
-        end
-        collection
-      end
-
-      def add(comparison, affirmative)
-        field = comparison.subject.field
-        value = comparison.value
-
-        operator = if affirmative
-          case comparison
-          when DataMapper::Query::Conditions::EqualToComparison then
-            "this.#{field} == #{value}"
-          when DataMapper::Query::Conditions::GreaterThanComparison then
-            "this.#{field} > #{value}"
-          when DataMapper::Query::Conditions::LessThanComparison then
-            "this.#{field} < #{value}"
-          when DataMapper::Query::Conditions::GreaterThanOrEqualToComparison then
-            "this.#{field} >= #{value}"
-          when DataMapper::Query::Conditions::LessThanOrEqualToComparison then
-            "this.#{field} <= #{value}"
-          when DataMapper::Query::Conditions::InclusionComparison then
-            range_comparison(field, value) if value.kind_of?(Range)
-          when DataMapper::Query::Conditions::RegexpComparison then
-            "this.#{field} =~ /#{value.source}/"
-          when DataMapper::Query::Conditions::LikeComparison then
-            "this.#{field} =~ /#{comparison.send(:expected_value).source}/"
-          end
-        else
-          case comparison
-          when DataMapper::Query::Conditions::InclusionComparison then
-            range_comparison(field, value, false) if value.kind_of?(Range)
-          end
-        end
-
-        if operator
-          @conditions.push(operator)
-        elsif !value.blank?
-          @comparisons.push(comparison)
-        end
+      def filter_collection!(collection)
+        @operation.operands.empty? ? collection : collection.delete_if {|record| !@operation.matches?(record)}
       end
 
       private
 
-      def range_comparison(field, range, affirmative=true)
-        if affirmative
-          "(this.#{field} >= #{range.first} && this.#{field} #{range.exclude_end? ? '<' : '<='} #{range.last})"
+      def verify_operation(query_operation)
+        operation = query_operation.dup.clear
+
+        query_operation.each do |operand|
+          if not_supported?(operand)
+            query_operation.operands.delete(operand)
+            operation << operand
+          elsif operand.kind_of?(AbstractOperation)
+            operation << verify_operation(operand)
+          end
+        end
+
+        operation
+      end
+
+      # Currently not supported comparisons are:
+      #
+      #   * $nin with range
+      #   * negated regexp comparison (see: http://jira.mongodb.org/browse/SERVER-251)
+      #
+      def not_supported?(operand)
+        case operand
+        when OrOperation
+          true
+        when RegexpComparison
+          if operand.negated?
+            true
+          end
+        when InclusionComparison
+          if operand.negated?
+            true
+          end
         else
-          "(this.#{field} < #{range.first} || this.#{field} #{range.exclude_end? ? '>=' : '>'} #{range.last})"
+          false
         end
       end
     end
