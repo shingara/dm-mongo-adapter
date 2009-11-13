@@ -94,18 +94,18 @@ describe DataMapper::Adapters::MongoAdapter do
   describe "associations" do
     before :all do
       class User
-        include DataMapper::Resource
+        include DataMapper::Mongo::Resource
 
-        property :id, DataMapper::Mongo::Types::ObjectID
-        property :group_id, DataMapper::Mongo::Types::ObjectID, :field => 'group_id'
+        property :id, ObjectID
+        property :group_id, DBRef
         property :name, String
         property :age, Integer
       end
 
       class Group
-        include DataMapper::Resource
+        include DataMapper::Mongo::Resource
 
-        property :id, DataMapper::Mongo::Types::ObjectID
+        property :id, ObjectID
         property :name, String
       end
 
@@ -124,13 +124,13 @@ describe DataMapper::Adapters::MongoAdapter do
     end
 
     describe "belongs_to" do
-      it "should set parent object _id" do
+      it "should set parent object _id in the db ref" do
         lambda {
           @john.group = @group
           @john.save
         }.should_not raise_error
 
-        @john.group_id.should eql(@group.id)
+        @john.group_id.object_id.should eql(@group.id)
       end
 
       it "should fetch parent object" do
@@ -152,7 +152,7 @@ describe DataMapper::Adapters::MongoAdapter do
       it "should add new children with <<" do
         user = User.new(:name => 'kyle')
         @group.users << user
-        user.group_id.should eql(@group.id)
+        user.group_id.object_id.should eql(@group.id)
         @group.users.size.should eql(3)
       end
 

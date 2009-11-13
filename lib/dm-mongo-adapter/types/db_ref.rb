@@ -1,10 +1,8 @@
 module DataMapper
   module Mongo
     module Types
-      class ObjectID < DataMapper::Type
+      class DBRef < DataMapper::Type
         primitive ::Object
-        key true
-        field "_id"
 
         def self.load(value, property)
           typecast(value, property)
@@ -19,16 +17,16 @@ module DataMapper
           when NilClass
             nil
           when String
-            ::Mongo::ObjectID.from_string(value)
+            ::Mongo::DBRef.new(property.model.storage_name, ::Mongo::ObjectID.from_string(value))
           when ::Mongo::ObjectID
-            value
+            ::Mongo::DBRef.new(property.model.storage_name, value)
           when ::Mongo::DBRef
-            value.object_id
+            value
           else
-            raise ArgumentError.new('+value+ must be nil, String or ObjectID')
+            raise ArgumentError.new('+value+ must be nil, String, ObjectID or DBRef')
           end
         end
-      end # ObjectID
+      end # DBRef
     end # Types
   end # Mongo
 end # DataMapper
