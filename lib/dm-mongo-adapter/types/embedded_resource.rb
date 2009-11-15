@@ -26,7 +26,7 @@ module DataMapper
             end
           elsif record.kind_of?(DataMapper::Mongo::EmbeddedResource)
             if new
-              record.attributes.to_h
+              record.attributes_as_fields
             else
               record
             end

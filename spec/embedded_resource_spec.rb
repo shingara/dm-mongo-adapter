@@ -56,6 +56,13 @@ describe DataMapper::Mongo::EmbeddedResource do
       User.get(user.id).address.should eql(address)
     end
 
+    it "should update an embedded resource" do
+      user = User.create(:name => 'john', :age => 100, :address => new_address)
+      user.address= Address.new(:location => 'boston')
+      user.save
+      User.get(user.id).address.location.should eql('boston')
+    end
+
     def new_address
       Address.new(:street => '1st avenue', :location => 'nyc', :country => 'us')
     end

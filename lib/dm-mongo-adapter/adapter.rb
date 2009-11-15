@@ -4,7 +4,7 @@ module DataMapper
       def create(resources)
         resources.map do |resource|
           with_collection(resource.model) do |collection|
-            resource.model.key.set!(resource, [collection.insert(attributes_for_insert(resource))])
+            resource.model.key.set!(resource, [collection.insert(attributes_as_fields(resource))])
           end
         end.size
       end
@@ -18,7 +18,8 @@ module DataMapper
       def update(attributes, resources)
         with_collection(resources.query.model) do |collection|
           resources.each do |resource|
-            collection.update(key(resource), resource.attributes(:field).merge(attributes_as_fields(attributes)))
+            collection.update(key(resource), 
+              attributes_as_fields(resource).merge(attributes_as_fields(attributes)))
           end.size
         end
       end
@@ -37,19 +38,21 @@ module DataMapper
         resource.model.key(name).map(&:field).zip(resource.key).to_hash
       end
 
-      def attributes_for_insert(resource)
-        attributes = {}
+      def attributes_as_fields(record)
+        return super(record) unless record.is_a?(DataMapper::Resource)
 
-        resource.__send__(:fields).each do |property|
-          if resource.model.public_method_defined?(name = property.name)
-            value = resource.__send__(name)
+        attributes  = {}
+
+        record.__send__(:fields).each do |property|
+          if record.model.public_method_defined?(name = property.name)
+            value = record.__send__(name)
             if value.kind_of?(EmbeddedResource)
-              value = attributes_for_insert(value)
+              value = value.attributes_as_fields
             end
             attributes[property.field] = value
           end
         end
-
+        
         attributes.except('_id')
       end
 
