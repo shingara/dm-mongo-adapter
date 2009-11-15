@@ -4,7 +4,7 @@ module DataMapper
       def create(resources)
         resources.map do |resource|
           with_collection(resource.model) do |collection|
-            resource.model.key.set!(resource, [collection.insert(resource.attributes(:field).except('_id'))])
+            resource.model.key.set!(resource, [collection.insert(attributes_for_insert(resource))])
           end
         end.size
       end
@@ -32,58 +32,75 @@ module DataMapper
       end
 
       private
-        def key(resource)
-          resource.model.key(name).map(&:field).zip(resource.key).to_hash
-        end
+      
+      def key(resource)
+        resource.model.key(name).map(&:field).zip(resource.key).to_hash
+      end
 
-        # TODO: document
-        # @api private
-        def with_connection
-          begin
-            yield connection = open_connection
-          rescue Exception => exception
-            DataMapper.logger.error(exception.to_s)
-            raise exception
-          ensure
-            close_connection(connection) if connection
-          end
-        end
+      def attributes_for_insert(resource)
+        attributes = {}
 
-        # TODO: document
-        # @api private
-        def with_collection(model)
-          begin
-            with_connection do |connection|
-              yield connection.collection(model.storage_name(name))
+        resource.__send__(:fields).each do |property|
+          if resource.model.public_method_defined?(name = property.name)
+            value = resource.__send__(name)
+            if value.kind_of?(EmbeddedResource)
+              value = attributes_for_insert(value)
             end
-          rescue Exception => exception
-            DataMapper.logger.error(exception.to_s)
-            raise exception
+            attributes[property.field] = value
           end
         end
 
-        # TODO: document
-        # @api private
-        def open_connection
-          connection = connection_stack.last || ::Mongo::Connection.new(
-            *@options.values_at(:host, :port)).db(@options.fetch(:path, @options[:database])) # TODO: :pk => @options[:pk]
-          connection_stack << connection
-          connection
-        end
+        attributes.except('_id')
+      end
 
-        # TODO: document
-        # @api private
-        def close_connection(connection)
-          connection_stack.pop
-          connection.close if connection_stack.empty?
+      # TODO: document
+      # @api private
+      def with_connection
+        begin
+          yield connection = open_connection
+        rescue Exception => exception
+          DataMapper.logger.error(exception.to_s)
+          raise exception
+        ensure
+          close_connection(connection) if connection
         end
+      end
 
-        # TODO: document
-        # @api private
-        def connection_stack
-          connection_stack_for = Thread.current[:dm_mongo_connection_stack] ||= {}
-          connection_stack_for[self] ||= []
+      # TODO: document
+      # @api private
+      def with_collection(model)
+        begin
+          with_connection do |connection|
+            yield connection.collection(model.storage_name(name))
+          end
+        rescue Exception => exception
+          DataMapper.logger.error(exception.to_s)
+          raise exception
         end
+      end
+
+      # TODO: document
+      # @api private
+      def open_connection
+        connection = connection_stack.last || ::Mongo::Connection.new(
+          *@options.values_at(:host, :port)).db(@options.fetch(:path, @options[:database])) # TODO: :pk => @options[:pk]
+        connection_stack << connection
+        connection
+      end
+
+      # TODO: document
+      # @api private
+      def close_connection(connection)
+        connection_stack.pop
+        connection.close if connection_stack.empty?
+      end
+
+      # TODO: document
+      # @api private
+      def connection_stack
+        connection_stack_for = Thread.current[:dm_mongo_connection_stack] ||= {}
+        connection_stack_for[self] ||= []
+      end
     end # Adapter
   end # Mongo
 
