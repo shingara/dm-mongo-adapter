@@ -4,9 +4,16 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe DataMapper::Adapters::MongoAdapter do
   before do
-    Heffalump.property :id, DataMapper::Mongo::Types::ObjectID
-  end
+    class Heffalump
+      include DataMapper::Mongo::Resource
 
+      property :id,        ObjectID
+      property :color,     String
+      property :num_spots, Integer
+      property :striped,   Boolean
+    end
+  end
+  
   before :all do
     @db = Mongo::Connection.new.db('dm-mongo-test')
 
@@ -79,7 +86,7 @@ describe DataMapper::Adapters::MongoAdapter do
         }.should_not raise_error
       end
 
-     it "should be able to search with 'equal to' criterium" do
+      it "should be able to search with 'equal to' criterium" do
         address = ['street' => 'Street 2']
         Zoo.create(:address => address)
 

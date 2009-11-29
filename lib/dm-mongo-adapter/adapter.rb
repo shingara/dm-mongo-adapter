@@ -41,18 +41,23 @@ module DataMapper
       def attributes_as_fields(record)
         return super(record) unless record.is_a?(DataMapper::Resource)
 
-        attributes  = {}
-
-        record.__send__(:fields).each do |property|
-          if record.model.public_method_defined?(name = property.name)
-            value = record.__send__(name)
-            if value.kind_of?(EmbeddedResource)
-              value = value.attributes_as_fields
-            end
-            attributes[property.field] = value
+        attributes = {}
+        
+        record.model.properties.each do |property|
+          name = property.name
+          if record.model.public_method_defined?(name)
+            attributes[property.field] = record.__send__(name)
           end
         end
-        
+
+        if record.respond_to?(:embedments)
+          record.embedments.keys.each do |name|
+            if record.model.public_method_defined?(name)
+              attributes[name] = attributes_as_fields(record.__send__(name))
+            end
+          end
+        end
+
         attributes.except('_id')
       end
 
