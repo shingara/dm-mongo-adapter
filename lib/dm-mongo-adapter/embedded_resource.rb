@@ -1,22 +1,32 @@
-# TODO: This is obiously not what we want, but current dm-core API doesn't support resources embedded in other resources.
 module DataMapper
   module Mongo
     module EmbeddedResource
       include Types
+      include DataMapper::Resource
 
       def self.included(base)
-        base.send(:include, DataMapper::Resource)
+        base.extend(DataMapper::Mongo::EmbeddedModel)
       end
 
-      def attributes_as_fields
-        attributes = {}
-        fields.each do |property|
-          if model.public_method_defined?(name = property.name)
-            value = __send__(name)
-            attributes[property.field] = value
-          end
-        end
-        attributes
+      # @api public
+      alias_method :model, :class
+
+      # @api public
+      attr_reader :parent
+
+      def parent=(resource)
+        @parent = resource
+      end
+
+      private
+
+      # @api public
+      def initialize(attributes = {}, &block) # :nodoc:
+        self.attributes = attributes
+      end
+
+      def saved?
+        parent && parent.saved?
       end
     end
   end
