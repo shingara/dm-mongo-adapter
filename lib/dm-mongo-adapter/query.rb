@@ -55,7 +55,7 @@ module DataMapper
             when InclusionComparison            then value.kind_of?(Range) ?
               {'$gte' => value.first, value.exclude_end? ? '$lt' : '$lte' => value.last}  : {'$in'  => value}
             when RegexpComparison               then value
-            when LikeComparison                 then comparison.send(:expected_value)
+            when LikeComparison                 then comparison.send(:expected)
           else
             raise NotImplementedError
           end
