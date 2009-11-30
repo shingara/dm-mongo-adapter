@@ -44,12 +44,12 @@ module DataMapper
           raise ArgumentError, 'should not specify options[:model] if passing the model in the third argument'
         end
 
-        model ||= options.delete(:model)
+        model ||= options.delete(:model) || Object.const_get(Extlib::Inflection.classify(name.to_s.singular))
 
-        klass = if max == 1
-          Embedments::OneToOne::Relationship
+        klass = if max > 1
+          Embedments::OneToMany::Relationship
         else
-          # TODO
+          Embedments::OneToOne::Relationship
         end
 
         embedment = embedments[name] = klass.new(name, model, self, options)
@@ -66,7 +66,9 @@ module DataMapper
 
       # @api public
       def embedded_in(name, *args)
-        # TODO: implement me :)
+        assert_kind_of 'name', name, Symbol
+
+
       end
 
       # @api private

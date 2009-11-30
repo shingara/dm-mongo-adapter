@@ -42,18 +42,22 @@ module DataMapper
         return super(record) unless record.is_a?(DataMapper::Resource)
 
         attributes = {}
+        model = record.model
         
-        record.model.properties.each do |property|
+        model.properties.each do |property|
           name = property.name
-          if record.model.public_method_defined?(name)
+          if model.public_method_defined?(name)
             attributes[property.field] = record.__send__(name)
           end
         end
 
-        if record.respond_to?(:embedments)
-          record.embedments.keys.each do |name|
-            if record.model.public_method_defined?(name)
-              attributes[name] = attributes_as_fields(record.__send__(name))
+        if model.respond_to?(:embedments)
+          model.embedments.each do |name, embedment|
+            value = record.__send__(name)
+            if embedment.kind_of?(Embedments::OneToMany::Relationship)
+              attributes[name] = value.map{ |resource| resource.attributes(:field) }
+            else
+              attributes[name] = attributes_as_fields(value)
             end
           end
         end

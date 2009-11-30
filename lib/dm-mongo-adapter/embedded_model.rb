@@ -170,6 +170,7 @@ module DataMapper
 
       append_extensions DataMapper::Model::Hook
       append_extensions DataMapper::Model::Property
+      append_extensions DataMapper::Model::Relationship
 
       # @overrides DataMapper::Model#assert_valid
       def assert_valid

@@ -31,6 +31,14 @@ describe DataMapper::Model::Embedment do
       property :post_code, String
       property :phone,     String
     end
+
+    class Car
+      include EmbeddedResource
+
+      property :name, String
+    end
+
+    @user_attributes = {:name => 'piotr', :age => 26, :address => {:street => '1st ave', :post_code => '123-45'}}
   end
 
   describe "Resource" do
@@ -51,7 +59,6 @@ describe DataMapper::Model::Embedment do
     describe "One-To-One Relationship" do
       before :all do
         User.embeds(1, :address, :model => Address)
-        @user_attributes = {:name => 'piotr', :address => {:street => '1st ave', :post_code => '123-45'}}
       end
 
       it "should create a new embedment" do
@@ -87,6 +94,51 @@ describe DataMapper::Model::Embedment do
         user = User.get(_id)
 
         user.address.should_not be_nil
+      end
+    end
+
+    describe "One-to-Many Relationship" do
+      before :all do
+        User.embeds User.n, :cars
+      end
+
+      it "should create a new embedment" do
+        User.embedments[:cars].class.should be(Embedments::OneToMany::Relationship)
+      end
+
+      it "should create readers and writers for the embedded resource" do
+        user = User.new
+
+        user.should respond_to("cars")
+        user.should respond_to("cars=")
+      end
+
+      it "should set the embedded collection" do
+        user = User.new
+
+        3.times { user.cars << Car.new }
+
+        user.cars.size.should eql(3)
+        user.cars.all?{ |c| c.parent == user }.should be(true)
+      end
+
+      it "should save the embedded resources" do
+        user = User.new @user_attributes.except(:address)
+
+        ['ford', 'honda', 'volvo'].each { |name| user.cars << Car.new(:name => name) }
+
+        user.save.should be(true)
+        user.cars.all?(&:saved?).should be(true)
+      end
+
+      it "should load parent with its embedded collection" do
+        _id = @db.collection('users').insert(
+          "name"=>"piotr", "cars"=>[{"name"=>"ford"}, {"name"=>"honda"}, {"name"=>"volvo"}], "age"=>26)
+
+        user = User.get(_id)
+
+        user.cars.should_not be_nil
+        user.cars.size.should eql(3)
       end
     end
 

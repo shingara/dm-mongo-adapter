@@ -2,6 +2,8 @@ module DataMapper
   module Mongo
     module Embedments
       class Relationship
+        include Extlib::Assertions
+        
         attr_reader :name
         attr_reader :child_model
         attr_reader :parent_model
@@ -29,6 +31,17 @@ module DataMapper
         # @api semipublic
         def set!(resource, association)
           resource.instance_variable_set(instance_variable_name, association)
+        end
+
+        # @api semipublic
+        def loaded?(resource)
+          assert_kind_of 'resource', resource, source_model
+
+          resource.instance_variable_defined?(instance_variable_name)
+        end
+
+        def query_for(source, other_query = nil)
+          Query.new
         end
         
         private

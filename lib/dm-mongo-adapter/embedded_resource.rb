@@ -18,13 +18,6 @@ module DataMapper
         @parent = resource
       end
 
-      private
-
-      # @api public
-      def initialize(attributes = {}, &block) # :nodoc:
-        self.attributes = attributes
-      end
-
       def saved?
         parent && parent.saved?
       end
