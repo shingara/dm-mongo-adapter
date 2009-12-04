@@ -1,6 +1,8 @@
 module DataMapper
   module Mongo
     module EmbeddedResource
+      class MissingParentError < StandardError; end
+
       include Types
       include DataMapper::Resource
 
@@ -20,6 +22,18 @@ module DataMapper
 
       def saved?
         parent && parent.saved?
+      end
+
+      def new?
+        !parent? || parent.new?
+      end
+
+      def parent?
+        !parent.nil?
+      end
+
+      def save
+        parent ? parent.save : raise(MissingParentError)
       end
     end
   end

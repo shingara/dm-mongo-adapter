@@ -5,14 +5,33 @@ module DataMapper
         DataMapper::Model.append_extensions(ModelMethods)
         
         base.send(:include, DataMapper::Resource) unless base.kind_of?(DataMapper::Resource)
+        base.send(:include, ResourceMethods)
         base.send(:include, DataMapper::Mongo::Types)
       end
 
-      private
-      
-      # @api private
-      def embedments
-        model.embedments
+      module ResourceMethods
+        # @overrides DataMapper::Resource#dirty?
+        def dirty?
+          super || run_once(true) { dirty_embedments? }
+        end
+
+        # @api public
+        def dirty_embedments?
+          embedments.any? do |name, embedment|
+            case embedment
+              when Embedments::OneToOne::Relationship  then embedment.get!(self).dirty?
+              when Embedments::OneToMany::Relationship then embedment.get!(self).any? { |r| r.dirty? }
+              else false
+            end
+          end
+        end
+
+        private
+
+        # @api private
+        def embedments
+          model.embedments
+        end
       end
 
       module ModelMethods

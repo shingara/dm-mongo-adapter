@@ -1,7 +1,5 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
-include DataMapper::Mongo
-
 describe DataMapper::Model::Embedment do
   before :all do
     @db = Mongo::Connection.new.db('dm-mongo-test')

@@ -8,17 +8,87 @@ describe DataMapper::Mongo::EmbeddedModel do
   )
 
   class User
-    include DataMapper::Mongo::EmbeddedResource
+    include Resource
 
+    property :id,   ObjectID
     property :name, String
     property :age,  Integer
   end
 
+  class Address
+    include EmbeddedResource
+
+    property :street,    String
+    property :post_code, String
+    property :phone,     String
+  end
+
+  class Car
+    include EmbeddedResource
+
+    property :name, String
+  end
+
+  User.embeds 1, :address, :model => Address
+  User.has User.n, :cars
+
   describe "#new" do
     it "should not need a key" do
       lambda {
-        User.new
+        class Thing
+          include DataMapper::Mongo::EmbeddedResource
+          property :name, String
+        end
+
+        Thing.new
       }.should_not raise_error
+    end
+  end
+
+  describe "creating new resources" do
+    it "should save via parent" do
+      user = User.new :address => Address.new(:street => 'Blank 0')
+      user.save.should be(true)
+      user.new?.should be(false)
+    end
+
+    it "should create via parent" do
+      user = User.create(:address => Address.new(:street => 'Blank 0'))
+      user.new?.should be(false)
+    end
+
+    it "should save an embedded resource" do
+      user = User.new :address => Address.new(:street => 'Blank 0')
+      user.address.save.should be(true)
+      user.new?.should be(false)
+      user.address.new?.should be(false)
+    end
+
+    it "should not allow to create an embedded resource without a parent" do
+      address = Address.new(:street => 'Blank 0')
+      lambda { address.save }.should raise_error(EmbeddedResource::MissingParentError)
+    end
+  end
+
+  describe "#dirty?" do
+    before :all do
+      @user = User.create(:address => Address.new)
+    end
+
+    it "should return true for a clean parent" do
+      @user.dirty?.should be(false)
+      @user.address.dirty?.should be(false)
+    end
+
+    it "should return true with one-to-one" do
+      @user.address.street = 'Some Street 1234'
+      @user.dirty?.should be(true)
+      @user.address.dirty?.should be(true)
+    end
+
+    it "should return true with one-to-many" do
+      @user.cars << Car.new
+      @user.dirty?.should be(true)
     end
   end
 end
