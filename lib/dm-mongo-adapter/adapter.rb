@@ -94,17 +94,17 @@ module DataMapper
       # TODO: document
       # @api private
       def open_connection
-        connection = connection_stack.last || ::Mongo::Connection.new(
+        db = connection_stack.last || ::Mongo::Connection.new(
           *@options.values_at(:host, :port)).db(@options.fetch(:path, @options[:database])) # TODO: :pk => @options[:pk]
-        connection_stack << connection
-        connection
+        connection_stack << db
+        db
       end
 
       # TODO: document
       # @api private
-      def close_connection(connection)
+      def close_connection(db)
         connection_stack.pop
-        connection.close if connection_stack.empty?
+        db.connection.close if connection_stack.empty?
       end
 
       # TODO: document
