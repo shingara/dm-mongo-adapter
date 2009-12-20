@@ -40,13 +40,13 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<dm-core>, ["~> 0.10.0"])
-      s.add_runtime_dependency(%q<mongodb-mongo>, ["~> 0.8"])
+      s.add_runtime_dependency(%q<mongo>, ["~> 0.18"])
     else
       s.add_dependency(%q<dm-core>, ["~> 0.10.0"])
-      s.add_dependency(%q<mongodb-mongo>, ["~> 0.8"])
+      s.add_dependency(%q<mongo>, ["~> 0.18"])
     end
   else
     s.add_dependency(%q<dm-core>, ["~> 0.10.0"])
-    s.add_dependency(%q<mongodb-mongo>, ["~> 0.8"])
+    s.add_dependency(%q<mongo>, ["~> 0.8"])
   end
 end
