@@ -67,9 +67,21 @@ module DataMapper
 
       # TODO: document
       # @api private
-      def with_connection
+      def with_collection(model)
         begin
-          yield connection = open_connection
+          with_db { |db| yield db.collection(model.storage_name(name)) }
+        rescue Exception => exception
+          DataMapper.logger.error(exception.to_s)
+          raise exception
+        end
+      end
+
+      # TODO: document
+      # @api private
+      def with_db
+        begin
+          connection = open_connection
+          yield connection.db(@options[:database]) # TODO: :pk => @options[:pk]
         rescue Exception => exception
           DataMapper.logger.error(exception.to_s)
           raise exception
@@ -80,31 +92,17 @@ module DataMapper
 
       # TODO: document
       # @api private
-      def with_collection(model)
-        begin
-          with_connection do |connection|
-            yield connection.collection(model.storage_name(name))
-          end
-        rescue Exception => exception
-          DataMapper.logger.error(exception.to_s)
-          raise exception
-        end
-      end
-
-      # TODO: document
-      # @api private
       def open_connection
-        db = connection_stack.last || ::Mongo::Connection.new(
-          *@options.values_at(:host, :port)).db(@options.fetch(:path, @options[:database])) # TODO: :pk => @options[:pk]
-        connection_stack << db
-        db
+        connection = connection_stack.last || ::Mongo::Connection.new(*@options.values_at(:host, :port))
+        connection_stack << connection
+        connection
       end
 
       # TODO: document
       # @api private
-      def close_connection(db)
+      def close_connection(connection)
         connection_stack.pop
-        db.connection.close if connection_stack.empty?
+        connection.close if connection_stack.empty?
       end
 
       # TODO: document
