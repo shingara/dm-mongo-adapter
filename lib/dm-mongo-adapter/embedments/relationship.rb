@@ -5,8 +5,8 @@ module DataMapper
         include Extlib::Assertions
         
         attr_reader :name
-        attr_reader :child_model
-        attr_reader :parent_model
+        attr_reader :target_model
+        attr_reader :source_model
         attr_reader :options
         attr_reader :instance_variable_name
         attr_reader :query
@@ -46,11 +46,11 @@ module DataMapper
         
         private
         
-        def initialize(name, child_model, parent_model, options={})
+        def initialize(name, target_model, source_model, options={})
           @name = name
           @instance_variable_name = "@#{@name}".freeze
-          @child_model = child_model
-          @parent_model = parent_model
+          @target_model = target_model
+          @source_model = source_model
           @options = options.dup.freeze
           @reader_visibility = @options.fetch(:reader_visibility, :public)
           @writer_visibility = @options.fetch(:writer_visibility, :public)

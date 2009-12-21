@@ -56,7 +56,7 @@ module DataMapper
             value = record.__send__(name)
             if embedment.kind_of?(Embedments::OneToMany::Relationship)
               attributes[name] = value.map{ |resource| resource.attributes(:field) }
-            else
+            elsif value
               attributes[name] = attributes_as_fields(value)
             end
           end

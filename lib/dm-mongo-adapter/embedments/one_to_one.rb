@@ -10,7 +10,7 @@ module DataMapper
 
           # @api semipublic
           def set(source, target)
-            target = child_model.new(target) if target.kind_of?(Hash)
+            target = target_model.new(target) if target.kind_of?(Hash)
 
             set!(source, target)
             

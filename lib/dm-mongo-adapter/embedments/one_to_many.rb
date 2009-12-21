@@ -4,12 +4,6 @@ module DataMapper
       module OneToMany
         class Relationship < Embedments::Relationship
           # @api semipublic
-          alias target_model child_model
-
-          # @api semipublic
-          alias source_model parent_model
-          
-          # @api semipublic
           def get(source, other_query = nil)
             assert_kind_of 'source', source, source_model
 

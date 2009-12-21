@@ -59,6 +59,18 @@ describe DataMapper::Model::Embedment do
         User.embeds(1, :address, :model => Address)
       end
 
+      describe "#dirty?" do
+        it "should return false without dirty attributes and without an embedded resource" do
+          u = User.new
+          u.dirty?.should be_false
+        end
+
+        it "should return true with a dirty attributes and with an embedded resource" do
+          u = User.new(@user_attributes.except(:address))
+          u.dirty?.should be_true
+        end
+      end
+
       it "should create a new embedment" do
         User.embedments[:address].class.should be(Embedments::OneToOne::Relationship)
       end
@@ -68,6 +80,11 @@ describe DataMapper::Model::Embedment do
 
         user.should respond_to("address")
         user.should respond_to("address=")
+      end
+
+      it "should not require embedded resource to save the parent" do
+        user = User.new(@user_attributes.except(:address))
+        user.save.should be_true
       end
 
       it "should set the embedded resource" do

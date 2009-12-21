@@ -17,8 +17,8 @@ module DataMapper
 
         # @api public
         def dirty_embedments?
-          embedments.any? do |name, embedment|
-            case embedment
+          embedments.values.any? do |embedment|
+            embedment.loaded?(self) && case embedment
               when Embedments::OneToOne::Relationship  then embedment.get!(self).dirty?
               when Embedments::OneToMany::Relationship then embedment.get!(self).any? { |r| r.dirty? }
               else false
@@ -72,7 +72,7 @@ module DataMapper
                 if relationship.kind_of?(Embedments::OneToMany::Relationship)
                   relationship.set(resource, records)
                 else
-                  relationship.set(resource, relationship.child_model.new(records))
+                  relationship.set(resource, relationship.target_model.new(records))
                 end
               end
 
