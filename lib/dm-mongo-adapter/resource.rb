@@ -69,10 +69,12 @@ module DataMapper
               # Load embedded resources
               model.embedments.each do |name, relationship|
                 records = record[name.to_s]
-                if relationship.kind_of?(Embedments::OneToMany::Relationship)
-                  relationship.set(resource, records)
-                else
-                  relationship.set(resource, relationship.target_model.new(records))
+                unless records.blank?
+                  if relationship.kind_of?(Embedments::OneToMany::Relationship)
+                    relationship.set(resource, records)
+                  else
+                    relationship.set(resource, relationship.target_model.new(records))
+                  end
                 end
               end
 
