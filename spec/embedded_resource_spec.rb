@@ -70,9 +70,28 @@ describe DataMapper::Mongo::EmbeddedModel do
     end
   end
 
+  describe "updating resources" do
+    before :all do
+      @db = Mongo::Connection.new.db('dm-mongo-test')
+      @user = User.create(:name => 'john', :address => Address.new)
+    end
+
+    it "should update embedded resource" do
+      @user.update(:address => { :street => 'Something 1' }).should be(true)
+
+      @user.address.street.should_not be_nil
+      @user.address.street.should eql('Something 1')
+
+      user = @db.collection('users').find_one('_id' => Mongo::ObjectID.from_string(@user.id))
+
+      user['address'].should_not be_nil
+      user['address']['street'].should eql('Something 1')
+    end
+  end
+
   describe "#dirty?" do
     before :all do
-      @user = User.new(:address => Address.new)
+      @user = User.new
     end
 
     it "should return false when new" do
@@ -87,18 +106,33 @@ describe DataMapper::Mongo::EmbeddedModel do
 
     it "should return false for a clean parent" do
       @user.dirty?.should be(false)
-      @user.address.dirty?.should be(false)
     end
 
     it "should return true with one-to-one" do
-      @user.address.street = 'Some Street 1234'
+      @user.address = Address.new(:street => 'Some Street 1234')
       @user.dirty?.should be(true)
       @user.address.dirty?.should be(true)
     end
-    
+
+    it "should include embedded resource attributes in the dirty attributes list" do
+      @user.address = Address.new
+      @user.address.street = 'Some Street 1234'
+
+      dirty_attributes    = @user.dirty_attributes
+
+      dirty_attributes.should_not be_nil
+
+      address_dirty_attrs = dirty_attributes[@user.model.embedments[:address]]
+
+      address_dirty_attrs.should_not be_nil
+      address_dirty_attrs.keys.size.should eql(1)
+      address_dirty_attrs.values.include?('Some Street 1234').should be(true)
+    end
+
     describe "with saved resource" do
       before :all do
         @user.name = 'john'
+        @user.address = Address.new
         @user.save
       end
       
@@ -109,6 +143,7 @@ describe DataMapper::Mongo::EmbeddedModel do
 
       it "should return false with a loaded resource" do
         user = User.get(@user.id)
+        user.dirty_embedments?.should be(false)
         user.dirty?.should be(false)
       end
     end

@@ -19,12 +19,12 @@ module DataMapper
             assert_kind_of 'source',  source,  source_model
             assert_kind_of 'targets', targets, Array
 
+            targets = targets.map { |t| load_target(source, t) if t.kind_of?(Hash) }
+            targets.each { |t| t.parent ||= source }
+            
             unless loaded?(source)
               set!(source, collection_for(source))
             end
-
-            targets = targets.map { |t| load_target(t) if t.kind_of?(Hash) }
-            targets.each { |t| t.parent = source }
 
             get!(source).replace(targets)
           end

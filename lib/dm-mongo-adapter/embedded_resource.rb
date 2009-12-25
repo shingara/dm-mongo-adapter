@@ -16,6 +16,25 @@ module DataMapper
       # @api public
       attr_reader :parent
 
+      # @overrides DataMapper::Resource#attributes
+      def attributes(key_on=:name)
+        attributes = {}
+
+        fields.each do |property|
+          if model.public_method_defined?(name = property.name)
+            key = case key_on
+            when :name  then name
+            when :field then property.field
+            else             property
+            end
+
+            attributes[key] = __send__(name)
+          end
+        end
+
+        attributes
+      end
+
       def parent=(resource)
         @parent = resource
       end

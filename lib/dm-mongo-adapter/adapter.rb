@@ -38,29 +38,45 @@ module DataMapper
         resource.model.key(name).map{ |key| [key.field, key.value(resource.__send__(key.name))] }.to_hash
       end
 
+      # TODO: split this into separate methods
       def attributes_as_fields(record)
-        return super(record) unless record.is_a?(DataMapper::Resource)
-
         attributes = {}
-        model = record.model
-        
-        model.properties.each do |property|
-          name = property.name
-          if model.public_method_defined?(name)
-            attributes[property.field] = record.__send__(name)
-          end
-        end
 
-        if model.respond_to?(:embedments)
-          model.embedments.each do |name, embedment|
-            value = record.__send__(name)
-            if embedment.kind_of?(Embedments::OneToMany::Relationship)
-              attributes[name] = value.map{ |resource| resource.attributes(:field) }
-            elsif value
-              attributes[name] = attributes_as_fields(value)
+        case record
+          when DataMapper::Resource
+            model = record.model
+
+            model.properties.each do |property|
+              name = property.name
+              if model.public_method_defined?(name)
+                attributes[property.field] = record.__send__(name)
+              end
+            end
+
+            if model.respond_to?(:embedments)
+              model.embedments.each do |name, embedment|
+                value = record.__send__(name)
+                if embedment.kind_of?(Embedments::OneToMany::Relationship)
+                  attributes[name] = value.map{ |resource| resource.attributes(:field) }
+                elsif value
+                  attributes[name] = attributes_as_fields(value)
+                end
+              end
+            end
+          when Hash
+            if record.keys.any? { |k| k.kind_of?(Embedments::Relationship) }
+              record.each do |key, value|
+                case key
+                when DataMapper::Property
+                  attributes[key.field] = value
+                when Embedments::Relationship
+                  attributes[key.name] = super(value)
+                end
+              end
+            else
+              attributes = super(record)
             end
           end
-        end
 
         attributes.except('_id')
       end

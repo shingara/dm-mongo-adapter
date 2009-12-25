@@ -26,11 +26,27 @@ module DataMapper
           end
         end
 
+        # @overrides DataMapper::Resource#dirty_attributes
+        def dirty_attributes
+          embedded_attributes = {}
+
+          each_embedment do |name, resource|
+            embedded_attributes[embedments[name]] = resource.dirty_attributes if resource.dirty?
+          end
+
+          super.merge(embedded_attributes)
+        end
+
         private
 
         # @api private
         def embedments
           model.embedments
+        end
+
+        def each_embedment
+          embedments.each { |name, embedment|
+            embedment.loaded?(self) && yield(name, embedment.get!(self)) }
         end
 
         # @overrides DataMapper::Resource#save_self

@@ -30,7 +30,15 @@ module DataMapper
 
         # @api semipublic
         def set!(resource, association)
+          set_original_attributes(resource, association)
           resource.instance_variable_set(instance_variable_name, association)
+        end
+
+        # @api semipublic
+        def set_original_attributes(resource, association)
+          Array(association).each do |association|
+            resource.original_attributes[self] = association.original_attributes if association.dirty?
+          end
         end
 
         # @api semipublic
@@ -40,11 +48,14 @@ module DataMapper
           resource.instance_variable_defined?(instance_variable_name)
         end
 
-        def load_target(attributes)
+        def load_target(source, attributes)
           target = target_model.allocate
+          target.parent = source
 
-          target_model.properties do |property|
-            property.set!(target, attributes[property.field])
+          attributes = attributes.to_mash
+
+          target_model.properties.each do |property|
+            property.set(target, attributes[property.field])
           end
 
           target
@@ -52,6 +63,14 @@ module DataMapper
 
         def query_for(source, other_query = nil)
           Query.new
+        end
+
+        def value(relationship)
+          relationship.model.properties.map { |property| [property, property.get(relationship)] }.to_hash
+        end
+
+        def valid?(relationship)
+          relationship.kind_of?(target_model)
         end
         
         private
