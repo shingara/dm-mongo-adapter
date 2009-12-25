@@ -9,7 +9,16 @@ module DataMapper
         end
 
         def self.dump(value, property)
-          typecast(value, property)
+          case value
+          when NilClass
+            nil
+          when String
+            ::Mongo::ObjectID.from_string(value)
+          when ::Mongo::ObjectID
+            value
+          else
+            raise ArgumentError.new('+value+ must be nil, String, ObjectID')
+          end
         end
 
         def self.typecast(value, property)
@@ -17,13 +26,11 @@ module DataMapper
           when NilClass
             nil
           when String
-            ::Mongo::DBRef.new(property.model.storage_name, ::Mongo::ObjectID.from_string(value))
-          when ::Mongo::ObjectID
-            ::Mongo::DBRef.new(property.model.storage_name, value)
-          when ::Mongo::DBRef
             value
+          when ::Mongo::ObjectID
+            value.to_s
           else
-            raise ArgumentError.new('+value+ must be nil, String, ObjectID or DBRef')
+            raise ArgumentError.new('+value+ must be nil, String, ObjectID')
           end
         end
       end # DBRef

@@ -8,7 +8,9 @@ dir = Pathname(__FILE__).dirname.expand_path / 'dm-mongo-adapter'
 
 require dir / 'query'
 require dir / 'conditions'
-require dir / 'types'
+require dir / 'types' / 'object_id'
+require dir / 'types' / 'db_ref'
+require dir / 'types' / 'objects'
 require dir / 'resource'
 
 require dir / 'embedments' / 'relationship'

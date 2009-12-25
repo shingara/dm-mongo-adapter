@@ -1,19 +1,7 @@
-require 'dm-core/spec/adapter_shared_spec'
-
 require File.join(File.dirname(__FILE__), 'spec_helper')
+require File.join(File.dirname(__FILE__), 'adapter_shared_spec')
 
 describe DataMapper::Adapters::MongoAdapter do
-  before do
-    class Heffalump
-      include DataMapper::Mongo::Resource
-
-      property :id,        ObjectID
-      property :color,     String
-      property :num_spots, Integer
-      property :striped,   Boolean
-    end
-  end
-  
   before :all do
     @db = Mongo::Connection.new.db('dm-mongo-test')
 
@@ -26,9 +14,18 @@ describe DataMapper::Adapters::MongoAdapter do
       :hostname => 'localhost',
       :database => 'dm-mongo-test'
     )
+
+    class ::Heffalump
+      include DataMapper::Mongo::Resource
+
+      property :id,        ObjectID
+      property :color,     String
+      property :num_spots, Integer
+      property :striped,   Boolean
+    end
   end
 
-  it_should_behave_like 'An Adapter'
+  it_should_behave_like "An Adapter"
 
   describe "queries" do
     before :all do
@@ -137,13 +134,23 @@ describe DataMapper::Adapters::MongoAdapter do
           @john.save
         }.should_not raise_error
 
-        @john.group_id.object_id.should eql(@group.id)
+        @john.group_id.should eql(@group.id)
       end
 
       it "should fetch parent object" do
         user = User.create(:name => 'jane')
         user.group_id = @group.id
         user.group.should eql(@group)
+      end
+
+      it "should work with SEL" do
+        users = User.all(:name => /john|jane/)
+
+        users.each { |u| u.update(:group_id => @group.id) }
+
+        users.each do |user|
+          user.group.should_not be_nil
+        end
       end
     end
 
@@ -159,7 +166,7 @@ describe DataMapper::Adapters::MongoAdapter do
       it "should add new children with <<" do
         user = User.new(:name => 'kyle')
         @group.users << user
-        user.group_id.object_id.should eql(@group.id)
+        user.group_id.should eql(@group.id)
         @group.users.size.should eql(3)
       end
 
