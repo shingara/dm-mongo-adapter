@@ -72,10 +72,20 @@ describe DataMapper::Mongo::EmbeddedModel do
 
   describe "#dirty?" do
     before :all do
-      @user = User.create(:address => Address.new)
+      @user = User.new(:address => Address.new)
     end
 
-    it "should return true for a clean parent" do
+    it "should return false when new" do
+      address = Address.new
+      address.dirty?.should be(false)
+    end
+
+    it "should return true if changed" do
+      address = Address.new(:street => "Some Street 1234")
+      address.dirty?.should be(true)
+    end
+
+    it "should return false for a clean parent" do
       @user.dirty?.should be(false)
       @user.address.dirty?.should be(false)
     end
@@ -85,10 +95,22 @@ describe DataMapper::Mongo::EmbeddedModel do
       @user.dirty?.should be(true)
       @user.address.dirty?.should be(true)
     end
+    
+    describe "with saved resource" do
+      before :all do
+        @user.name = 'john'
+        @user.save
+      end
+      
+      it "should return true with one-to-many" do
+        @user.cars << Car.new
+        @user.dirty?.should be(true)
+      end
 
-    it "should return true with one-to-many" do
-      @user.cars << Car.new
-      @user.dirty?.should be(true)
+      it "should return false with a loaded resource" do
+        user = User.get(@user.id)
+        user.dirty?.should be(false)
+      end
     end
   end
 end

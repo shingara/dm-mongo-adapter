@@ -40,6 +40,16 @@ module DataMapper
           resource.instance_variable_defined?(instance_variable_name)
         end
 
+        def load_target(attributes)
+          target = target_model.allocate
+
+          target_model.properties do |property|
+            property.set!(target, attributes[property.field])
+          end
+
+          target
+        end
+
         def query_for(source, other_query = nil)
           Query.new
         end

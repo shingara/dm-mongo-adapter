@@ -19,9 +19,9 @@ module DataMapper
         def dirty_embedments?
           embedments.values.any? do |embedment|
             embedment.loaded?(self) && case embedment
-              when Embedments::OneToOne::Relationship  then embedment.get!(self).dirty?
-              when Embedments::OneToMany::Relationship then embedment.get!(self).any? { |r| r.dirty? }
-              else false
+            when Embedments::OneToOne::Relationship  then embedment.get!(self).dirty?
+            when Embedments::OneToMany::Relationship then embedment.get!(self).any? { |r| r.dirty? }
+            else false
             end
           end
         end
@@ -32,97 +32,31 @@ module DataMapper
         def embedments
           model.embedments
         end
+
+        # @overrides DataMapper::Resource#save_self
+        def save_self(safe = true)
+          super && embedments.values.each do |e|
+            e.loaded?(self) && Array(e.get!(self)).each { |r| r.original_attributes.clear }
+          end
+        end
       end
 
       module ModelMethods
         # @overrides DataMapper::Model#load
         def load(records, query)
-          repository      = query.repository
-          repository_name = repository.name
-          fields          = query.fields
-          discriminator   = properties(repository_name).discriminator
-          no_reload       = !query.reload?
+          resources = super
 
-          field_map = fields.map { |property| [ property, property.field ] }.to_hash
-
-          records.map do |record|
-            identity_map = nil
-            key_values   = nil
-            resource     = nil
-
-            case record
-            when Hash
-              # remap fields to use the Property object
-              record = record.dup
-              field_map.each { |property, field| record[property] = record.delete(field) if record.key?(field) }
-
-              model     = discriminator && record[discriminator] || self
-              model_key = model.key(repository_name)
-
-              resource = if model_key.valid?(key_values = record.values_at(*model_key))
-                identity_map = repository.identity_map(model)
-                identity_map[key_values]
+          # Load embedded resources
+          resources.each_with_index do |resource, index|
+            resource.model.embedments.each do |name, relationship|
+              unless (targets = records[index][name.to_s]).blank?
+                relationship.set(resource, targets)
               end
 
-              resource ||= model.allocate
-
-              # Load embedded resources
-              model.embedments.each do |name, relationship|
-                records = record[name.to_s]
-                unless records.blank?
-                  if relationship.kind_of?(Embedments::OneToMany::Relationship)
-                    relationship.set(resource, records)
-                  else
-                    relationship.set(resource, relationship.target_model.new(records))
-                  end
-                end
-              end
-
-              fields.each do |property|
-                next if no_reload && property.loaded?(resource)
-
-                value = record[property]
-
-                # TODO: typecasting should happen inside the Adapter
-                # and all values should come back as expected objects
-                if property.custom?
-                  value = property.type.load(value, property)
-                end
-
-                property.set!(resource, value)
-              end
-
-            when Resource
-              model     = record.model
-              model_key = model.key(repository_name)
-
-              resource = if model_key.valid?(key_values = record.key)
-                identity_map = repository.identity_map(model)
-                identity_map[key_values]
-              end
-
-              resource ||= model.allocate
-
-              fields.each do |property|
-                next if no_reload && property.loaded?(resource)
-
-                property.set!(resource, property.get!(record))
-              end
             end
-
-            resource.instance_variable_set(:@_repository, repository)
-            resource.instance_variable_set(:@_saved,      true)
-
-            if identity_map
-              # defer setting the IdentityMap so second level caches can
-              # record the state of the resource after loaded
-              identity_map[key_values] = resource
-            else
-              resource.instance_variable_set(:@_readonly, true)
-            end
-
-            resource
           end
+
+          resources
         end
       end
     end

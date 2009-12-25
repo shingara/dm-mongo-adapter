@@ -23,7 +23,7 @@ module DataMapper
               set!(source, collection_for(source))
             end
 
-            targets = targets.map { |t| target_model.new(t) if t.kind_of?(Hash) }
+            targets = targets.map { |t| load_target(t) if t.kind_of?(Hash) }
             targets.each { |t| t.parent = source }
 
             get!(source).replace(targets)

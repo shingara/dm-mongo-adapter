@@ -33,7 +33,23 @@ module DataMapper
       end
 
       def save
-        parent ? parent.save : raise(MissingParentError)
+        if parent
+          if parent.save
+            original_attributes.clear
+          end
+        else
+          raise(MissingParentError)
+        end
+      end
+
+      def dirty_self?
+        if original_attributes.any?
+          true
+        elsif new?
+          properties.any? { |property| property.default? }
+        else
+          false
+        end
       end
     end
   end
