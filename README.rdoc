@@ -25,7 +25,7 @@ conditions plus a Javascript $where clause when required would be much better.
 
 Ruby::
 * dm-core ~> 0.10.2
-* mongo   ~> 0.16
+* mongo   ~> 0.18
 
 == Install
 

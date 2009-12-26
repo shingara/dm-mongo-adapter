@@ -15,12 +15,13 @@ module DataMapper
           end
 
           # @api semipublic
-          def set(source, targets)
+          def set(source, targets, loading=false)
             assert_kind_of 'source',  source,  source_model
             assert_kind_of 'targets', targets, Array
 
-            targets = targets.map { |t| load_target(source, t) if t.kind_of?(Hash) }
-            targets.each { |t| t.parent ||= source }
+            targets = targets.map{|t| t.kind_of?(Hash) ? load_target(source, t) : t.parent = source}
+
+            set_original_attributes(source, targets) unless loading
             
             unless loaded?(source)
               set!(source, collection_for(source))

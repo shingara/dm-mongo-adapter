@@ -132,7 +132,7 @@ describe DataMapper::Mongo::EmbeddedModel do
     describe "with saved resource" do
       before :all do
         @user.name = 'john'
-        @user.address = Address.new
+        @user.address = Address.new(:street => 'A Street 101')
         @user.save
       end
       

@@ -9,9 +9,10 @@ module DataMapper
           end
 
           # @api semipublic
-          def set(source, target)
-            target = load_target(source, target) if target.kind_of?(Hash)
-            target.parent ||= source
+          def set(source, target, loading=false)
+            target.kind_of?(Hash) ? target = load_target(source, target, loading) : target.parent = source
+
+            set_original_attributes(source, target) unless loading
 
             set!(source, target)
           end

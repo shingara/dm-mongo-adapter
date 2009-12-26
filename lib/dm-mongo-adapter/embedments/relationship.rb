@@ -30,7 +30,6 @@ module DataMapper
 
         # @api semipublic
         def set!(resource, association)
-          set_original_attributes(resource, association)
           resource.instance_variable_set(instance_variable_name, association)
         end
 
@@ -48,14 +47,14 @@ module DataMapper
           resource.instance_variable_defined?(instance_variable_name)
         end
 
-        def load_target(source, attributes)
+        def load_target(source, attributes, loading=false)
           target = target_model.allocate
           target.parent = source
 
           attributes = attributes.to_mash
 
           target_model.properties.each do |property|
-            property.set(target, attributes[property.field])
+            property.send(loading ? :set! : :set, target, attributes[property.field])
           end
 
           target

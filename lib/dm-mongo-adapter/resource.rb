@@ -66,9 +66,8 @@ module DataMapper
           resources.each_with_index do |resource, index|
             resource.model.embedments.each do |name, relationship|
               unless (targets = records[index][name.to_s]).blank?
-                relationship.set(resource, targets)
+                relationship.set(resource, targets, true)
               end
-
             end
           end
 
