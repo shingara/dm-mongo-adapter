@@ -10,9 +10,12 @@ module DataMapper
 
           # @api semipublic
           def set(source, target, loading=false)
-            target.kind_of?(Hash) ? target = load_target(source, target, loading) : target.parent = source
+            assert_kind_of 'source', source, source_model
 
-            set_original_attributes(source, target) unless loading
+            unless target.nil?
+              target.kind_of?(Hash) ? target = load_target(source, target, loading) : target.parent = source
+              set_original_attributes(source, target) unless loading
+            end
 
             set!(source, target)
           end
