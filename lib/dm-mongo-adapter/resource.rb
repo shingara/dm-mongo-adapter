@@ -10,6 +10,16 @@ module DataMapper
       end
 
       module ResourceMethods
+        # monkey patching based on this: http://github.com/datamapper/dm-core/commit/3332db6c25ab9cea9ba58ce62a9ad3038303baa1
+        # TODO: remove once dm-core 0.10.3 is released
+        def eager_load(properties)
+          unless properties.empty? || key.nil? || collection.nil?
+            collection.reload(:fields => properties)
+          end
+
+          self
+        end
+
         # @overrides DataMapper::Resource#dirty?
         def dirty?
           super || run_once(true) { dirty_embedments? }
