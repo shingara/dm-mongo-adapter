@@ -52,8 +52,7 @@ module DataMapper
             when LessThanComparison             then {'$lt'  => value}
             when GreaterThanOrEqualToComparison then {'$gte' => value}
             when LessThanOrEqualToComparison    then {'$lte' => value}
-            when InclusionComparison            then value.kind_of?(Range) ?
-              {'$gte' => value.first, value.exclude_end? ? '$lt' : '$lte' => value.last}  : {'$in'  => value}
+            when InclusionComparison            then inclusion_comparison_operator(comparison, value)
             when RegexpComparison               then value
             when LikeComparison                 then comparison.send(:expected)
           else
@@ -70,6 +69,18 @@ module DataMapper
 
         operator.is_a?(Hash) ?
           (@statements[field.to_sym] ||= {}).merge!(operator) : @statements[field.to_sym] = operator
+      end
+
+      def inclusion_comparison_operator(comparison, value)
+        if value.kind_of?(Range)
+          {'$gte' => value.first, value.exclude_end? ? '$lt' : '$lte' => value.last}
+        elsif comparison.kind_of?(InclusionComparison) && value.size == 1
+          value.first
+        elsif comparison.subject.type == DataMapper::Mongo::Types::EmbeddedArray
+          value
+        else
+          {'$in'  => value}
+        end
       end
 
       def sort_statement(conditions)

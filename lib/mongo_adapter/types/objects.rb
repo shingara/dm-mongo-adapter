@@ -1,13 +1,27 @@
 module DataMapper
   module Mongo
     module Types
-      class Array < DataMapper::Type
-        primitive ::Object
+      class EmbeddedArray < DataMapper::Type
+        primitive Object
       end
 
-      # TODO: make it work with symbolized keys
-      class Hash < DataMapper::Type
-        primitive ::Object
+      class EmbeddedHash < DataMapper::Type
+        primitive Object
+
+        def self.load(value, property)
+          typecast(value, property)
+        end
+
+        def self.typecast(value, property)
+          case value
+          when NilClass
+            nil
+          when Hash
+            value.to_mash.symbolize_keys
+          when Array
+            [value].to_mash.symbolize_keys
+          end
+        end
       end
     end
   end
