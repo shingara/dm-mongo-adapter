@@ -5,7 +5,7 @@ module DataMapper
         class Relationship < Embedments::Relationship
           # @api semipublic
           def get(source, other_query = nil)
-            get!(source)
+            get!(source) || target_model.new
           end
 
           # @api semipublic

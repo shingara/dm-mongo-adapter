@@ -114,10 +114,8 @@ describe DataMapper::Model::Embedment do
       it "should load parent if the embedded resource is nil" do
         _id = @db.collection('users').insert(:name => 'john')
 
-#        lambda {
-          user = User.get(_id)
-          user.address.should be_nil
-#        }.should_not raise_error
+        user = User.get(_id)
+        user.address.should_not be_nil
       end
     end
 
