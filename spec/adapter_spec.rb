@@ -48,8 +48,8 @@ describe DataMapper::Adapters::MongoAdapter do
         include DataMapper::Mongo::Resource
 
         property :id, ObjectID
-        property :animals, Array
-        property :address, Hash
+        property :animals, EmbeddedArray
+        property :address, EmbeddedHash
       end
     end
 
@@ -80,11 +80,22 @@ describe DataMapper::Adapters::MongoAdapter do
 
         lambda {
           zoo.save
+          zoo.address.class.should be(Hash)
         }.should_not raise_error
       end
 
+      it "should set the property value as hash" do
+        _id = @db.collection('zoos').insert(:address => { :street => 'Street 2' })
+
+        zoo = Zoo.get(_id)
+
+        zoo.address.should be_kind_of(Hash)
+        zoo.address[:street].should eql('Street 2')
+      end
+
       it "should be able to search with 'equal to' criterium" do
-        address = ['street' => 'Street 2']
+        address = {:street => 'Street 3'}
+
         Zoo.create(:address => address)
 
         zoo = Zoo.first(:address => address)
