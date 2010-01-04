@@ -10,6 +10,7 @@ dir = Pathname(__FILE__).dirname.expand_path / 'mongo_adapter'
 
 require dir / 'query'
 require dir / 'conditions'
+require dir / 'types' / 'discriminator'
 require dir / 'types' / 'object_id'
 require dir / 'types' / 'db_ref'
 require dir / 'types' / 'objects'

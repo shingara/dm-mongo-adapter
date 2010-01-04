@@ -2,6 +2,7 @@ module DataMapper
   module Mongo
     class Adapter < DataMapper::Adapters::AbstractAdapter
       def create(resources)
+        puts resources.inspect
         resources.map do |resource|
           with_collection(resource.model) do |collection|
             resource.model.key.set(resource, [collection.insert(attributes_as_fields(resource))])
