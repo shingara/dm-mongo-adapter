@@ -34,6 +34,15 @@ Ruby::
     git clone git://github.com/solnic/dm-mongo-adapter.git
     rake install
 
+* With Rails:
+
+  Add this to your config/environment.rb file:
+
+  config.gem "mongo"
+  config.gem "dm-core"
+  config.gem "dm-mongo-adapter", :lib => "mongo_adapter"
+  config.gem "rails_datamapper"
+
 == Synopsis
 
   DataMapper.setup(:default,
