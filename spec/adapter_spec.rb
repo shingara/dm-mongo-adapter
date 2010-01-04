@@ -8,6 +8,7 @@ describe DataMapper::Adapters::MongoAdapter do
     $db.drop_collection('heffalumps')
 
     # DataMapper::Logger.new(STDOUT, :debug)
+    cleanup_models :Heffalump
 
     class ::Heffalump
       include DataMapper::Mongo::Resource
@@ -38,6 +39,8 @@ describe DataMapper::Adapters::MongoAdapter do
 
   describe "embedded objects as properties" do
     before :all do
+      cleanup_models :Zoo
+
       class Zoo
         include DataMapper::Mongo::Resource
 
@@ -102,6 +105,8 @@ describe DataMapper::Adapters::MongoAdapter do
 
   describe "associations" do
     before :all do
+      cleanup_models :User, :Group
+
       class User
         include DataMapper::Mongo::Resource
 

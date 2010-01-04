@@ -2,30 +2,34 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe DataMapper::Mongo::EmbeddedModel do
 
-  class User
-    include Resource
+  before(:all) do
+    cleanup_models :User, :Address, :Car
 
-    property :id,   ObjectID
-    property :name, String
-    property :age,  Integer
+    class User
+      include Resource
+
+      property :id,   ObjectID
+      property :name, String
+      property :age,  Integer
+    end
+
+    class Address
+      include EmbeddedResource
+
+      property :street,    String
+      property :post_code, String
+      property :phone,     String
+    end
+
+    class Car
+      include EmbeddedResource
+
+      property :name, String
+    end
+
+    User.embeds 1, :address, :model => Address
+    User.has User.n, :cars
   end
-
-  class Address
-    include EmbeddedResource
-
-    property :street,    String
-    property :post_code, String
-    property :phone,     String
-  end
-
-  class Car
-    include EmbeddedResource
-
-    property :name, String
-  end
-
-  User.embeds 1, :address, :model => Address
-  User.has User.n, :cars
 
   describe "#new" do
     it "should not need a key" do
@@ -143,3 +147,4 @@ describe DataMapper::Mongo::EmbeddedModel do
     end
   end
 end
+

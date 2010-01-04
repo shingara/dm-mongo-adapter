@@ -12,3 +12,21 @@ $adapter = DataMapper.setup(:default,
 $db = Mongo::Connection.new.db('dm-mongo-test')
 
 include DataMapper::Mongo
+
+def cleanup_models(*models)
+  unless models.empty?
+    model = models.pop
+  
+    if Object.const_defined?(model)
+      Object.send(:remove_const, model)
+    end
+
+    cleanup_models(*models)
+  end
+end
+
+Spec::Runner.configure do |config|
+  config.before(:all) do
+
+  end
+end

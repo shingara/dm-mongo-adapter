@@ -7,6 +7,7 @@ describe DataMapper::Model::Embedment do
     $db.drop_collection('users')
 
     # DataMapper::Logger.new(STDOUT, :debug)
+    cleanup_models :User, :Address, :Car
 
     class User
       include Resource
