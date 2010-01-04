@@ -2,17 +2,12 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe DataMapper::Model::Embedment do
   before :all do
-    @db = Mongo::Connection.new.db('dm-mongo-test')
 
     # let's start with an empty collection
-    @db.drop_collection('users')
+    $db.drop_collection('users')
 
     # DataMapper::Logger.new(STDOUT, :debug)
-    @adapter = DataMapper.setup(:default,
-      :adapter  => 'mongo',
-      :hostname => 'localhost',
-      :database => 'dm-mongo-test'
-    )
+    cleanup_models :User, :Address, :Car
 
     class User
       include Resource
@@ -104,7 +99,7 @@ describe DataMapper::Model::Embedment do
       end
 
       it "should load parent and the embedded resource" do
-        _id = @db.collection('users').insert(@user_attributes)
+        _id = $db.collection('users').insert(@user_attributes)
 
         user = User.get(_id)
 
@@ -112,7 +107,7 @@ describe DataMapper::Model::Embedment do
       end
 
       it "should load parent if the embedded resource is nil" do
-        _id = @db.collection('users').insert(:name => 'john')
+        _id = $db.collection('users').insert(:name => 'john')
 
         user = User.get(_id)
         user.address.should_not be_nil
@@ -154,7 +149,7 @@ describe DataMapper::Model::Embedment do
       end
 
       it "should load parent with its embedded collection" do
-        _id = @db.collection('users').insert(
+        _id = $db.collection('users').insert(
           "name"=>"piotr", "cars"=>[{"name"=>"ford"}, {"name"=>"honda"}, {"name"=>"volvo"}], "age"=>26)
 
         user = User.get(_id)

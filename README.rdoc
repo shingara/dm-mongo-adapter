@@ -1,6 +1,6 @@
 = DataMapper Mongo Adapter
 
-* http://github.com/shanna/dm-mongo-adapter/tree/master
+* http://github.com/solnic/dm-mongo-adapter/tree/master
 
 == WARNING
 
@@ -31,7 +31,7 @@ Ruby::
 
 * Via git:
 
-    git clone git://github.com/shanna/dm-mongo-adapter.git
+    git clone git://github.com/solnic/dm-mongo-adapter.git
     rake install
 
 == Synopsis
@@ -44,7 +44,7 @@ Ruby::
   # Define your DataMapper resource and start saving:
   class User
     include DataMapper::Resource
-    property :id, DataMapper::Mongo::Types::ObjectID, :field => '_id', :key => true
+    property :_id, ObjectID, :key => true
     property :name, String
     property :age, Integer
   end
