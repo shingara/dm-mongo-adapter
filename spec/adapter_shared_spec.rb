@@ -12,8 +12,6 @@ share_examples_for 'An Adapter' do
   end
 
   before :all do
-    raise '+@adapter+ should be defined in before block' unless instance_variable_get('@adapter')
-
     # create all tables and constraints before each spec
     if @repository.respond_to?(:auto_migrate!)
       Heffalump.auto_migrate!

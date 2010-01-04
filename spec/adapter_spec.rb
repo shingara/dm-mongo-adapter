@@ -3,17 +3,11 @@ require File.join(File.dirname(__FILE__), 'adapter_shared_spec')
 
 describe DataMapper::Adapters::MongoAdapter do
   before :all do
-    @db = Mongo::Connection.new.db('dm-mongo-test')
 
     # let's start with an empty collection
-    @db.drop_collection('heffalumps')
+    $db.drop_collection('heffalumps')
 
     # DataMapper::Logger.new(STDOUT, :debug)
-    @adapter = DataMapper.setup(:default,
-      :adapter  => 'mongo',
-      :hostname => 'localhost',
-      :database => 'dm-mongo-test'
-    )
 
     class ::Heffalump
       include DataMapper::Mongo::Resource
@@ -85,7 +79,7 @@ describe DataMapper::Adapters::MongoAdapter do
       end
 
       it "should set the property value as hash" do
-        _id = @db.collection('zoos').insert(:address => { :street => 'Street 2' })
+        _id = $db.collection('zoos').insert(:address => { :street => 'Street 2' })
 
         zoo = Zoo.get(_id)
 
@@ -129,8 +123,8 @@ describe DataMapper::Adapters::MongoAdapter do
     end
 
     before :each do
-      @db.drop_collection('users')
-      @db.drop_collection('groups')
+      $db.drop_collection('users')
+      $db.drop_collection('groups')
 
       @john = User.create(:name => 'john', :age => 101)
       @jane = User.create(:name => 'jane', :age => 102)

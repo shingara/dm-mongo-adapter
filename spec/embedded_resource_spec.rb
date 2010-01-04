@@ -1,11 +1,6 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe DataMapper::Mongo::EmbeddedModel do
-  DataMapper.setup(:default,
-    :adapter  => 'mongo',
-    :hostname => 'localhost',
-    :database => 'dm-mongo-test'
-  )
 
   class User
     include Resource
@@ -72,7 +67,6 @@ describe DataMapper::Mongo::EmbeddedModel do
 
   describe "updating resources" do
     before :all do
-      @db = Mongo::Connection.new.db('dm-mongo-test')
       @user = User.create(:name => 'john', :address => Address.new)
     end
 
@@ -82,7 +76,7 @@ describe DataMapper::Mongo::EmbeddedModel do
       @user.address.street.should_not be_nil
       @user.address.street.should eql('Something 1')
 
-      user = @db.collection('users').find_one('_id' => Mongo::ObjectID.from_string(@user.id))
+      user = $db.collection('users').find_one('_id' => Mongo::ObjectID.from_string(@user.id))
 
       user['address'].should_not be_nil
       user['address']['street'].should eql('Something 1')
