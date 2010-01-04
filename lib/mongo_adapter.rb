@@ -1,5 +1,5 @@
 gem 'dm-core', '~> 0.10.2'
-gem 'mongo', '~> 0.16'
+gem 'mongo', '~> 0.18'
 
 require 'dm-core'
 require 'mongo'
