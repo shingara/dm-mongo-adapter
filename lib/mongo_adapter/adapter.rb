@@ -2,7 +2,6 @@ module DataMapper
   module Mongo
     class Adapter < DataMapper::Adapters::AbstractAdapter
       def create(resources)
-        puts resources.inspect
         resources.map do |resource|
           with_collection(resource.model) do |collection|
             resource.model.key.set(resource, [collection.insert(attributes_as_fields(resource))])
@@ -69,7 +68,7 @@ module DataMapper
               record.each do |key, value|
                 case key
                 when DataMapper::Property
-                  attributes[key.field] = value
+                  attributes[key.field] = value.is_a?(Class) ? value.to_s : value
                 when Embedments::Relationship
                   attributes[key.name] = super(value)
                 end
@@ -78,6 +77,8 @@ module DataMapper
               attributes = super(record)
             end
           end
+
+        attributes.each { |k, v| attributes[k] = v.to_s if v.is_a?(Class) }
 
         attributes.except('_id')
       end

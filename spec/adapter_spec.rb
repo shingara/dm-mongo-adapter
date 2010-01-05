@@ -214,7 +214,7 @@ describe DataMapper::Adapters::MongoAdapter do
       [Person, Male, Father, Son].each do |model|
         object = model.create!
         object.reload
-        object.type.should == model.name
+        object.type.should == model
       end
     end
 
