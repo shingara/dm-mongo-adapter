@@ -19,8 +19,6 @@ describe "Single Table Inheritance" do
     class ::Son < Male; end
   end
 
-
-
   it "should have a type property that reflects the class" do
     [Person, Male, Father, Son].each do |model|
       object = model.create
@@ -40,15 +38,19 @@ describe "Single Table Inheritance" do
   it "should discriminate types during reads" do
     $db.drop_collection('people')
 
-    Son.create
     father1 = Father.create
     father2 = Father.create
+    son1 = Son.create
+    son2 = Son.create
 
     fathers = Father.all
     fathers.should == [father1, father2]
     fathers.each do |father|
       father.should be_instance_of(Father)
     end
+
+    sons = Son.all
+    sons.should == [son1, son2]
   end
   
 end
