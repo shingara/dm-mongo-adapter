@@ -33,6 +33,8 @@ end
 
 Spec::Runner.configure do |config|
   config.before(:all) do
-    cleanup_models(*(DataMapper::Model.descendants.to_a + DataMapper::Mongo::EmbeddedModel.descendants.to_a))
+    models = (DataMapper::Model.descendants.to_a + DataMapper::Mongo::EmbeddedModel.descendants.to_a)
+    models.delete(DataMapper::Mongo::EmbeddedResource)
+    cleanup_models(*models)
   end
 end

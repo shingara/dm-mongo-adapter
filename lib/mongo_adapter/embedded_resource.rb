@@ -6,8 +6,6 @@ module DataMapper
       include Types
       include DataMapper::Resource
 
-      DataMapper::Model.descendants.delete(self)
-
       def self.included(base)
         base.extend(DataMapper::Mongo::EmbeddedModel)
       end
