@@ -10,8 +10,13 @@ module DataMapper
       end
 
       def read(query)
+        fields = query.fields
+        types  = fields.map { |property| property.primitive }
+        
         with_collection(query.model) do |collection|
-          Query.new(collection, query).read
+          query = Query.new(collection, query)
+          query.types = types
+          query.read
         end
       end
 
@@ -78,7 +83,14 @@ module DataMapper
             end
           end
 
-        attributes.each { |k, v| attributes[k] = v.to_s if v.is_a?(Class) }
+        # make this prettier and off on its own method
+        attributes.each do |k, v| 
+          if v.is_a?(Class) 
+            attributes[k] = v.to_s
+          elsif v.is_a?(DateTime) || v.is_a?(Date)
+            attributes[k] = Time.parse(v.to_s)
+          end
+        end
 
         attributes.except('_id')
       end

@@ -4,6 +4,8 @@ module DataMapper
       include Extlib::Assertions
       include DataMapper::Query::Conditions
 
+      attr_accessor :types
+
       def initialize(collection, query)
         assert_kind_of 'collection', collection, ::Mongo::Collection
         assert_kind_of 'query', query, DataMapper::Query
@@ -16,10 +18,31 @@ module DataMapper
         options[:sort]  = sort_statement(@query.order) unless @query.order.empty?
 
         conditions_statement(@query.conditions)
-        @conditions.filter_collection!(@collection.find(@statements, options).to_a)
+        records = @conditions.filter_collection!(@collection.find(@statements, options).to_a)
+        records.map{|record| typecast_record(record)}
       end
 
       private
+
+      def typecast_record(record)
+        type_i = 0
+        @query.model.properties.each do |property|
+          type = @types[type_i]
+          value = record[property.name.to_s]
+          
+          unless value.nil?
+            if type == DateTime 
+              record[property.name.to_s] = DateTime.parse(value.to_s)
+            elsif type == Date
+              record[property.name.to_s] = Date.parse(value.to_s)
+            end
+          end
+
+          type_i += 1
+        end
+
+        record
+      end
       
       def conditions_statement(conditions, affirmative = true)
         case conditions
