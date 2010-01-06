@@ -193,34 +193,4 @@ describe DataMapper::Adapters::MongoAdapter do
       end
     end
   end
-
-  describe "Single Table Inheritance" do
-    before(:all) do
-      class Person
-        include DataMapper::Mongo::Resource
-        
-        property :id, ObjectID
-        property :name, String
-        property :job, String
-        property :type, Discriminator
-      end
-
-      class Male < Person; end
-      class Father < Male; end
-      class Son < Male; end
-    end
-
-    it "should have a type property that reflects the class" do
-      [Person, Male, Father, Son].each do |model|
-        object = model.create!
-        object.reload
-        object.type.should == model
-      end
-    end
-
-    it "should parent should return an instance of the child when type is explicitly specified" do
-      Person.new(:type => "Male").should be_instance_of(Male)
-    end
-
-  end
 end

@@ -16,7 +16,6 @@ module DataMapper
         options[:sort]  = sort_statement(@query.order) unless @query.order.empty?
 
         conditions_statement(@query.conditions)
-
         @conditions.filter_collection!(@collection.find(@statements, options).to_a)
       end
 

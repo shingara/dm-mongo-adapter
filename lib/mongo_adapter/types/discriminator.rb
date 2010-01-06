@@ -5,8 +5,12 @@ module DataMapper
         typecast(value, property)
       end
 
+      def self.dump(value, property)
+        value.name
+      end
+
       def self.typecast(value, property)
-        value.is_a?(String) ? Object.const_get(Extlib::Inflection.classify(value)) : value
+        Object.const_get(Extlib::Inflection.classify(value)) if value
       end
     end
   end
