@@ -1,0 +1,42 @@
+Add support for:
+
+- aggregation functions: http://www.mongodb.org/display/DOCS/Aggregation
+
+- offset option for queries
+
+- declaring indexes: http://www.mongodb.org/display/DOCS/Indexes
+
+  User.index :foo
+
+- querying based on an embedded resource properties, ie:
+
+  User.all(:address => { :street => 'foo' })
+
+  which should run a following query using the driver:
+
+  find('address.street' => 'foo')) }
+
+- authentication: http://www.mongodb.org/display/DOCS/Security+and+Authentication
+
+General stuff:
+
+- figure out how to include the shared adapter spec from dm-core and overwrite Heffalump model so it will work fine
+
+- organize specs in groups (public/semipublic like in dm-core maybe?)
+
+- improve test coverage, especially for embedded resources and handling of custom types
+
+- add MongoMapper-style of typecasting objects, like Date.to_mongo etc.
+
+- finish mysql vs mongodb performance script based on the one from dm-core
+
+- update README
+
+- clean up and document the code
+
+- write a basic tutorial
+
+
+And a big one:
+
+ figure out what needs to be improved in dm-core so there won't be a need to override its private API :)
