@@ -2,7 +2,6 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe "Single Table Inheritance" do
   before(:all) do
-    cleanup_models :Person, :Male, :Father, :Son
     $db.drop_collection('people')
 
     class ::Person

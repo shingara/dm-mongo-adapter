@@ -2,12 +2,8 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe DataMapper::Model::Embedment do
   before :all do
-
     # let's start with an empty collection
     $db.drop_collection('users')
-
-    # DataMapper::Logger.new(STDOUT, :debug)
-    cleanup_models :User, :Address, :Car
 
     class User
       include Resource

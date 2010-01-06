@@ -4,7 +4,6 @@ describe "Time fields" do
   before(:all) do
     ENV['TZ'] = 'utc'
 
-    cleanup_models :Appointment, :Male, :Father, :Son
     $db.drop_collection('appointments')
 
     class ::Appointment
