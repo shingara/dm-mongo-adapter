@@ -1,6 +1,7 @@
 module DataMapper
   module Types
     class Discriminator < DataMapper::Type
+      primitive String
       def self.load(value, property)
         typecast(value, property)
       end
