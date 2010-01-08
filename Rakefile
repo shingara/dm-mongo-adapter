@@ -28,4 +28,7 @@ Spec::Rake::SpecTask.new(:rcov) do |spec|
   spec.pattern = 'spec/**/*_spec.rb'
   spec.rcov = true
 end
- 
+
+task :install_fast do
+  sh "rake build; gem install pkg/dm-mongo-adapter*.gem --local"
+end
