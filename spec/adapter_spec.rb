@@ -93,7 +93,7 @@ describe DataMapper::Adapters::MongoAdapter do
         zoo = Zoo.first(:address => address)
 
         zoo.should_not be_nil
-        zoo.address.should eql(address)
+        zoo.address.should == address
       end
     end
   end
