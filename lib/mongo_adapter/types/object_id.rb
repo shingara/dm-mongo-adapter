@@ -5,6 +5,7 @@ module DataMapper
         primitive ::Object
         key true
         field "_id"
+        required false
 
         def self.load(value, property)
           typecast(value, property)

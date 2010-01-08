@@ -11,7 +11,13 @@ module DataMapper
       end
 
       def self.typecast(value, property)
-        Object.const_get(Extlib::Inflection.classify(value)) if value
+        if value
+          if value.is_a?(String)
+            Object.const_get(value)
+          else
+            value
+          end
+        end
       end
     end
   end
