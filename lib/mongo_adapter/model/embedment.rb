@@ -1,5 +1,26 @@
 module DataMapper
   module Model
+    # Embedment extends Mongo-based resources to allow resources to be
+    # embedded within a document, while providing relationship-like `has 1`
+    # and `has n` functionality.
+    #
+    # @example
+    #   class User
+    #     include DataMapper::Mongo::Resource
+    #
+    #     property :id,   ObjectID
+    #     property :name, String
+    #
+    #     embeds n, :addresses, :model => Address
+    #   end
+    #
+    #   class Address
+    #     include DataMapper::Mongo::EmbeddedResource
+    #
+    #     property :street,    String
+    #     property :post_code, String
+    #   end
+    #
     module Embedment
       include DataMapper::Mongo
       include DataMapper::Model::Relationship
@@ -22,11 +43,50 @@ module DataMapper
         end
       end
 
-      # @api public
+      # Returns the embedments on this model
+      #
+      # @return [Hash]
+      #   Embedments on this model, where each hash key is the embedment name,
+      #   and each value is the DataMapper::Mongo::Embedments::Relationship
+      #   instance.
+      #
+      # @api semipublic
       def embedments
         @embedments ||= {}
       end
 
+      # A short-hand, clear syntax for defining one-to-one and one-to-many
+      # embedments -- where an embedded resource is held within the parent
+      # document in the database.
+      #
+      # @example
+      #   embed 1,    :friend          # one friend
+      #   embed n,    :friends         # many friends
+      #   embed 1..3, :friends         # many friends (at least 1, at most 3)
+      #   embed 3,    :friends         # many friends (exactly 3)
+      #   embed 1,    :friend, 'User'  # one friend with the class User
+      #
+      # @param cardinality [Integer, Range, Infinity]
+      #   Cardinality that defines the embedment type and constraints
+      # @param name [Symbol]
+      #   The name that the embedment will be referenced by
+      # @param model [Model, #to_str]
+      #   The target model of the embedment
+      # @param opts [Hash]
+      #   An options hash
+      #
+      # @option :model[Model, String] The name of the class to associate with,
+      #   if omitted then the model class name is assumed to match the
+      #   (optional) third parameter, or the embedment name.
+      #
+      # @return [Embedment::Relationship]
+      #   The embedment that was created to reflect either a one-to-one or
+      #   one-to-many embedment.
+      #
+      # @raise [ArgumentError]
+      #   If the cardinality was not understood. Should be a Integer, Range or
+      #   Infinity(n)
+      #
       # @api public
       def embeds(cardinality, name, *args)
         assert_kind_of 'cardinality', cardinality, Integer, Range, Infinity.class
@@ -64,13 +124,29 @@ module DataMapper
         embedment
       end
 
+      # @todo Investigate as a candidate for removal.
+      #   Added 26ae98e1 as an equivelent of belongs_to but _probably_ isn't
+      #   of much use in embedded resources (since it would be perfectly
+      #   acceptable for an embedment to be used in multiple models). My
+      #   opinion is that embedments should always be declared from the parent
+      #   side (DM::M::Resource), rather the child side
+      #   (DM::M::EmbeddedResource).
+      #
+      #   ~antw
+      #
       # @api public
       def embedded_in(name, *args)
-        assert_kind_of 'name', name, Symbol
-
-
+        return NotImplementedError
       end
 
+      # Dynamically defines a reader method
+      #
+      # Creates a public method matching the name of the embedment which can
+      # be used to access the embedded resource(s).
+      #
+      # @param [Embedment::Relationship] embedment
+      #   The embedment for which a reader should be created
+      #
       # @api private
       def create_embedment_reader(embedment)
         name        = embedment.name
@@ -88,6 +164,14 @@ module DataMapper
         RUBY
       end
 
+      # Dynamically defines a writer method
+      #
+      # Creates a public method matching the name of the embedment which can
+      # be used to set the embedded resource(s).
+      #
+      # @param [Embedment::Relationship] embedment
+      #   The embedment for which a writer should be created
+      #
       # @api private
       def create_embedment_writer(embedment)
         name        = embedment.name
@@ -107,5 +191,5 @@ module DataMapper
     end
 
     Model.append_extensions(Embedment)
-  end
-end
+  end # Model
+end # DataMapper
