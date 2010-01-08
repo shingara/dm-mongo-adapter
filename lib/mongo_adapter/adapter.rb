@@ -1,6 +1,18 @@
 module DataMapper
   module Mongo
     class Adapter < DataMapper::Adapters::AbstractAdapter
+      # Persists one or more new resources
+      #
+      # @example
+      #   adapter.create(collection)  # => 1
+      #
+      # @param [Enumerable<Resource>] resources
+      #   The list of resources (model instances) to create
+      #
+      # @return [Integer]
+      #   The number of records that were actually saved into the data-store
+      #
+      # @api semipublic
       def create(resources)
         resources.map do |resource|
           with_collection(resource.model) do |collection|
@@ -9,12 +21,38 @@ module DataMapper
         end.size
       end
 
+      # Reads one or many resources from a datastore
+      #
+      # @example
+      #   adapter.read(query)  # => [ { 'name' => 'Dan Kubb' } ]
+      #
+      # @param [Query] query
+      #   The query to match resources in the datastore
+      #
+      # @return [Enumerable<Hash>]
+      #   An array of hashes to become resources
+      #
+      # @api semipublic
       def read(query)
         with_collection(query.model) do |collection|
           Query.new(collection, query).read
         end
       end
 
+      # Updates one or many existing resources
+      #
+      # @example
+      #   adapter.update(attributes, collection)  # => 1
+      #
+      # @param [Hash(Property => Object)] attributes
+      #   Hash of attribute values to set, keyed by Property
+      # @param [Collection] resources
+      #   Collection of records to be updated
+      #
+      # @return [Integer]
+      #   The number of records updated
+      #
+      # @api semipublic
       def update(attributes, resources)
         with_collection(resources.query.model) do |collection|
           resources.each do |resource|
@@ -24,6 +62,18 @@ module DataMapper
         end
       end
 
+      # Deletes one or many existing resources
+      #
+      # @example
+      #   adapter.delete(collection)  # => 1
+      #
+      # @param [Collection] resources
+      #   Collection of records to be deleted
+      #
+      # @return [Integer]
+      #   The number of records deleted
+      #
+      # @api semipublic
       def delete(resources)
         with_collection(resources.query.model) do |collection|
           resources.each do |resource|
@@ -34,11 +84,36 @@ module DataMapper
 
       private
 
+      # Retrieves the key for a given resource as a hash.
+      #
+      # @param [Resource] resource
+      #   The resource whose key is to be retrieved
+      #
+      # @return [Hash{Symbol => Object}]
+      #   Returns a hash where each hash key/value corresponds to a key name
+      #   and value on the resource.
+      #
+      # @api private
       def key(resource)
         resource.model.key(name).map{ |key| [key.field, key.value(resource.__send__(key.name))] }.to_hash
       end
 
-      # TODO: split this into separate methods
+      # Retrieves all of a records attributes and returns them as a Hash.
+      #
+      # The resulting hash can then be used with the Mongo library for
+      # inserting new -- and updating existing -- documents in the database.
+      #
+      # @param [Resource, Hash] record
+      #   A DataMapper resource, or a hash containing fields and values.
+      #
+      # @return [Hash]
+      #   Returns a hash containing the values for each of the fields in the
+      #   given resource as raw (dumped) values suitable for use with the
+      #   Mongo library.
+      #
+      # @todo split this into separate methods
+      #
+      # @api private
       def attributes_as_fields(record)
         attributes = {}
 
@@ -91,7 +166,14 @@ module DataMapper
         attributes.except('_id')
       end
 
-      # TODO: document
+      # Runs the given block within the context of a Mongo collection.
+      #
+      # @param [Model] model
+      #   The model whose collection is to be scoped.
+      #
+      # @yieldparam [Mongo::Collection]
+      #   The Mongo::Collection instance for the given model
+      #
       # @api private
       def with_collection(model)
         begin
@@ -102,7 +184,15 @@ module DataMapper
         end
       end
 
-      # TODO: document
+      # Runs the given block within the context of a Mongo databae.
+      #
+      # @yieldparam [Mongo::DB]
+      #   The Mongo::DB instance for the adapter
+      #
+      # @todo can the connection be persisted by default (as in MongoMapper
+      #       and Mongoid)? The DataObjects connections use Extlib::Pooling so
+      #       as not to create a new connection for every query...
+      #
       # @api private
       def with_db
         begin
@@ -116,7 +206,11 @@ module DataMapper
         end
       end
 
-      # TODO: document
+      # Opens and returns a connection to a Mongo database
+      #
+      # @return [Mongo::Connection]
+      #   The Mongo::Connection instance
+      #
       # @api private
       def open_connection
         connection = connection_stack.last || ::Mongo::Connection.new(*@options.values_at(:host, :port))
@@ -124,14 +218,23 @@ module DataMapper
         connection
       end
 
-      # TODO: document
+      # Closes the given Mongo connection
+      #
+      # @param [Mongo::Connection]
+      #   The instance to be closed.
+      #
       # @api private
       def close_connection(connection)
         connection_stack.pop
         connection.close if connection_stack.empty?
       end
 
-      # TODO: document
+      # The stack of currently open connections
+      #
+      # @return [Array<Mongo::Connection>]
+      #   An array containing active Mongo::Connection instance. If there are
+      #   no open connections, the array will be empty.
+      #
       # @api private
       def connection_stack
         connection_stack_for = Thread.current[:dm_mongo_connection_stack] ||= {}
