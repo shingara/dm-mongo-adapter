@@ -189,56 +189,26 @@ module DataMapper
       # @yieldparam [Mongo::DB]
       #   The Mongo::DB instance for the adapter
       #
-      # @todo can the connection be persisted by default (as in MongoMapper
-      #       and Mongoid)? The DataObjects connections use Extlib::Pooling so
-      #       as not to create a new connection for every query...
-      #
       # @api private
       def with_db
         begin
-          connection = open_connection
           yield connection.db(@options[:database]) # TODO: :pk => @options[:pk]
         rescue Exception => exception
           DataMapper.logger.error(exception.to_s)
           raise exception
-        ensure
-          close_connection(connection) if connection
         end
       end
 
-      # Opens and returns a connection to a Mongo database
+      # Returns the Mongo::Connection instance for this process
+      #
+      # @todo Reconnect if the connection has timed out, or if the process has
+      #       been forked.
       #
       # @return [Mongo::Connection]
-      #   The Mongo::Connection instance
       #
-      # @api private
-      def open_connection
-        connection = connection_stack.last || ::Mongo::Connection.new(*@options.values_at(:host, :port))
-        connection_stack << connection
-        connection
-      end
-
-      # Closes the given Mongo connection
-      #
-      # @param [Mongo::Connection]
-      #   The instance to be closed.
-      #
-      # @api private
-      def close_connection(connection)
-        connection_stack.pop
-        connection.close if connection_stack.empty?
-      end
-
-      # The stack of currently open connections
-      #
-      # @return [Array<Mongo::Connection>]
-      #   An array containing active Mongo::Connection instance. If there are
-      #   no open connections, the array will be empty.
-      #
-      # @api private
-      def connection_stack
-        connection_stack_for = Thread.current[:dm_mongo_connection_stack] ||= {}
-        connection_stack_for[self] ||= []
+      # @api semipublic
+      def connection
+        @connection ||= ::Mongo::Connection.new(*@options.values_at(:host, :port))
       end
     end # Adapter
   end # Mongo
