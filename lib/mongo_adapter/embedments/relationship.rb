@@ -3,7 +3,7 @@ module DataMapper
     module Embedments
       class Relationship
         include Extlib::Assertions
-        
+
         attr_reader :name
         attr_reader :target_model
         attr_reader :source_model
@@ -71,9 +71,9 @@ module DataMapper
         def valid?(relationship)
           relationship.kind_of?(target_model)
         end
-        
+
         private
-        
+
         def initialize(name, target_model, source_model, options={})
           @name = name
           @instance_variable_name = "@#{@name}".freeze

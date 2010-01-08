@@ -111,22 +111,22 @@ describe "associations" do
       #@friend2 = Friend.new
       @user1 = User.new
       @user2 = User.new
-      @group = Group.new(:users => 
+      @group = Group.new(:users =>
                          [
-                          {:friends => 
+                          {:friends =>
                             [{:name => "blah"}, {:name => "blah2"}]
-                          }, 
-                          {:friends => 
+                          },
+                          {:friends =>
                             [{:name => "blah3"},{:name => "blah4"}]
                           }])
     end
 
     it "should save nested objects" do
-      
+
       #@group.users << @user1
       #@group.users << @user2
       @group.save
-      Group.get(@group.id).users.all.each do |u| 
+      Group.get(@group.id).users.all.each do |u|
         u.group_id.should == @group.id
         u.friends.each do |f|
           f.user_id.should == u.id

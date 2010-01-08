@@ -22,7 +22,7 @@ module DataMapper
             targets = targets.map{|t| t.kind_of?(Hash) ? load_target(source, t) : t.parent = source}
 
             set_original_attributes(source, targets) unless loading
-            
+
             unless loaded?(source)
               set!(source, collection_for(source))
             end

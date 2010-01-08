@@ -33,7 +33,7 @@ module DataMapper
       end
 
       private
-      
+
       def key(resource)
         resource.model.key(name).map{ |key| [key.field, key.value(resource.__send__(key.name))] }.to_hash
       end
@@ -143,4 +143,3 @@ module DataMapper
   Adapters::MongoAdapter = DataMapper::Mongo::Adapter
   Adapters.const_added(:MongoAdapter)
 end # DataMapper
-

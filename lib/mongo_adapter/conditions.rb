@@ -4,7 +4,7 @@ module DataMapper
       include DataMapper::Query::Conditions
 
       attr_reader :operation
-      
+
       def initialize(query_operation)
         @operation = verify_operation(query_operation)
       end

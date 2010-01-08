@@ -84,7 +84,7 @@ describe DataMapper::Model::Embedment do
 
         user.address = address
         user.address.should be(address)
-      
+
         address.parent.should be(user)
       end
 

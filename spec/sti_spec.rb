@@ -6,7 +6,7 @@ describe "Single Table Inheritance" do
 
     class ::Person
       include DataMapper::Mongo::Resource
-      
+
       property :id, ObjectID
       property :name, String
       property :job, String
@@ -51,5 +51,5 @@ describe "Single Table Inheritance" do
     sons = Son.all
     sons.should == [son1, son2]
   end
-  
+
 end

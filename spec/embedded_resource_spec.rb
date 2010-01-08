@@ -128,7 +128,7 @@ describe DataMapper::Mongo::EmbeddedModel do
         @user.address = Address.new(:street => 'A Street 101')
         @user.save
       end
-      
+
       it "should return true with one-to-many" do
         @user.cars << Car.new
         @user.dirty?.should be(true)
@@ -142,4 +142,3 @@ describe DataMapper::Mongo::EmbeddedModel do
     end
   end
 end
-

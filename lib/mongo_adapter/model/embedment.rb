@@ -31,7 +31,7 @@ module DataMapper
       def embeds(cardinality, name, *args)
         assert_kind_of 'cardinality', cardinality, Integer, Range, Infinity.class
         assert_kind_of 'name',        name,        Symbol
-        
+
         model   = extract_model(args)
         options = extract_options(args)
 

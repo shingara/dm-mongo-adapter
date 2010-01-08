@@ -30,7 +30,7 @@ module DataMapper
       def typecast_record(record)
         @query.model.properties.each do |property|
           type  = property.primitive
-          
+
           key   = property.name.to_s
           value = record[key]
 
@@ -42,10 +42,10 @@ module DataMapper
             end
           end
         end
-        
+
         record
       end
-      
+
       def conditions_statement(conditions, affirmative = true)
         case conditions
         when AbstractOperation  then operation_statement(conditions, affirmative)

@@ -8,7 +8,7 @@ describe "Time fields" do
 
     class ::Appointment
       include DataMapper::Mongo::Resource
-      
+
       property :id, ObjectID
       property :description, String
       property :starts_at, DateTime
@@ -31,5 +31,5 @@ describe "Time fields" do
     appointment.ends_at.to_s.should == ends_at.to_s
     appointment.next_appointment_on.to_s.should == next_appointment_on.to_s
   end
-  
+
 end
