@@ -141,7 +141,7 @@ describe DataMapper::Model::Embedment do
         ['ford', 'honda', 'volvo'].each { |name| user.cars << Car.new(:name => name) }
 
         user.save.should be(true)
-        user.cars.all?(&:saved?).should be(true)
+        user.cars.all? { |car| car.saved? }.should be(true)
       end
 
       it "should load parent with its embedded collection" do
