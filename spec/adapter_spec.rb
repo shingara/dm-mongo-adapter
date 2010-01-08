@@ -3,12 +3,9 @@ require File.join(File.dirname(__FILE__), 'adapter_shared_spec')
 
 describe DataMapper::Adapters::MongoAdapter do
   before :all do
-
+    @adapter = $adapter
     # let's start with an empty collection
     $db.drop_collection('heffalumps')
-
-    # DataMapper::Logger.new(STDOUT, :debug)
-    cleanup_models :Heffalump
 
     class ::Heffalump
       include DataMapper::Mongo::Resource
@@ -39,8 +36,6 @@ describe DataMapper::Adapters::MongoAdapter do
 
   describe "embedded objects as properties" do
     before :all do
-      cleanup_models :Zoo
-
       class Zoo
         include DataMapper::Mongo::Resource
 
@@ -102,5 +97,4 @@ describe DataMapper::Adapters::MongoAdapter do
       end
     end
   end
-
 end

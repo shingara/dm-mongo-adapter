@@ -4,12 +4,14 @@ module DataMapper
       include Extlib::Assertions
       include DataMapper::Query::Conditions
 
-      attr_accessor :types
-
       def initialize(collection, query)
         assert_kind_of 'collection', collection, ::Mongo::Collection
         assert_kind_of 'query', query, DataMapper::Query
-        @collection, @query, @statements, @conditions = collection, query, {}, Conditions.new(query.conditions)
+
+        @collection = collection
+        @query      = query
+        @statements = {}
+        @conditions = Conditions.new(query.conditions)
       end
 
       def read
@@ -18,6 +20,7 @@ module DataMapper
         options[:sort]  = sort_statement(@query.order) unless @query.order.empty?
 
         conditions_statement(@query.conditions)
+
         records = @conditions.filter_collection!(@collection.find(@statements, options).to_a)
         records.map{|record| typecast_record(record)}
       end
@@ -25,22 +28,21 @@ module DataMapper
       private
 
       def typecast_record(record)
-        type_i = 0
         @query.model.properties.each do |property|
-          type = @types[type_i]
-          value = record[property.name.to_s]
+          type  = property.primitive
           
+          key   = property.name.to_s
+          value = record[key]
+
           unless value.nil?
-            if type == DateTime 
-              record[property.name.to_s] = DateTime.parse(value.to_s)
+            if type == DateTime
+              record[key] = value.to_datetime
             elsif type == Date
-              record[property.name.to_s] = Date.parse(value.to_s)
+              record[key] = Date.parse(value.to_s)
             end
           end
-
-          type_i += 1
         end
-
+        
         record
       end
       

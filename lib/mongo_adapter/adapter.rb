@@ -10,13 +10,8 @@ module DataMapper
       end
 
       def read(query)
-        fields = query.fields
-        types  = fields.map { |property| property.primitive }
-        
         with_collection(query.model) do |collection|
-          query = Query.new(collection, query)
-          query.types = types
-          query.read
+          Query.new(collection, query).read
         end
       end
 
@@ -83,15 +78,14 @@ module DataMapper
             end
           end
 
-        # make this prettier and off on its own method
+        # TODO: make this prettier and off on its own method
         attributes.each do |k, v|
-          if v.is_a?(Class) 
-            attributes[k] = v.to_s
-          elsif v.is_a?(DateTime) || v.is_a?(Date)
-            attributes[k] = Time.parse(v.to_s)
-          elsif v.is_a?(String) && !k.grep(/_id$/).empty? && k != "_id"
-            attributes[k] = ::Mongo::ObjectID.from_string(v)
+          case v
+            when Class    then attributes[k] = v.to_s
+            when DateTime then attributes[k] = v.to_time
+            when Date     then attributes[k] = Time.utc(v.year, v.month, v.day)
           end
+          attributes[k] = ::Mongo::ObjectID.from_string(v) if v.is_a?(String) && !k.grep(/_id$/).empty? && k != "_id"
         end
 
         attributes.except('_id')

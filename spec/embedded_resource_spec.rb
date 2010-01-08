@@ -3,8 +3,6 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 describe DataMapper::Mongo::EmbeddedModel do
 
   before(:all) do
-    cleanup_models :User, :Address, :Car
-
     class User
       include Resource
 
@@ -77,13 +75,10 @@ describe DataMapper::Mongo::EmbeddedModel do
     it "should update embedded resource" do
       @user.update(:address => { :street => 'Something 1' }).should be(true)
 
+      @user.reload
+
       @user.address.street.should_not be_nil
       @user.address.street.should eql('Something 1')
-
-      user = $db.collection('users').find_one('_id' => Mongo::ObjectID.from_string(@user.id))
-
-      user['address'].should_not be_nil
-      user['address']['street'].should eql('Something 1')
     end
   end
 
