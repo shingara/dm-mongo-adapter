@@ -181,6 +181,7 @@ module DataMapper
           raise IncompleteModelError, "#{self.name} must have at least one property to be valid"
         end
       end
-    end
-  end
-end
+
+    end # EmbeddedModel
+  end # Mongo
+end # DataMapper
