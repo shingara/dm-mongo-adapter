@@ -20,6 +20,10 @@ Add support for:
 
 General stuff:
 
+- figure out why DataMapper::Model::Hook and DataMapper::Validate need to be explicitly included on EmbeddedResource
+
+- embeded resources within embedded resources
+
 - figure out how to include the shared adapter spec from dm-core and overwrite Heffalump model so it will work fine
 
 - organize specs in groups (public/semipublic like in dm-core maybe?)
@@ -35,7 +39,6 @@ General stuff:
 - clean up and document the code
 
 - write a basic tutorial
-
 
 And a big one:
 
