@@ -1,6 +1,8 @@
 module DataMapper
   module Mongo
     class Adapter < DataMapper::Adapters::AbstractAdapter
+      class ConnectionError < StandardError; end
+
       # Persists one or more new resources
       #
       # @example
@@ -188,9 +190,25 @@ module DataMapper
       #
       # @return [Mongo::DB]
       #
+      # @raise [ConnectionError]
+      #   If the database requires you to authenticate, and the given username
+      #   or password was not correct, a ConnectionError exception will be
+      #   raised.
+      #
       # @api semipublic
       def database
-        @database ||= connection.db(@options[:database])
+        unless defined?(@database)
+          @database = connection.db(@options[:database])
+
+          if @options[:username] and not @database.authenticate(
+                @options[:username], @options[:password])
+            raise ConnectionError,
+              'MongoDB did not recognize the given username and/or ' \
+              'password; see the server logs for more information'
+          end
+        end
+
+        @database
       end
 
       # Returns the Mongo::Connection instance for this process
