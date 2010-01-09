@@ -177,26 +177,20 @@ module DataMapper
       # @api private
       def with_collection(model)
         begin
-          with_db { |db| yield db.collection(model.storage_name(name)) }
+          yield database.collection(model.storage_name(name))
         rescue Exception => exception
           DataMapper.logger.error(exception.to_s)
           raise exception
         end
       end
 
-      # Runs the given block within the context of a Mongo databae.
+      # Returns the Mongo::DB instance for this process.
       #
-      # @yieldparam [Mongo::DB]
-      #   The Mongo::DB instance for the adapter
+      # @return [Mongo::DB]
       #
-      # @api private
-      def with_db
-        begin
-          yield connection.db(@options[:database]) # TODO: :pk => @options[:pk]
-        rescue Exception => exception
-          DataMapper.logger.error(exception.to_s)
-          raise exception
-        end
+      # @api semipublic
+      def database
+        @database ||= connection.db(@options[:database])
       end
 
       # Returns the Mongo::Connection instance for this process
