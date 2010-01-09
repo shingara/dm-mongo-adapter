@@ -1,6 +1,8 @@
 module DataMapper
   module Mongo
     class Adapter < DataMapper::Adapters::AbstractAdapter
+      class ConnectionError < StandardError; end
+
       # Persists one or more new resources
       #
       # @example
@@ -185,26 +187,36 @@ module DataMapper
       # @api private
       def with_collection(model)
         begin
-          with_db { |db| yield db.collection(model.storage_name(name)) }
+          yield database.collection(model.storage_name(name))
         rescue Exception => exception
           DataMapper.logger.error(exception.to_s)
           raise exception
         end
       end
 
-      # Runs the given block within the context of a Mongo databae.
+      # Returns the Mongo::DB instance for this process.
       #
-      # @yieldparam [Mongo::DB]
-      #   The Mongo::DB instance for the adapter
+      # @return [Mongo::DB]
       #
-      # @api private
-      def with_db
-        begin
-          yield connection.db(@options[:database]) # TODO: :pk => @options[:pk]
-        rescue Exception => exception
-          DataMapper.logger.error(exception.to_s)
-          raise exception
+      # @raise [ConnectionError]
+      #   If the database requires you to authenticate, and the given username
+      #   or password was not correct, a ConnectionError exception will be
+      #   raised.
+      #
+      # @api semipublic
+      def database
+        unless defined?(@database)
+          @database = connection.db(@options[:database])
+
+          if @options[:username] and not @database.authenticate(
+                @options[:username], @options[:password])
+            raise ConnectionError,
+              'MongoDB did not recognize the given username and/or ' \
+              'password; see the server logs for more information'
+          end
         end
+
+        @database
       end
 
       # Returns the Mongo::Connection instance for this process
