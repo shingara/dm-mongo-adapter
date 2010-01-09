@@ -1,9 +1,7 @@
-require 'rubygems'
-
-#if defined?(gem)
+if defined?(gem)
   gem 'dm-core', '~> 0.10.2'
   gem 'mongo', '~> 0.18'
-#end
+end
 
 require 'dm-core'
 require 'mongo'
