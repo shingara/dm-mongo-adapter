@@ -82,6 +82,14 @@ module DataMapper
         end
       end
 
+      def execute(resources, selector, document, options={})
+        resources.map do |resource|
+          with_collection(resource.model) do |collection|
+            collection.update(selector, document, options)
+          end
+        end.size
+      end
+
       private
 
       # Retrieves the key for a given resource as a hash.
@@ -165,7 +173,7 @@ module DataMapper
 
         attributes.except('_id')
       end
-
+      
       # Runs the given block within the context of a Mongo collection.
       #
       # @param [Model] model
