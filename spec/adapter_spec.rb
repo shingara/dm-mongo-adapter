@@ -46,7 +46,7 @@ describe DataMapper::Adapters::MongoAdapter do
     end
 
     it 'should raise no error when connecting with valid credentials' do
-      DataMapper.setup(:dm_mongo_auth_valid,
+      DataMapper.setup(:dm_mongo_auth,
         :adapter  => 'mongo',
         :hostname => 'localhost',
         :database => 'dm-mongo-test-auth',
@@ -55,14 +55,14 @@ describe DataMapper::Adapters::MongoAdapter do
       )
 
       lambda do
-        repository(:dm_mongo_auth_valid) do
+        repository(:dm_mongo_auth) do
           Heffalump.create(:color => 'red', :num_spots => 2)
         end
       end.should_not raise_error(DataMapper::Mongo::Adapter::ConnectionError)
     end
 
     it 'should raise an error when connecting with an invalid username' do
-      DataMapper.setup(:dm_mongo_auth_valid,
+      DataMapper.setup(:dm_mongo_auth,
         :adapter  => 'mongo',
         :hostname => 'localhost',
         :database => 'dm-mongo-test',
@@ -71,14 +71,14 @@ describe DataMapper::Adapters::MongoAdapter do
       )
 
       lambda do
-        repository(:dm_mongo_auth_valid) do
+        repository(:dm_mongo_auth) do
           Heffalump.create(:color => 'red', :num_spots => 2)
         end
       end.should raise_error(DataMapper::Mongo::Adapter::ConnectionError)
     end
 
     it 'should raise an error when connecting with an invalid password' do
-      DataMapper.setup(:dm_mongo_auth_valid,
+      DataMapper.setup(:dm_mongo_auth,
         :adapter  => 'mongo',
         :hostname => 'localhost',
         :database => 'dm-mongo-test',
@@ -87,7 +87,7 @@ describe DataMapper::Adapters::MongoAdapter do
       )
 
       lambda do
-        repository(:dm_mongo_auth_valid) do
+        repository(:dm_mongo_auth) do
           Heffalump.create(:color => 'red', :num_spots => 2)
         end
       end.should raise_error(DataMapper::Mongo::Adapter::ConnectionError)
