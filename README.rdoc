@@ -1,6 +1,7 @@
 = DataMapper Mongo Adapter
 
 * http://github.com/solnic/dm-mongo-adapter/tree/master
+* http://groups.google.com/group/dm-mongo-adapter
 
 == WARNING
 
