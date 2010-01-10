@@ -86,6 +86,16 @@ module DataMapper
 
       private
 
+      def initialize(name, options = {})
+        # When giving a repository URI rather than a hash, the database name
+        # is :path, with a leading slash.
+        if options[:path] && options[:database].nil?
+          options[:database] = options[:path].sub(/^\//, '')
+        end
+
+        super
+      end
+
       # Retrieves the key for a given resource as a hash.
       #
       # @param [Resource] resource
