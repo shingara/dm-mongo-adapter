@@ -52,7 +52,7 @@ module DataMapper
         #
         # @return [String]
         #
-        # @api public
+        # @api semipublic
         def self.typecast(value, property)
           case value
           when NilClass
