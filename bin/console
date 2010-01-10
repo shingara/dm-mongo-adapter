@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+$:.unshift(File.dirname(__FILE__) + '/../lib')
+
+require 'irb'
+require 'rubygems'
+require 'dm-core'
+
+IRB.setup(nil)
+irb = IRB::Irb.new
+
+IRB.conf[:MAIN_CONTEXT] = irb.context
+
+irb.context.evaluate("require 'irb/completion'", 0)
+irb.context.evaluate(%(
+  DataMapper.setup(:default,
+    :adapter  => 'mongo',
+    :hostname => 'localhost',
+    :database => 'dm-mongo-test'
+  )
+
+  db = Mongo::Connection.new.db('dm-mongo-test')
+), 0)
+
+trap("SIGINT") do
+  irb.signal_handle
+end
+
+catch(:IRB_EXIT) do
+  irb.eval_input
+end
