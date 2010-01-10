@@ -3,7 +3,6 @@ require File.join(File.dirname(__FILE__), 'adapter_shared_spec')
 
 describe DataMapper::Adapters::MongoAdapter do
   before :all do
-    @adapter = $adapter
     # let's start with an empty collection
     $db.drop_collection('heffalumps')
 
