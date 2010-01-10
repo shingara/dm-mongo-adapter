@@ -2,6 +2,8 @@ Add support for:
 
 - aggregation functions: http://www.mongodb.org/display/DOCS/Aggregation
 
+- modifier functions: http://www.mongodb.org/display/DOCS/Updating
+
 - offset option for queries
 
 - declaring indexes: http://www.mongodb.org/display/DOCS/Indexes
@@ -29,8 +31,6 @@ General stuff:
 - organize specs in groups (public/semipublic like in dm-core maybe?)
 
 - improve test coverage, especially for embedded resources and handling of custom types
-
-- add MongoMapper-style of typecasting objects, like Date.to_mongo etc.
 
 - finish mysql vs mongodb performance script based on the one from dm-core
 
