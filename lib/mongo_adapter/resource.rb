@@ -6,7 +6,7 @@ module DataMapper
       def self.included(base)
         DataMapper::Model.append_extensions(ModelMethods)
 
-        base.send(:include, DataMapper::Resource) unless base.kind_of?(DataMapper::Resource)
+        base.send(:include, DataMapper::Resource)
         base.send(:include, ResourceMethods)
         base.send(:include, DataMapper::Mongo::Types)
       end
