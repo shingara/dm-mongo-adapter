@@ -38,6 +38,7 @@ module DataMapper
         conditions_statement(@query.conditions)
 
         records = @conditions.filter_collection!(@collection.find(@statements, options).to_a)
+
         records.map{|record| typecast_record(record)}
       end
 
@@ -54,17 +55,11 @@ module DataMapper
       # @api private
       def typecast_record(record)
         @query.model.properties.each do |property|
-          type  = property.primitive
-
           key   = property.name.to_s
           value = record[key]
 
-          unless value.nil?
-            if type == DateTime
-              record[key] = value.to_datetime
-            elsif type == Date
-              record[key] = Date.parse(value.to_s)
-            end
+          if value
+            record[key] = property.from_mongo(value)
           end
         end
 

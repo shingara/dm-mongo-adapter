@@ -121,59 +121,62 @@ module DataMapper
       #   given resource as raw (dumped) values suitable for use with the
       #   Mongo library.
       #
-      # @todo split this into separate methods
-      #
       # @api private
       def attributes_as_fields(record)
-        attributes = {}
-
-        case record
+        attributes = case record
           when DataMapper::Resource
-            model = record.model
-
-            model.properties.each do |property|
-              name = property.name
-              if model.public_method_defined?(name)
-                attributes[property.field] = record.__send__(name)
-              end
-            end
-
-            if model.respond_to?(:embedments)
-              model.embedments.each do |name, embedment|
-                value = record.__send__(name)
-                if embedment.kind_of?(Embedments::OneToMany::Relationship)
-                  attributes[name] = value.map{ |resource| resource.attributes(:field) }
-                elsif value
-                  attributes[name] = attributes_as_fields(value)
-                end
-              end
-            end
+            attributes_from_resource(record)
           when Hash
-            if record.keys.any? { |k| k.kind_of?(Embedments::Relationship) }
-              record.each do |key, value|
-                case key
-                when DataMapper::Property
-                  attributes[key.field] = value.is_a?(Class) ? value.to_s : value
-                when Embedments::Relationship
-                  attributes[key.name] = super(value)
-                end
-              end
-            else
-              attributes = super(record)
-            end
+            attributes_from_properties_hash(record)
           end
-
-        # TODO: make this prettier and off on its own method
-        attributes.each do |k, v|
-          case v
-            when Class    then attributes[k] = v.to_s
-            when DateTime then attributes[k] = v.to_time
-            when Date     then attributes[k] = Time.utc(v.year, v.month, v.day)
-          end
-          attributes[k] = ::Mongo::ObjectID.from_string(v) if v.is_a?(String) && !k.grep(/_id$/).empty? && k != "_id"
-        end
 
         attributes.except('_id')
+      end
+
+      # TODO: document
+      def attributes_from_resource(record)
+        attributes = {}
+
+        model = record.model
+
+        model.properties.each do |property|
+          name = property.name
+          if model.public_method_defined?(name)
+            attributes[property.field] = property.to_mongo(record.__send__(name))
+          end
+        end
+
+        if model.respond_to?(:embedments)
+          model.embedments.each do |name, embedment|
+            if model.public_method_defined?(name)
+              value = record.__send__(name)
+              
+              if embedment.kind_of?(Embedments::OneToMany::Relationship)
+                attributes[name] = value.map{ |resource| attributes_as_fields(resource) }
+              else
+                attributes[name] = attributes_as_fields(value)
+              end
+            end
+          end
+        end
+
+        attributes
+      end
+
+      # TODO: document
+      def attributes_from_properties_hash(record)
+        attributes = {}
+
+        record.each do |key, value|
+          case key
+            when DataMapper::Property
+              attributes[key.field] = key.to_mongo(value)
+            when Embedments::Relationship
+              attributes[key.name] = attributes_as_fields(value)
+            end
+        end
+
+        attributes
       end
       
       # Runs the given block within the context of a Mongo collection.
@@ -209,7 +212,7 @@ module DataMapper
           @database = connection.db(@options[:database])
 
           if @options[:username] and not @database.authenticate(
-                @options[:username], @options[:password])
+              @options[:username], @options[:password])
             raise ConnectionError,
               'MongoDB did not recognize the given username and/or ' \
               'password; see the server logs for more information'
