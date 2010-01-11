@@ -43,7 +43,6 @@ module DataMapper
         #
         # @api public
         def dirty_embedments?
-          p self
           embedments.values.any? do |embedment|
             embedment.loaded?(self) && case embedment
             when Embedments::OneToOne::Relationship  then embedment.get!(self).dirty?
@@ -70,7 +69,6 @@ module DataMapper
         end
 
         def assign_embedded_attributes(resource, original_attributes, nested_attributes={})
-          puts "assign_embedded_attributes #{resource}"
           resource.send(:embedments).each do |name, embedment|
             if embedment.loaded?(resource)
               embedded_resource = embedment.get!(resource)
