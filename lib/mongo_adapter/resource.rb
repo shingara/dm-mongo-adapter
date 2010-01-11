@@ -41,7 +41,7 @@ module DataMapper
         # @return [Boolean]
         #   True if any embedded documents can be persisted
         #
-        # @api public
+        # @api private
         def dirty_embedments?
           embedments.values.any? do |embedment|
             embedment.loaded?(self) && case embedment
