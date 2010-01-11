@@ -13,7 +13,10 @@ module DataMapper::Mongo::Spec
         sym   = model.to_s.to_sym
 
         if Object.const_defined?(sym)
-          $db.drop_collection(model.storage_name) if model.respond_to?(:storage_name)
+          if model.respond_to?(:storage_name)
+            db = DataMapper::Mongo::Spec.database(model.repository.name)
+            db.drop_collection(model.storage_name)
+          end
 
           DataMapper::Model.descendants.delete(model)
           DataMapper::Mongo::EmbeddedModel.descendants.delete(model)
