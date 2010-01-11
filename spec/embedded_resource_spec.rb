@@ -90,8 +90,10 @@ describe DataMapper::Mongo::EmbeddedModel do
 
       @user.address.street.should_not be_nil
       @user.address.street.should eql('Something 1')
+      @user.address.should be_instance_of(Address)
       @user.address.city.should_not be_nil
       @user.address.city.name.should == "Some city"
+      @user.address.city.should be_instance_of(City)
     end
   end
 
@@ -103,11 +105,15 @@ describe DataMapper::Mongo::EmbeddedModel do
     it "should return false when new" do
       address = Address.new
       address.dirty?.should be(false)
+      city = City.new
+      city.dirty?.should be(false)
     end
 
     it "should return true if changed" do
       address = Address.new(:street => "Some Street 1234")
       address.dirty?.should be(true)
+      city = City.new(:name => "New York City")
+      city.dirty?.should be(true)
     end
 
     it "should return false for a clean parent" do
@@ -116,13 +122,17 @@ describe DataMapper::Mongo::EmbeddedModel do
 
     it "should return true with one-to-one" do
       @user.address = Address.new(:street => 'Some Street 1234')
+      @user.address.city = City.new(:name => "San Francisco")
       @user.dirty?.should be(true)
       @user.address.dirty?.should be(true)
+      @user.address.city.dirty?.should be(true)
     end
 
     it "should include embedded resource attributes in the dirty attributes list" do
       @user.address = Address.new
       @user.address.street = 'Some Street 1234'
+      @user.address.city = City.new
+      @user.address.city.name = 'Los Angeles'
 
       dirty_attributes    = @user.dirty_attributes
 

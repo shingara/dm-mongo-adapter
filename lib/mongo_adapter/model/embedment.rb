@@ -110,7 +110,7 @@ module DataMapper
           end
 
           embedment = embedments[name] = klass.new(name, model, self, options)
-
+          
           descendants.each do |descendant|
             descendant.embedments[name] ||= embedment
           end

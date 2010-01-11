@@ -74,7 +74,7 @@ module DataMapper
               embedded_resource = embedment.get!(resource)
               if embedded_resource.dirty?
                 nested_attributes[embedments[name]] = embedded_resource.dirty_attributes 
-                assign_embedded_attributes(embedded_resource, original_attributes, nested_attributes)
+                assign_embedded_attributes(embedded_resource, nested_attributes)
               end
             end
           end
