@@ -43,6 +43,7 @@ module DataMapper
         #
         # @api public
         def dirty_embedments?
+          p self
           embedments.values.any? do |embedment|
             embedment.loaded?(self) && case embedment
             when Embedments::OneToOne::Relationship  then embedment.get!(self).dirty?
@@ -63,11 +64,24 @@ module DataMapper
         def dirty_attributes
           embedded_attributes = {}
 
-          each_embedment do |name, resource|
-            embedded_attributes[embedments[name]] = resource.dirty_attributes if resource.dirty?
+          embedded_attributes = assign_embedded_attributes(self, embedded_attributes)
+          
+          super.merge(embedded_attributes)
+        end
+
+        def assign_embedded_attributes(resource, original_attributes, nested_attributes={})
+          puts "assign_embedded_attributes #{resource}"
+          resource.send(:embedments).each do |name, embedment|
+            if embedment.loaded?(resource)
+              embedded_resource = embedment.get!(resource)
+              if embedded_resource.dirty?
+                nested_attributes[embedments[name]] = embedded_resource.dirty_attributes 
+                assign_embedded_attributes(embedded_resource, original_attributes, nested_attributes)
+              end
+            end
           end
 
-          super.merge(embedded_attributes)
+          original_attributes.merge(nested_attributes)
         end
 
         private
@@ -103,8 +117,15 @@ module DataMapper
         #
         # @api semipublic
         def save_self(safe = true)
-          super && embedments.values.each do |e|
-            e.loaded?(self) && Array(e.get!(self)).each { |r| r.original_attributes.clear }
+          super && clear_embedded_original_attributes
+        end
+
+        def clear_embedded_original_attributes
+          embedments.values.each do |e|
+            e.loaded?(self) && Array(e.get!(self)).each do |r| 
+              r.original_attributes.clear
+              r.send(:clear_embedded_original_attributes)
+            end
           end
         end
       end # ResourceMethods

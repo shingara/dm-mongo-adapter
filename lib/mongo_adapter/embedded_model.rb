@@ -3,7 +3,7 @@ module DataMapper
     module EmbeddedModel
       extend Chainable
       include DataMapper::Model
-
+      
       # Creates a new Model class with default_storage_name +storage_name+
       #
       # If a block is passed, it will be eval'd in the context of the new Model
@@ -130,6 +130,7 @@ module DataMapper
 
       # @api private
       def self.extended(model)
+        model.extend DataMapper::Mongo::Model::Embedment
         descendants = self.descendants
 
         descendants << model

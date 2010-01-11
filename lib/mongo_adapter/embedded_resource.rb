@@ -6,7 +6,7 @@ module DataMapper
       class MissingParentError < StandardError; end
 
       include Types
-      include DataMapper::Resource
+      include DataMapper::Mongo::Resource
 
       def self.included(base)
         base.extend(DataMapper::Mongo::EmbeddedModel)
@@ -116,7 +116,9 @@ module DataMapper
       #
       # @api public
       def dirty_self?
-        if original_attributes.any?
+        if dirty_embedments?
+          true
+        elsif original_attributes.any?
           true
         elsif new?
           properties.any? { |property| property.default? }

@@ -25,7 +25,14 @@ describe DataMapper::Mongo::EmbeddedModel do
       property :name, String
     end
 
+    class City
+      include EmbeddedResource
+
+      property :name, String
+    end
+
     User.embeds 1, :address, :model => Address
+    Address.embeds 1, :city, :model => City
     User.has User.n, :cars
   end
 
@@ -44,41 +51,47 @@ describe DataMapper::Mongo::EmbeddedModel do
 
   describe "creating new resources" do
     it "should save via parent" do
-      user = User.new :address => Address.new(:street => 'Blank 0')
+      user = User.new :address => Address.new(:street => 'Blank 0', :city => City.new(:name => 'Blank City'))
       user.save.should be(true)
       user.new?.should be(false)
     end
 
     it "should create via parent" do
-      user = User.create(:address => Address.new(:street => 'Blank 0'))
+      user = User.create(:address => Address.new(:street => 'Blank 0', :city => City.new(:name => 'Blank City')))
       user.new?.should be(false)
     end
 
-    it "should save an embedded resource" do
-      user = User.new :address => Address.new(:street => 'Blank 0')
+    it "should save embedded resources" do
+      user = User.new :address => Address.new(:street => 'Blank 0', :city => City.new(:name => 'Blank City'))
+      user.address.city.save.should be(true)
       user.address.save.should be(true)
       user.new?.should be(false)
+      user.address.city.new?.should be(false)
       user.address.new?.should be(false)
     end
 
-    it "should not allow to create an embedded resource without a parent" do
+    it "should not allow creation of an embedded resource without a parent" do
       address = Address.new(:street => 'Blank 0')
       lambda { address.save }.should raise_error(EmbeddedResource::MissingParentError)
+      city = City.new(:name => 'Blank City')
+      lambda { city.save }.should raise_error(EmbeddedResource::MissingParentError)
     end
   end
 
   describe "updating resources" do
     before :all do
-      @user = User.create(:name => 'john', :address => Address.new)
+      @user = User.create(:name => 'john', :address => Address.new(:city => City.new))
     end
 
     it "should update embedded resource" do
-      @user.update(:address => { :street => 'Something 1' }).should be(true)
+      @user.update(:address => { :street => 'Something 1', :city => {:name => "Some city"}}).should be(true)
 
       @user.reload
 
       @user.address.street.should_not be_nil
       @user.address.street.should eql('Something 1')
+      @user.address.city.should_not be_nil
+      @user.address.city.name.should == "Some city"
     end
   end
 
