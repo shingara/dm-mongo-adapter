@@ -106,10 +106,12 @@ describe DataMapper::Mongo::EmbeddedModel do
       address.dirty?.should be(true)
     end
 
+    # @done
     it "should return false for a clean parent" do
       @user.dirty?.should be(false)
     end
 
+    # @done
     it "should return true with one-to-one" do
       @user.address = Address.new(:street => 'Some Street 1234')
       @user.dirty?.should be(true)
@@ -138,11 +140,13 @@ describe DataMapper::Mongo::EmbeddedModel do
         @user.save
       end
 
+      # @done
       it "should return true with one-to-many" do
         @user.cars << Car.new
         @user.dirty?.should be(true)
       end
 
+      # @done
       it "should return false with a loaded resource" do
         user = User.get(@user.id)
         user.dirty_embedments?.should be(false)
