@@ -20,6 +20,8 @@ Add support for:
 
 - authentication: http://www.mongodb.org/display/DOCS/Security+and+Authentication
 
+- embeds n, :resources - the work has been started but it's not finished yet
+
 General stuff:
 
 - figure out why DataMapper::Model::Hook and DataMapper::Validate need to be explicitly included on EmbeddedResource
@@ -31,8 +33,6 @@ General stuff:
 - organize specs in groups (public/semipublic like in dm-core maybe?)
 
 - improve test coverage, especially for embedded resources and handling of custom types
-
-- finish mysql vs mongodb performance script based on the one from dm-core
 
 - update README
 
