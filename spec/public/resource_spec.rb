@@ -12,8 +12,8 @@ describe DataMapper::Mongo::Resource do
       include DataMapper::Mongo::Resource
       property  :id,        ObjectID
       property  :name,      String
-      property  :tags,      EmbeddedArray
-      property  :metadata,  EmbeddedHash
+      property  :tags,      Array
+      property  :metadata,  Hash
       embeds 1, :address,   :model => Address
       embeds n, :locations, :model => Address
     end
