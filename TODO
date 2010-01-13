@@ -18,8 +18,6 @@ Add support for:
 
   find('address.street' => 'foo')) }
 
-- authentication: http://www.mongodb.org/display/DOCS/Security+and+Authentication
-
 - embeds n, :resources - the work has been started but it's not finished yet
 
 General stuff:
