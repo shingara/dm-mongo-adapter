@@ -93,6 +93,31 @@ describe DataMapper::Mongo::Resource do
   end
 
   #
+  # count
+  #
+
+  describe '#count' do
+    before(:all) do
+      User.all.destroy!
+      @user_one   = User.create(:name => 'One')
+      @user_two   = User.create(:name => 'Two')
+      @user_three = User.create(:name => 'Three')
+    end
+
+    describe 'with no query' do
+      it 'should return number of all resources' do
+        User.count.should == 3
+      end
+    end
+
+    describe 'with a query' do
+      it 'should return number of resources matching conditions' do
+        User.count(:name => /one|two/i).should == 2
+      end
+    end
+  end
+
+  #
   # dirty?
   #
 
