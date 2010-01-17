@@ -43,9 +43,41 @@ module DataMapper
         # TODO: atm ruby driver doesn't support count with statements,
         #        that's why we use find and size here as a tmp workaround
         if @statements.blank?
-          @collection.count
+          [@collection.count]
         else
-          find.size
+          [find.size]
+        end
+      end
+
+      # TODO: document
+      # @api semipublic
+      def group
+        setup_conditions_and_options
+
+        property_names = []
+        operators = []
+        keys = []
+
+        @query.fields.each do |field|
+          if field.kind_of?(DataMapper::Query::Operator)
+            operators << field
+            property_names << field.target.name
+          else
+            keys << field.name
+            property_names << field.name
+          end
+        end
+
+        js_operation = JavaScript::Operation.new(operators)
+
+        initial  = js_operation.initial
+        reduce   = js_operation.reduce
+        finalize = js_operation.finalize
+
+        keys = keys - initial.keys
+
+        @collection.group(keys, @statements, initial, reduce, true, finalize).map do |records|
+          records.to_mash.symbolize_keys.only(*property_names)
         end
       end
 
