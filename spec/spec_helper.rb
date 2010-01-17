@@ -1,41 +1,45 @@
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-
+require 'pathname'
 require 'rubygems'
 require 'spec'
+
+MONGO_SPEC_ROOT = Pathname(__FILE__).dirname.expand_path
+$LOAD_PATH.unshift(MONGO_SPEC_ROOT.parent + 'lib')
+
 require 'mongo_adapter'
 
-$adapter = DataMapper.setup(:default,
-                            :adapter  => 'mongo',
-                            :hostname => 'localhost',
-                            :database => 'dm-mongo-test'
-                            )
+Pathname.glob((MONGO_SPEC_ROOT + '{lib,*/shared}/**/*.rb').to_s).each { |file| require file }
 
-$db = Mongo::Connection.new.db('dm-mongo-test')
+# Define the repositories used by the specs. Override the defaults by
+# supplying ENV['DEFAULT_SPEC_URI'] or ENV['AUTH_SPEC_URI'].
 
-include DataMapper::Mongo
+REPOS = {
+  'default' => 'mongo://localhost/dm-mongo-test',
+  'auth'    => 'mongo://dmm-auth:dmm-password@localhost/dm-mongo-test-auth'
+}
 
-def cleanup_models(*models)
-  unless models.empty?
-    model = models.pop
-    sym   = model.to_s.to_sym
+REPOS.each do |name, default|
+  connection_string = ENV["#{name.upcase}_SPEC_URI"] || default
 
-    if Object.const_defined?(sym)
-      $db.drop_collection(model.storage_name) if model.respond_to?(:storage_name)
+  DataMapper.setup(name.to_sym, connection_string)
+  REPOS[name] = connection_string  # ensure *_SPEC_URI is saved
+end
 
-      DataMapper::Model.descendants.delete(model)
-      DataMapper::Mongo::EmbeddedModel.descendants.delete(model)
+REPOS.freeze
 
-      Object.send(:remove_const, sym)
-    end
+Spec::Runner.configure do |config|
+  config.include(DataMapper::Mongo::Spec::CleanupModels)
+
+  config.before(:all) do
+    models  = DataMapper::Model.descendants.to_a
+    models += DataMapper::Mongo::EmbeddedModel.descendants.to_a
+    models.delete(DataMapper::Mongo::EmbeddedResource)
 
     cleanup_models(*models)
   end
-end
 
-Spec::Runner.configure do |config|
-  config.before(:all) do
-    models = (DataMapper::Model.descendants.to_a + DataMapper::Mongo::EmbeddedModel.descendants.to_a)
-    models.delete(DataMapper::Mongo::EmbeddedResource)
-    cleanup_models(*models)
+  config.after(:all) do
+    # Close all the raw connections
+    DataMapper::Mongo::Spec.database(:default).connection.close
+    DataMapper::Mongo::Spec.database(:auth).connection.close
   end
 end

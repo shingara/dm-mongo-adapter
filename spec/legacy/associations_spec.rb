@@ -81,6 +81,7 @@ describe "associations" do
       [@john, @jane].each { |user| user.update(:group_id => @group.id) }
     end
 
+    # @done
     it "should get children" do
       @group.users.size.should eql(2)
     end
@@ -92,6 +93,7 @@ describe "associations" do
       @group.users.size.should eql(3)
     end
 
+    # @done
     it "should replace children" do
       user = User.create(:name => 'stan')
       @group.users = [user]
@@ -121,6 +123,7 @@ describe "associations" do
                           }])
     end
 
+    # @done
     it "should save nested objects" do
 
       #@group.users << @user1

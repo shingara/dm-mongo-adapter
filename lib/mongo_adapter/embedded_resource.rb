@@ -34,6 +34,8 @@ module DataMapper
       #   All the attributes
       #
       # @overrides DataMapper::Resource#attributes
+      #
+      # @api public
       def attributes(key_on=:name)
         attributes = {}
 
@@ -100,12 +102,11 @@ module DataMapper
       #
       # @api public
       def save
-        if parent
-          if parent.save
-            original_attributes.clear
-          end
+        if parent?
+          original_attributes.clear if parent.save
         else
-          raise(MissingParentError)
+          raise MissingParentError, 'EmbeddedResource needs a parent to be ' \
+                                    'set before it can be saved'
         end
       end
 

@@ -4,6 +4,7 @@ if defined?(gem)
 end
 
 require 'dm-core'
+require 'dm-aggregates'
 require 'mongo'
 
 dir = Pathname(__FILE__).dirname.expand_path / 'mongo_adapter'
@@ -30,4 +31,5 @@ require dir / 'embedments' / 'one_to_many'
 require dir / 'embedded_model'
 require dir / 'embedded_resource'
 
+require dir / 'aggregates'
 require dir / 'adapter'

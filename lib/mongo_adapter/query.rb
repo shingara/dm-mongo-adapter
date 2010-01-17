@@ -31,19 +31,41 @@ module DataMapper
       #
       # @api semipublic
       def read
-        options         = {}
-        options[:limit] = @query.limit if @query.limit
-        options[:sort]  = sort_statement(@query.order) unless @query.order.empty?
+        setup_conditions_and_options
+        find.map{|record| typecast_record(record)}
+      end
 
-        conditions_statement(@query.conditions)
+      # TODO: document
+      # @api semipublic
+      def count
+        setup_conditions_and_options
 
-        records = @conditions.filter_collection!(@collection.find(@statements, options).to_a)
-
-        records.map{|record| typecast_record(record)}
+        # TODO: atm ruby driver doesn't support count with statements,
+        #        that's why we use find and size here as a tmp workaround
+        if @statements.blank?
+          @collection.count
+        else
+          find.size
+        end
       end
 
       private
 
+      # TODO: document
+      # @api private
+      def setup_conditions_and_options
+        @options         = {}
+        @options[:limit] = @query.limit if @query.limit
+        @options[:sort]  = sort_statement(@query.order) unless @query.order.empty?
+
+        conditions_statement(@query.conditions)
+      end
+
+      # TODO: document
+      # @api private
+      def find
+        @conditions.filter_collection!(@collection.find(@statements, @options).to_a)
+      end
 
       # Typecasts Date and DateTime properties in a record
       #
