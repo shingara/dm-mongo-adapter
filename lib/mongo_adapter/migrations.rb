@@ -11,21 +11,6 @@ module DataMapper
     end
   end
 
-  module Model
-    def properties_with_subclasses(repository_name = default_repository_name)
-      puts "properties_with_subclasses #{repository_name}"
-        properties = PropertySet.new
- 
-        descendants.each do |model|
-          model.properties(repository_name).each do |property|
-            properties[property.name] ||= property
-          end
-        end
- 
-        properties
-      end
-  end
-
   module Mongo
     module Migrations
       def self.included(base)  
@@ -37,42 +22,20 @@ module DataMapper
       end
 
       def storage_exists?(storage_name)
-        puts "storage exists"
         database.collections.map(&:name).include?(storage_name)
       end
 
       def create_model_storage(model)
-        puts "create model storage"
-        name       = model.name.to_sym
-        properties = model.properties_with_subclasses(name)
-
-        return false if storage_exists?(model.storage_name(name))
-        return false if properties.empty?
-        puts "create before"
-        p database.collections.map(&:name)
-        database.create_collection(model.storage_name(name))
-        p database.collections.map(&:name)
-        puts "create after"
+        return false if storage_exists?(model.storage_name)
+        database.create_collection(model.storage_name)
       end
 
       def upgrade_model_storage(model)
-        puts "upgrade"
-        name       = self.name
-        properties = model.properties_with_subclasses(name)
- 
-        if success = create_model_storage(model)
-          return properties
-        end
-
-        
+        create_model_storage(model)
       end
 
       def destroy_model_storage(model)
-        puts "destroy #{model.storage_name(name).inspect}"
-        p database.collections.map(&:name)
-        database.drop_collection(model.storage_name(name))
-        p database.collections.map(&:name)
-        puts "destroyed"
+        database.drop_collection(model.storage_name)
       end
 
      end
