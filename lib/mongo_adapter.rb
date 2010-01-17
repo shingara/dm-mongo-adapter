@@ -21,6 +21,7 @@ require dir / 'model' / 'embedment'
 require dir / 'model'
 
 require dir / 'resource'
+require dir / 'migrations'
 
 require dir / 'embedments' / 'relationship'
 require dir / 'embedments' / 'one_to_one'
