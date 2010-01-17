@@ -103,7 +103,6 @@ describe DataMapper::Mongo::Resource do
         property  :id,     ObjectID
         property  :name,   String
         property  :school, String
-        property  :age,    Integer
         property  :score,  Float
       end
 
@@ -131,27 +130,103 @@ describe DataMapper::Mongo::Resource do
       end
     end
 
+    #
+    # aggregate
+    #
+
     describe "#aggregate" do
-      describe "with count operator" do
+
+      #
+      # count
+      #
+
+      describe "count operator" do
         describe "without conditions" do
-          it "should get the correct results based on all records" do
+          it "should get correct results based on all records" do
             result = Student.aggregate(:school, :score.count)
 
             result.size.should == 2
 
             school_1, school_2 = result
 
-            school_1['score'].should == 1
-            school_2['score'].should   == 2
+            school_1[:school].should == 'School 1'
+            school_2[:school].should == 'School 2'
+
+            school_1[:score].should == 1
+            school_2[:score].should   == 2
           end
         end
 
         describe "with conditions" do
-          it "should get the correct results based on records that match conditions" do
+          it "should get correct results based on records that match conditions" do
             result = Student.aggregate(:school, :score.count, :name => /two|three/i)
 
             result.size.should == 1
-            result.first['score'].should == 2
+            result.first[:score].should == 2
+            result.first[:school].should == 'School 2'
+          end
+        end
+      end
+
+      #
+      # avg
+      #
+      # TODO: add spec for #avg with conditions
+
+      describe "avg operator" do
+        describe 'without conditions' do
+          it 'should return an avarage value of the given field' do
+            result = Student.aggregate(:school, :score.avg)
+
+            school_1, school_2 = result
+
+            school_1[:school].should == 'School 1'
+            school_2[:school].should == 'School 2'
+
+            school_1[:score].should == 3.0
+            school_2[:score].should == 4.0
+          end
+        end
+      end
+
+      #
+      # min
+      #
+      # TODO: add spec for #min with conditions
+
+      describe "min operator" do
+        describe 'without conditions' do
+          it 'should return the minimum value of the given field' do
+            result = Student.aggregate(:school, :score.min)
+
+            school_1, school_2 = result
+
+            school_1[:school].should == 'School 1'
+            school_2[:school].should == 'School 2'
+
+            school_1[:score].should == 3.0
+            school_2[:score].should == 3.5
+          end
+        end
+      end
+
+      #
+      # max
+      #
+      # TODO: add spec for #max with conditions
+
+      describe "#max" do
+        describe 'without conditions' do
+          it 'should return the maximum value of the given field' do
+            result = Student.aggregate(:school, :score.max)
+
+            school_1, school_2 = result
+
+            school_1[:school].should == 'School 1'
+            school_2[:school].should == 'School 2'
+
+            school_1[:score].should == 3.0
+            school_2[:score].should == 4.5
           end
         end
       end

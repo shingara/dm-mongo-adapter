@@ -51,29 +51,34 @@ module DataMapper
 
       # TODO: document
       # @api semipublic
-      REDUCE_COUNT = "function(doc, out) { out.#field++ }"
       def group
         setup_conditions_and_options
 
-        keys    = []
-        initial = {}
-        reduce  = REDUCE_COUNT
+        property_names = []
+        operators = []
+        keys = []
 
         @query.fields.each do |field|
-          case field
-            when DataMapper::Property
-              keys << field.name
-            when DataMapper::Query::Operator
-              key = field.target.name
-
-              if field.operator == :count
-                initial[key] = 0
-                reduce.gsub!('#field', key.to_s)
-              end
+          if field.kind_of?(DataMapper::Query::Operator)
+            operators << field
+            property_names << field.target.name
+          else
+            keys << field.name
+            property_names << field.name
           end
         end
 
-        @collection.group(keys, @statements, initial, reduce, true)
+        js_operation = JavaScript::Operation.new(operators)
+
+        initial  = js_operation.initial
+        reduce   = js_operation.reduce
+        finalize = js_operation.finalize
+
+        keys = keys - initial.keys
+
+        @collection.group(keys, @statements, initial, reduce, true, finalize).map do |records|
+          records.to_mash.symbolize_keys.only(*property_names)
+        end
       end
 
       private

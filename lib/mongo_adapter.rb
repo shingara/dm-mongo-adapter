@@ -10,6 +10,7 @@ require 'mongo'
 dir = Pathname(__FILE__).dirname.expand_path / 'mongo_adapter'
 
 require dir / 'query'
+require dir / 'query' / 'java_script'
 require dir / 'conditions'
 require dir / 'modifier'
 require dir / 'property'
