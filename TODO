@@ -1,6 +1,6 @@
 Add support for:
 
-- aggregation functions: http://www.mongodb.org/display/DOCS/Aggregation
+- distinct function: http://www.mongodb.org/display/DOCS/Aggregation
 
 - modifier functions: http://www.mongodb.org/display/DOCS/Updating
 
