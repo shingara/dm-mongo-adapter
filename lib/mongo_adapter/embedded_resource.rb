@@ -103,7 +103,10 @@ module DataMapper
       # @api public
       def save
         if parent?
-          original_attributes.clear if parent.save
+          if parent.save
+            original_attributes.clear
+            true
+          end
         else
           raise MissingParentError, 'EmbeddedResource needs a parent to be ' \
                                     'set before it can be saved'
