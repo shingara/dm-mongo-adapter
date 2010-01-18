@@ -101,7 +101,7 @@ module DataMapper
             raise ArgumentError, 'should not specify options[:model] if passing the model in the third argument'
           end
 
-          model ||= options.delete(:model) || Object.const_get(Extlib::Inflection.classify(name.to_s.singular))
+          model ||= options.delete(:model)
 
           klass = if max > 1
             Embedments::OneToMany::Relationship
