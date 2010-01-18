@@ -14,7 +14,7 @@ module DataMapper
           #
           # @api semipublic
           def get(source, other_query = nil)
-            get!(source) || target_model.new
+            get!(source)
           end
 
           # Sets and returns association target for given source

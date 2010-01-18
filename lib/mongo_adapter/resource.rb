@@ -24,6 +24,26 @@ module DataMapper
           self
         end
 
+        # Assign values to multiple attributes in one call (mass assignment)
+        #
+        # Overrides attributes= in dm-core so as to permit assignments to
+        # embedments.
+        #
+        # @param [Hash] attributes
+        #   names and values of attributes to assign
+        #
+        # @return [Hash]
+        #   names and values of attributes assigned
+        #
+        # @api public
+        def attributes=(attributes)
+          attributes.each do |name, value|
+            name.set(self, value) if name.kind_of?(Embedments::Relationship)
+          end
+
+          super(attributes)
+        end
+
         # Checks if the resource, or embedded documents, have unsaved changes
         #
         # @return [Boolean]

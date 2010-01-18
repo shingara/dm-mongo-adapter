@@ -112,12 +112,17 @@ describe DataMapper::Mongo::Model::Embedment do
         user.address.should_not be_nil
       end
 
-      it "should load parent if the embedded resource is nil" do
-        _id = $db.collection('users').insert(:name => 'john')
-
-        user = User.get(_id)
-        user.address.should_not be_nil
-      end
+      # @done
+      #
+      # Spec now fails since a OneToOne relationship which hasn't been set
+      # should return nil.
+      #
+      # it "should load parent if the embedded resource is nil" do
+      #   _id = $db.collection('users').insert(:name => 'john')
+      #
+      #   user = User.get(_id)
+      #   user.address.should_not be_nil
+      # end
     end
 
     describe "One-to-Many Relationship" do

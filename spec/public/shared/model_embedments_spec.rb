@@ -7,17 +7,11 @@ share_examples_for 'A singular embedment reader' do
   describe 'reader' do
     describe 'when there is no associated resource' do
       it 'should return nil when there is no query' do
-        pending 'OneToOne should not create new resource if none is set; ' \
-                'not dm-core convention, breaks setting to nil' do
-          @car.__send__(@name).should be_nil
-        end
+        @car.__send__(@name).should be_nil
       end
 
       it 'should return nil when there is a query' do
-        pending 'OneToOne should not create new resource if none is set; ' \
-                'not dm-core convention, breaks setting to nil' do
-          @car.__send__(@name, :name => '__nothing__').should be_nil
-        end
+        @car.__send__(@name, :name => '__nothing__').should be_nil
       end
     end # when there is no associated resource
 
@@ -123,18 +117,12 @@ share_examples_for 'A singular embedment writer' do
       end
 
       it 'should set nil' do
-        pending 'OneToOne should not create new resource if none is set; ' \
-                'not dm-core convention, breaks setting to nil' do
-          @car.__send__(@name).should be_nil
-        end
+        @car.__send__(@name).should be_nil
       end
 
       it 'should persist as nil' do
-        pending 'OneToOne should not create new resource if none is set; ' \
-                'not dm-core convention, breaks setting to nil' do
-          @car.save.should be_true
-          @car.model.get(*@car.key).__send__(@name).should be_nil
-        end
+        @car.save.should be_true
+        @car.model.get(*@car.key).__send__(@name).should be_nil
       end
     end # when setting nil
 
