@@ -228,6 +228,10 @@ module DataMapper
         def initialize(name, target_model, source_model, options={})
           if target_model.kind_of?(EmbeddedModel)
             @target_model = target_model
+          elsif target_model.nil?
+            # No model given, infer it from the name.
+            @target_model_name =
+              Extlib::Inflection.camelize(name.to_s.singular).freeze
           else
             # We were likely given a string as the target model -- perhaps
             # because the user's app hasn't loaded yet; get the constant

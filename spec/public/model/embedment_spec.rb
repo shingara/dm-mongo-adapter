@@ -1,6 +1,15 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'spec_helper'))
 
 describe DataMapper::Mongo::Embedments do
+  # Removes the Engine constant, runs the block, then redefines the Engine
+  # class.
+  def without_engine_defined
+    old_engine = ::Engine
+    Object.send(:remove_const, :Engine) if defined?(::Engine)
+    yield
+    Object.send(:const_set, :Engine, old_engine)
+  end
+
   before(:all) do
     class ::Car
       include DataMapper::Mongo::Resource
@@ -79,6 +88,21 @@ describe DataMapper::Mongo::Embedments do
   end
 
   describe '#embeds' do
+    describe 'when inferring the model from the name' do
+      it 'should set the relationship target model' do
+        Car.embeds(1, :engine)
+        Car.embedments[:engine].target_model.should == Engine
+      end
+
+      it 'should set the relationship target model when it is not defined' do
+        without_engine_defined do
+          Car.embeds(1, :engine)
+        end
+
+        Car.embedments[:engine].target_model.should == Engine
+      end
+    end
+
     describe 'when the third argument is a model' do
       it 'should set the relationship target model' do
         Car.embeds(1, :engine, Engine)
@@ -88,7 +112,10 @@ describe DataMapper::Mongo::Embedments do
 
     describe 'when the third argument is a string' do
       it 'should set the relationship target model' do
-        Car.embeds(1, :engine, 'Engine')
+        without_engine_defined do
+          Car.embeds(1, :engine, 'Engine')
+        end
+
         Car.embedments[:engine].target_model.should == Engine
       end
 
@@ -101,7 +128,10 @@ describe DataMapper::Mongo::Embedments do
 
     describe 'when a :model option is given' do
       it 'should set the relationship target model when given a string' do
-        Car.embeds(1, :engine, :model => 'Engine')
+        without_engine_defined do
+          Car.embeds(1, :engine, :model => 'Engine')
+        end
+
         Car.embedments[:engine].target_model.should == Engine
       end
 
@@ -119,7 +149,8 @@ describe DataMapper::Mongo::Embedments do
 
     describe 'when no model is given' do
       it 'should raise NameError' do
-        running = lambda { Car.embeds(1, :does_not_exist) }
+        Car.embeds(1, :does_not_exist)
+        running = lambda { Car.embedments[:engine].target_model }
         running.should raise_error(NameError)
       end
     end
