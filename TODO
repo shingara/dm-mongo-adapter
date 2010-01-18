@@ -4,8 +4,6 @@ Add support for:
 
 - modifier functions: http://www.mongodb.org/display/DOCS/Updating
 
-- offset option for queries
-
 - declaring indexes: http://www.mongodb.org/display/DOCS/Indexes
 
   User.index :foo
