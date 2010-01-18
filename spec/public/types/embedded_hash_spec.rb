@@ -24,10 +24,8 @@ describe DataMapper::Mongo::Types::EmbeddedHash do
     end
 
     it 'should return an empty Hash when given an Array with no values' do
-      pending "Mash#symbolize_keys doesn't like this" do
-        loaded = EHash.load([], nil)
-        loaded.should == {}
-      end
+      loaded = EHash.load([], nil)
+      loaded.should == {}
     end
 
     it 'should return an empty Hash with values when given an Array with values' do
