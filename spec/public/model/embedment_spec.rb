@@ -89,19 +89,38 @@ describe DataMapper::Mongo::Embedments do
     describe 'when the third argument is a string' do
       it 'should set the relationship target model' do
         Car.embeds(1, :engine, 'Engine')
-        pending { Car.embedments[:engine].target_model.should == Engine }
+        Car.embedments[:engine].target_model.should == Engine
+      end
+
+      it 'should raise NameError when given an invalid string' do
+        Car.embeds(1, :engine, 'DoesNotExist')
+        running = lambda { Car.embedments[:engine].target_model }
+        running.should raise_error(NameError)
       end
     end
 
     describe 'when a :model option is given' do
       it 'should set the relationship target model when given a string' do
         Car.embeds(1, :engine, :model => 'Engine')
-        pending { Car.embedments[:engine].target_model.should == Engine }
+        Car.embedments[:engine].target_model.should == Engine
+      end
+
+      it 'should raise NameError when given an invalid string' do
+        Car.embeds(1, :engine, :model => 'DoesNotExist')
+        running = lambda { Car.embedments[:engine].target_model }
+        running.should raise_error(NameError)
       end
 
       it 'should set the relationship target model when given a model' do
         Car.embeds(1, :engine, :model => Engine)
         Car.embedments[:engine].target_model.should == Engine
+      end
+    end
+
+    describe 'when no model is given' do
+      it 'should raise NameError' do
+        running = lambda { Car.embeds(1, :does_not_exist) }
+        running.should raise_error(NameError)
       end
     end
 

@@ -21,14 +21,6 @@ module DataMapper
         # @api semipublic
         attr_reader :name
 
-        # Returns the model class used by the child side of the relationship
-        #
-        # @return [Resource]
-        #   Model for relationship child
-        #
-        # @api semipublic
-        attr_reader :target_model
-
         # Returns the model class used by the parent side of the relationship
         #
         # @return [Resource]
@@ -123,6 +115,22 @@ module DataMapper
           resource.instance_variable_set(instance_variable_name, association)
         end
 
+        # Returns the model class used by the child side of the relationship
+        #
+        # @return [Resource]
+        #   Model for relationship child
+        #
+        # @api semipublic
+        def target_model
+          if defined?(@target_model)
+            @target_model
+          elsif @target_model_name
+            @target_model = (@source_model || Object).find_const(@target_model_name)
+          else
+            raise "No model type defined for relationship #{@name}"
+          end
+        end
+
         # @api semipublic
         def set_original_attributes(resource, association)
           Array(association).each do |association|
@@ -203,7 +211,7 @@ module DataMapper
 
         # Creates a new Relationship instance
         #
-        # @param [DataMapper::Mongo::EmbeddedModel] target_model
+        # @param [DataMapper::Mongo::EmbeddedModel, String] target_model
         #   The child side of the relationship.
         # @param [DataMapper::Mongo::Model] source_model
         #   The parent side of the relationship.
@@ -218,10 +226,18 @@ module DataMapper
         #   one of public, protected or private.
         #
         def initialize(name, target_model, source_model, options={})
+          if target_model.kind_of?(EmbeddedModel)
+            @target_model = target_model
+          else
+            # We were likely given a string as the target model -- perhaps
+            # because the user's app hasn't loaded yet; get the constant
+            # later in Relationship#target_model.
+            @target_model_name = target_model.to_str.dup.freeze
+          end
+
           @name = name
-          @instance_variable_name = "@#{@name}".freeze
-          @target_model = target_model
           @source_model = source_model
+          @instance_variable_name = "@#{@name}".freeze
           @options = options.dup.freeze
           @reader_visibility = @options.fetch(:reader_visibility, :public)
           @writer_visibility = @options.fetch(:writer_visibility, :public)
