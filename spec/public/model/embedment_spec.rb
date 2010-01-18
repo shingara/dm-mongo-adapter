@@ -49,12 +49,6 @@ describe DataMapper::Mongo::Embedments do
     it_should_behave_like 'A singular embedment writer'
   end
 
-  describe '#embeds(1, :through ...)' do
-    it 'should raise an ArgumentError' do
-      pending ':through option not supported on embedments'
-    end
-  end
-
   describe '#embeds(n, ...)' do
     before(:all) do
       @model = Door
@@ -153,6 +147,31 @@ describe DataMapper::Mongo::Embedments do
         running = lambda { Car.embedments[:engine].target_model }
         running.should raise_error(NameError)
       end
+    end
+
+    it 'should raise an exception if a :through option is given' do
+      running = lambda { Car.embeds(1, Engine, :through => :engines) }
+      running.should raise_error(ArgumentError)
+    end
+
+    it 'should raise an exception if a :remote_name option is given' do
+      running = lambda { Car.embeds(1, Engine, :remote_name => :engines) }
+      running.should raise_error(ArgumentError)
+    end
+
+    it 'should raise an exception if a :via option is given' do
+      running = lambda { Car.embeds(1, Engine, :via => :engines) }
+      running.should raise_error(ArgumentError)
+    end
+
+    it 'should raise an exception if a :inverse option is given' do
+      running = lambda { Car.embeds(1, Engine, :inverse => :parent) }
+      running.should raise_error(ArgumentError)
+    end
+
+    it 'should raise an exception if a :parent_key option is given' do
+      running = lambda { Car.embeds(1, Engine, :parent_key => :id) }
+      running.should raise_error(ArgumentError)
     end
 
     it 'should raise an exception if the cardinality is not understood' do
