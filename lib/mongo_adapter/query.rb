@@ -86,8 +86,10 @@ module DataMapper
       # TODO: document
       # @api private
       def setup_conditions_and_options
-        @options         = {}
-        @options[:limit] = @query.limit if @query.limit
+        @options = {}
+        
+        @options[:limit] = @query.limit  if @query.limit
+        @options[:skip]  = @query.offset if @query.offset
         @options[:sort]  = sort_statement(@query.order) unless @query.order.empty?
 
         conditions_statement(@query.conditions)
