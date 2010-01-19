@@ -159,6 +159,16 @@ module DataMapper
         end
       end
 
+      # TODO: document
+      # @api private
+      def comparison_statement_for_embedment(comparison, affirmative = true)
+        embedment = @query.model.embedments.values.detect { |e| e.target_model == comparison.subject.model }
+
+        field = "#{embedment.name}.#{comparison.subject.field}"
+
+       update_statements(comparison, field, affirmative)
+      end
+
       # Takes a Comparison condition and returns a Mongo-compatible hash
       #
       # @param [DataMapper::Query::Conditions::Comparison] comparison
@@ -175,7 +185,16 @@ module DataMapper
           return conditions_statement(comparison.foreign_key_mapping, affirmative)
         end
 
-        field = comparison.subject.field
+        if comparison.subject.model && comparison.subject.model < EmbeddedResource
+          return comparison_statement_for_embedment(comparison, affirmative)
+        end
+
+        update_statements(comparison, comparison.subject.field, affirmative)
+      end
+
+      # TODO: document
+      # @api private
+      def update_statements(comparison, field, affirmative = true)
         value = comparison.value
 
         operator = if affirmative

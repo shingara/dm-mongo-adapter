@@ -44,6 +44,17 @@ module DataMapper
           end
         end
 
+        chainable do
+          # @api public
+          def method_missing(method, *args, &block)
+            if respond_to?(:embedments) && embedment = embedments[method]
+              return embedment
+            end
+
+            super
+          end
+        end
+
         # Returns the embedments on this model
         #
         # @return [Hash]

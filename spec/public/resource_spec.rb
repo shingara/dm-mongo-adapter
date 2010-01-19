@@ -38,6 +38,12 @@ describe DataMapper::Mongo::Resource do
         expected = [User.create(:name => 'One'), User.create(:name => 'Two')]
         User.all.should == expected
       end
+
+      it 'should fail if incorrect conditions are given' do
+        lambda {
+          User.all :'adres.blah' => 'New York'
+        }.should raise_error
+      end
     end
 
     describe 'with a query' do
@@ -55,6 +61,15 @@ describe DataMapper::Mongo::Resource do
         User.create(:name => 'One')
         expected = User.create(:name => 'Two')
         User.all(:name => 'Two').should == [expected]
+      end
+
+      describe 'including conditions for an embedded resource' do
+        it 'should return specific resources' do
+          User.create(:name => 'Boston guy', :address => { :city => 'Boston' })
+          expected = User.create(:name => 'NY guy', :address => { :city => 'New York' })
+
+          User.all(:'address.city' => 'New York').should == [expected]
+        end
       end
     end
   end

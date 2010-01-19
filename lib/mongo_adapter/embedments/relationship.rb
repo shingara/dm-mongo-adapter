@@ -207,6 +207,11 @@ module DataMapper
           relationship.kind_of?(target_model)
         end
 
+        # @api public
+        def method_missing(method, *args, &block)
+          target_model.send(method, args, &block)
+        end
+
         private
 
         # Creates a new Relationship instance
