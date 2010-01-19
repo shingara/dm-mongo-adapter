@@ -6,8 +6,8 @@
 == Dependencies
 
 Ruby::
-* dm-core ~> 0.10.0
-* mongo   ~> 0.18.0
+* dm-core ~> 0.10.2
+* mongo   ~> 0.18.2
 
 == Install
 
@@ -33,25 +33,7 @@ Ruby::
     :database => 'my_mongo_db',
   )
 
-  # Define your DataMapper Mongo resources
-  class Student
-    include DataMapper::Mongo::Resource
-
-    property :id, ObjectID
-    property :name, String
-    property :age, Integer
-
-    embeds 1, :address, :model => Address
-    embeds n, :scores
-  end
-
-  class Course
-    include DataMapper::Mongo::Resource
-
-    property :id, ObjectID
-    property :name, String
-  end
-
+  # Define embedded resources
   class Address
     include DataMapper::Mongo::EmbeddedResource
 
@@ -68,6 +50,25 @@ Ruby::
     property :course_id, DBRef
 
     belongs_to :course
+  end
+
+  # Define top-level resources
+  class Student
+    include DataMapper::Mongo::Resource
+
+    property :id, ObjectID
+    property :name, String
+    property :age, Integer
+
+    embeds 1, :address, :model => Address
+    embeds n, :scores
+  end
+
+  class Course
+    include DataMapper::Mongo::Resource
+
+    property :id, ObjectID
+    property :name, String
   end
 
   # No need to (auto_)migrate!
