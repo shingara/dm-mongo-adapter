@@ -83,11 +83,38 @@ module DataMapper
         def dirty_attributes
           embedded_attributes = {}
 
-          each_embedment do |name, resource|
-            embedded_attributes[embedments[name]] = resource.dirty_attributes if resource.dirty?
+          each_embedment do |name, target|
+            case (embedment = embedments[name])
+            when Embedments::OneToMany::Relationship
+              target.each do |resource|
+                if resource.dirty?
+                  embedded_attributes[embedment] ||= []
+                  embedded_attributes[embedment] << resource.dirty_attributes
+                end
+              end
+            when Embedments::OneToOne::Relationship
+              # Relationship target is a single resource.
+              if target.dirty?
+                embedded_attributes[embedment] = target.dirty_attributes
+              end
+            end
           end
 
           super.merge(embedded_attributes)
+        end
+
+        # Saves the resource and it's embedments
+        #
+        # @return [Boolean]
+        #   True if the resource was successfully saved
+        #
+        # @overrides DataMapper::Resource#save_self
+        #
+        # @api semipublic
+        def save_self(safe = true)
+          super && embedments.values.each do |e|
+            e.loaded?(self) && Array(e.get!(self)).each { |r| r.original_attributes.clear }
+          end
         end
 
         private
@@ -108,24 +135,10 @@ module DataMapper
         # @yieldparam [Mongo::Collection]
         #   The embedded resource, or collection of embedded resources
         #
-        # @api semipublic
+        # @api private
         def each_embedment
           embedments.each { |name, embedment|
             embedment.loaded?(self) && yield(name, embedment.get!(self)) }
-        end
-
-        # Saves the resource and it's embedments
-        #
-        # @return [Boolean]
-        #   True if the resource was successfully saved
-        #
-        # @overrides DataMapper::Resource#save_self
-        #
-        # @api semipublic
-        def save_self(safe = true)
-          super && embedments.values.each do |e|
-            e.loaded?(self) && Array(e.get!(self)).each { |r| r.original_attributes.clear }
-          end
         end
       end # ResourceMethods
 
