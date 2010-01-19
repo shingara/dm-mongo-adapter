@@ -8,10 +8,12 @@ module DataMapper
       class EmbeddedHash < DataMapper::Type
         primitive Object
 
+        # @api public
         def self.load(value, property)
           typecast(value, property)
         end
 
+        # @api semipublic
         def self.typecast(value, property)
           case value
           when NilClass
@@ -19,10 +21,11 @@ module DataMapper
           when Hash
             value.to_mash.symbolize_keys
           when Array
-            [value].to_mash.symbolize_keys
+            value.empty? ? Mash.new : [value].to_mash.symbolize_keys
           end
         end
-      end
-    end
-  end
-end
+      end #EmbeddedHash
+
+    end # Types
+  end # Mongo
+end # DataMapper

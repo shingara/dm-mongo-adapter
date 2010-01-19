@@ -37,7 +37,18 @@ module DataMapper
             assert_kind_of 'source',  source,  source_model
             assert_kind_of 'targets', targets, Array
 
-            targets = targets.map{|t| t.kind_of?(Hash) ? load_target(source, t) : t.parent = source}
+            targets = targets.map do |target|
+              case target
+              when Hash
+                load_target(source, target)
+              when DataMapper::Mongo::EmbeddedResource
+                target.parent = source
+                target
+              else
+                raise ArgumentError, 'one-to-many embedment requires an ' \
+                                     'EmbeddedResource or a hash'
+              end
+            end
 
             set_original_attributes(source, targets) unless loading
 

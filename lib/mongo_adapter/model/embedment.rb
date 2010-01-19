@@ -25,6 +25,9 @@ module DataMapper
       module Embedment
         extend Chainable
 
+        # Options which cannot be used on Embedments.
+        ILLEGAL_OPTS = [:through, :remote_name, :via, :inverse, :parent_key]
+
         # @api private
         def self.extended(model)
           model.instance_variable_set(:@embedments, {})
@@ -36,6 +39,17 @@ module DataMapper
             model.instance_variable_set(:@embedments, {})
 
             @embedments.each { |name, embedment| model.embedments[name] ||= embedment }
+
+            super
+          end
+        end
+
+        chainable do
+          # @api public
+          def method_missing(method, *args, &block)
+            if respond_to?(:embedments) && embedment = embedments[method]
+              return embedment
+            end
 
             super
           end
@@ -101,7 +115,7 @@ module DataMapper
             raise ArgumentError, 'should not specify options[:model] if passing the model in the third argument'
           end
 
-          model ||= options.delete(:model) || Object.const_get(Extlib::Inflection.classify(name.to_s.singular))
+          model ||= options.delete(:model)
 
           klass = if max > 1
             Embedments::OneToMany::Relationship
@@ -134,6 +148,15 @@ module DataMapper
         # @api public
         def embedded_in(name, *args)
           return NotImplementedError
+        end
+
+        def assert_valid_options(options)
+          ILLEGAL_OPTS.each do |option|
+            raise ArgumentError, "+options[:#{option}]+ should not be " \
+              "specified on a relationship" if options.key?(option)
+          end
+
+          super
         end
 
         # Dynamically defines a reader method

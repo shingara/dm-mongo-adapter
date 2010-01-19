@@ -31,6 +31,7 @@ describe DataMapper::Mongo::Model::Embedment do
   end
 
   describe "Resource" do
+    # @done
     it "should respond to #embeds" do
       User.should respond_to(:embeds)
     end
@@ -39,6 +40,7 @@ describe DataMapper::Mongo::Model::Embedment do
       User.should respond_to(:embedded_in)
     end
 
+    # @done
     it "should respond to #embedments" do
       User.should respond_to(:embedments)
     end
@@ -51,21 +53,25 @@ describe DataMapper::Mongo::Model::Embedment do
       end
 
       describe "#dirty?" do
+        # @done
         it "should return false without dirty attributes and without an embedded resource" do
           u = User.new
           u.dirty?.should be_false
         end
 
+        # @done
         it "should return true with a dirty attributes and with an embedded resource" do
           u = User.new(@user_attributes.except(:address))
           u.dirty?.should be_true
         end
       end
 
+      # @done
       it "should create a new embedment" do
         User.embedments[:address].class.should be(Embedments::OneToOne::Relationship)
       end
 
+      # @done
       it "should create readers and writers for the embedded resource" do
         user = User.new
 
@@ -73,11 +79,13 @@ describe DataMapper::Mongo::Model::Embedment do
         user.should respond_to("address=")
       end
 
+      # @done
       it "should not require embedded resource to save the parent" do
         user = User.new(@user_attributes.except(:address))
         user.save.should be_true
       end
 
+      # @done
       it "should set the embedded resource" do
         user = User.new
         address = Address.new
@@ -88,12 +96,14 @@ describe DataMapper::Mongo::Model::Embedment do
         address.parent.should be(user)
       end
 
+      # @done
       it "should save the embedded resource" do
         user = User.new(@user_attributes)
         user.save.should be(true)
         user.address.new?.should be(false)
       end
 
+      # @done
       it "should load parent and the embedded resource" do
         _id = $db.collection('users').insert(@user_attributes)
 
@@ -102,12 +112,17 @@ describe DataMapper::Mongo::Model::Embedment do
         user.address.should_not be_nil
       end
 
-      it "should load parent if the embedded resource is nil" do
-        _id = $db.collection('users').insert(:name => 'john')
-
-        user = User.get(_id)
-        user.address.should_not be_nil
-      end
+      # @done
+      #
+      # Spec now fails since a OneToOne relationship which hasn't been set
+      # should return nil.
+      #
+      # it "should load parent if the embedded resource is nil" do
+      #   _id = $db.collection('users').insert(:name => 'john')
+      #
+      #   user = User.get(_id)
+      #   user.address.should_not be_nil
+      # end
     end
 
     describe "One-to-Many Relationship" do

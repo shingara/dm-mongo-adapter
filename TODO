@@ -1,24 +1,12 @@
 Add support for:
 
-- aggregation functions: http://www.mongodb.org/display/DOCS/Aggregation
+- distinct function: http://www.mongodb.org/display/DOCS/Aggregation
 
 - modifier functions: http://www.mongodb.org/display/DOCS/Updating
-
-- offset option for queries
 
 - declaring indexes: http://www.mongodb.org/display/DOCS/Indexes
 
   User.index :foo
-
-- querying based on an embedded resource properties, ie:
-
-  User.all(:address => { :street => 'foo' })
-
-  which should run a following query using the driver:
-
-  find('address.street' => 'foo')) }
-
-- authentication: http://www.mongodb.org/display/DOCS/Security+and+Authentication
 
 - embeds n, :resources - the work has been started but it's not finished yet
 

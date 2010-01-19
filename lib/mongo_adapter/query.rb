@@ -31,19 +31,75 @@ module DataMapper
       #
       # @api semipublic
       def read
-        options         = {}
-        options[:limit] = @query.limit if @query.limit
-        options[:sort]  = sort_statement(@query.order) unless @query.order.empty?
+        setup_conditions_and_options
+        find.map{|record| typecast_record(record)}
+      end
 
-        conditions_statement(@query.conditions)
+      # TODO: document
+      # @api semipublic
+      def count
+        setup_conditions_and_options
 
-        records = @conditions.filter_collection!(@collection.find(@statements, options).to_a)
+        # TODO: atm ruby driver doesn't support count with statements,
+        #        that's why we use find and size here as a tmp workaround
+        if @statements.blank?
+          [@collection.count]
+        else
+          [find.size]
+        end
+      end
 
-        records.map{|record| typecast_record(record)}
+      # TODO: document
+      # @api semipublic
+      def group
+        setup_conditions_and_options
+
+        property_names = []
+        operators = []
+        keys = []
+
+        @query.fields.each do |field|
+          if field.kind_of?(DataMapper::Query::Operator)
+            operators << field
+            property_names << field.target.name
+          else
+            keys << field.name
+            property_names << field.name
+          end
+        end
+
+        js_operation = JavaScript::Operation.new(operators)
+
+        initial  = js_operation.initial
+        reduce   = js_operation.reduce
+        finalize = js_operation.finalize
+
+        keys = keys - initial.keys
+
+        @collection.group(keys, @statements, initial, reduce, true, finalize).map do |records|
+          records.to_mash.symbolize_keys.only(*property_names)
+        end
       end
 
       private
 
+      # TODO: document
+      # @api private
+      def setup_conditions_and_options
+        @options = {}
+        
+        @options[:limit] = @query.limit  if @query.limit
+        @options[:skip]  = @query.offset if @query.offset
+        @options[:sort]  = sort_statement(@query.order) unless @query.order.empty?
+
+        conditions_statement(@query.conditions)
+      end
+
+      # TODO: document
+      # @api private
+      def find
+        @conditions.filter_collection!(@collection.find(@statements, @options).to_a)
+      end
 
       # Typecasts Date and DateTime properties in a record
       #
@@ -103,6 +159,16 @@ module DataMapper
         end
       end
 
+      # TODO: document
+      # @api private
+      def comparison_statement_for_embedment(comparison, affirmative = true)
+        embedment = @query.model.embedments.values.detect { |e| e.target_model == comparison.subject.model }
+
+        field = "#{embedment.name}.#{comparison.subject.field}"
+
+       update_statements(comparison, field, affirmative)
+      end
+
       # Takes a Comparison condition and returns a Mongo-compatible hash
       #
       # @param [DataMapper::Query::Conditions::Comparison] comparison
@@ -119,7 +185,16 @@ module DataMapper
           return conditions_statement(comparison.foreign_key_mapping, affirmative)
         end
 
-        field = comparison.subject.field
+        if comparison.subject.model && comparison.subject.model < EmbeddedResource
+          return comparison_statement_for_embedment(comparison, affirmative)
+        end
+
+        update_statements(comparison, comparison.subject.field, affirmative)
+      end
+
+      # TODO: document
+      # @api private
+      def update_statements(comparison, field, affirmative = true)
         value = comparison.value
 
         operator = if affirmative

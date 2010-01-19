@@ -140,7 +140,7 @@ module DataMapper
             attributes_from_properties_hash(record)
           end
 
-        attributes.except('_id')
+        attributes.except('_id') unless attributes.nil?
       end
 
       # TODO: document
@@ -160,7 +160,7 @@ module DataMapper
           model.embedments.each do |name, embedment|
             if model.public_method_defined?(name)
               value = record.__send__(name)
-              
+
               if embedment.kind_of?(Embedments::OneToMany::Relationship)
                 attributes[name] = value.map{ |resource| attributes_as_fields(resource) }
               else
@@ -188,7 +188,7 @@ module DataMapper
 
         attributes
       end
-      
+
       # Runs the given block within the context of a Mongo collection.
       #
       # @param [Model] model

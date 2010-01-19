@@ -14,7 +14,7 @@ module DataMapper
           #
           # @api semipublic
           def get(source, other_query = nil)
-            get!(source) || target_model.new
+            get!(source)
           end
 
           # Sets and returns association target for given source
@@ -31,9 +31,15 @@ module DataMapper
           # @api semipublic
           def set(source, target, loading=false)
             assert_kind_of 'source', source, source_model
+            assert_kind_of 'target', target, target_model, Hash, NilClass
 
             unless target.nil?
-              target.kind_of?(Hash) ? target = load_target(source, target, loading) : target.parent = source
+              if target.kind_of?(Hash)
+                target = load_target(source, target, loading)
+              else
+                target.parent = source
+              end
+
               set_original_attributes(source, target) unless loading
             end
 

@@ -42,18 +42,22 @@ describe DataMapper::Mongo::EmbeddedModel do
     end
   end
 
+  # @done
   describe "creating new resources" do
+    # @done
     it "should save via parent" do
       user = User.new :address => Address.new(:street => 'Blank 0')
       user.save.should be(true)
       user.new?.should be(false)
     end
 
+    # @done
     it "should create via parent" do
       user = User.create(:address => Address.new(:street => 'Blank 0'))
       user.new?.should be(false)
     end
 
+    # @done
     it "should save an embedded resource" do
       user = User.new :address => Address.new(:street => 'Blank 0')
       user.address.save.should be(true)
@@ -61,17 +65,20 @@ describe DataMapper::Mongo::EmbeddedModel do
       user.address.new?.should be(false)
     end
 
+    # @done
     it "should not allow to create an embedded resource without a parent" do
       address = Address.new(:street => 'Blank 0')
       lambda { address.save }.should raise_error(EmbeddedResource::MissingParentError)
     end
   end
 
+  # @done
   describe "updating resources" do
     before :all do
       @user = User.create(:name => 'john', :address => Address.new)
     end
 
+    # @done
     it "should update embedded resource" do
       @user.update(:address => { :street => 'Something 1' }).should be(true)
 
@@ -87,20 +94,24 @@ describe DataMapper::Mongo::EmbeddedModel do
       @user = User.new
     end
 
+    # @done
     it "should return false when new" do
       address = Address.new
       address.dirty?.should be(false)
     end
 
+    # @done
     it "should return true if changed" do
       address = Address.new(:street => "Some Street 1234")
       address.dirty?.should be(true)
     end
 
+    # @done
     it "should return false for a clean parent" do
       @user.dirty?.should be(false)
     end
 
+    # @done
     it "should return true with one-to-one" do
       @user.address = Address.new(:street => 'Some Street 1234')
       @user.dirty?.should be(true)
@@ -129,11 +140,13 @@ describe DataMapper::Mongo::EmbeddedModel do
         @user.save
       end
 
+      # @done
       it "should return true with one-to-many" do
         @user.cars << Car.new
         @user.dirty?.should be(true)
       end
 
+      # @done
       it "should return false with a loaded resource" do
         user = User.get(@user.id)
         user.dirty_embedments?.should be(false)
