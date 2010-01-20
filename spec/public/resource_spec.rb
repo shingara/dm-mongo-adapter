@@ -230,7 +230,7 @@ describe DataMapper::Mongo::Resource do
       #
       # TODO: add spec for #max with conditions
 
-      describe "#max" do
+      describe "max operator" do
         describe 'without conditions' do
           it 'should return the maximum value of the given field' do
             result = Student.aggregate(:school, :score.max)
@@ -242,6 +242,27 @@ describe DataMapper::Mongo::Resource do
 
             school_1[:score].should == 3.0
             school_2[:score].should == 4.5
+          end
+        end
+      end
+
+       #
+      # max
+      #
+      # TODO: add spec for #sum with conditions
+
+      describe "sum operator" do
+        describe 'without conditions' do
+          it 'should return the maximum value of the given field' do
+            result = Student.aggregate(:school, :score.sum)
+
+            school_1, school_2 = result
+
+            school_1[:school].should == 'School 1'
+            school_2[:school].should == 'School 2'
+
+            school_1[:score].should == 3.0
+            school_2[:score].should == 8.0
           end
         end
       end
