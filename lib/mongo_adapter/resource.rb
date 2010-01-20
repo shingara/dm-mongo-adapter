@@ -7,6 +7,7 @@ module DataMapper
         model.send(:include, DataMapper::Resource)
         model.send(:include, ResourceMethods)
         model.send(:include, DataMapper::Mongo::Types)
+        model.send(:include, DataMapper::Mongo::Modifier)
 
         # Needs to be after the inclusion of DM::Resource so as to overwrite
         # methods added by DM::Model.

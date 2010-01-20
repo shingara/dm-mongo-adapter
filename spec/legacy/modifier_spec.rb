@@ -26,13 +26,14 @@ describe "updates with mongodb modifiers" do
   end
 
   it "should set" do
-    post = Post.create(:body => "This needs to be edited", :comment_count => 2)
-    post.set(:body => "This was edited", :comment_count => 3)
-    post.body.should == "This was edited"
-    post.comment_count.should == 3
-    fresh_post = Post.get(post.id)
-    fresh_post.body.should == "This was edited"
-    fresh_post.comment_count.should == 3
+#    post = Post.create(:body => "This needs to be edited", :comment_count => 2)
+#    post.set(:body => "This was edited", :comment_count => 3)
+#    post.body.should == "This was edited"
+#    post.comment_count.should == 3
+#    fresh_post = Post.get(post.id)
+#    fresh_post.body.should == "This was edited"
+#    fresh_post.comment_count.should == 3
+    pending
   end
 
   it "should unset" do
