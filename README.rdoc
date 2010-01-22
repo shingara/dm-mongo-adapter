@@ -5,16 +5,18 @@
 
 == Dependencies
 
-Ruby::
+Ruby gems
+
 * dm-core ~> 0.10.2
-* mongo   ~> 0.18.2
+* dm-aggregates ~> 0.10.2
+* mongo ~> 0.18.2
 
 == Install
 
 * Via git:
 
-    git clone git://github.com/solnic/dm-mongo-adapter.git
-    rake install
+  git clone git://github.com/solnic/dm-mongo-adapter.git
+  rake install
 
 * With Rails:
 
@@ -81,7 +83,36 @@ Ruby::
     :scores  => [ { :grade => 4.0, :course_id => biology.id }, { :grade => 3.0, :course_id => english.id } ])
 
   # Queries
-  students = Student.all(:age.gte => 20, :name => /oh/, :limit => 20, :order => [:age.asc])
+  Student.all(:age.gte => 20, :name => /oh/, :limit => 20, :order => [:age.asc])
+
+  # Reaching into embedded objects
+  Student.all(:"address.state" => "NY")
+
+  # Array and Hash as a property
+  class Zoo
+    include DataMapper::Mongo::Resource
+
+    property :id, ObjectID
+    property :opening_hours, Hash
+    property :animals, Array
+  end
+
+  Zoo.create(
+    :opening_hours => { :weekend => '9am-8pm', :weekdays => '11am-8pm' },
+    :animals       => [ "Marty", "Alex", "Gloria" ])
+
+  Zoo.all(:animals => 'Alex')
+
+== DataMapper plugins
+
+Currently the adapter supports:
+
+  1. dm-timestamps
+  2. dm-validations
+  3. dm-aggregates
+  4. dm-pager
+
+and expect more of course :)
 
 == Contributing
 
