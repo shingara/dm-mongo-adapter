@@ -8,6 +8,8 @@ describe DataMapper::Mongo::Resource do
       property :city, String
     end
 
+    class Location < Address; end
+
     class User
       include DataMapper::Mongo::Resource
       property  :id,        ObjectID
@@ -15,7 +17,7 @@ describe DataMapper::Mongo::Resource do
       property  :tags,      Array
       property  :metadata,  Hash
       embeds 1, :address,   :model => Address
-      embeds n, :locations, :model => Address
+      embeds n, :locations
     end
   end
 
