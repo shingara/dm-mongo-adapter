@@ -70,6 +70,16 @@ module DataMapper
         resources
       end
 
+      private
+
+      # @api private
+      def const_missing(name)
+        if DataMapper::Mongo::Types.const_defined?(name)
+          DataMapper::Mongo::Types.const_get(name)
+        else
+          super
+        end
+      end
     end # Model
   end # Mongo
 end # DataMapper
