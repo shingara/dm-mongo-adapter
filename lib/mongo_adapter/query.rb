@@ -111,11 +111,11 @@ module DataMapper
       # @api private
       def typecast_record(record)
         @query.model.properties.each do |property|
-          key   = property.name.to_s
-          value = record[key]
+          field = property.name.to_s
+          value = record[field]
 
           if value
-            record[key] = property.from_mongo(value)
+            record[field] = property.from_mongo(value)
           end
         end
 

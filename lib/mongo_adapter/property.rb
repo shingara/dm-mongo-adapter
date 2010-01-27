@@ -2,7 +2,12 @@ module DataMapper
   class Property
     def from_mongo(value)
       if value
-        primitive.respond_to?(:from_mongo) ? primitive.from_mongo(value) : value
+        if primitive.respond_to?(:from_mongo)
+          primitive.from_mongo(value)
+        else
+          # DataMapper::Model#load doesn't load key properties so we need to do it here
+          key? ? type.load(value, self) : value
+        end
       end
     end
 
