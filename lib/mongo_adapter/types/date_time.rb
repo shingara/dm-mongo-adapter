@@ -2,7 +2,7 @@ module DataMapper
   module Mongo
     module Types
       class DateTime < DataMapper::Type
-        primitive ::DateTime
+        primitive Time
 
         def self.load(value, property)
           self.typecast(value, property)
