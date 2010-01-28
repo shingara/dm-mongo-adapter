@@ -16,6 +16,7 @@ describe DataMapper::Mongo::Resource do
       property  :name,      String
       property  :tags,      Array
       property  :metadata,  Hash
+      property  :created_at, DateTime
       embeds 1, :address,   :model => Address
       embeds n, :locations
     end

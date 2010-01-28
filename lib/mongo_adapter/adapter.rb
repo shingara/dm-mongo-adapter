@@ -152,7 +152,9 @@ module DataMapper
         model.properties.each do |property|
           name = property.name
           if model.public_method_defined?(name)
-            attributes[property.field] = property.to_mongo(record.__send__(name))
+            value = record.__send__(name)
+            attributes[property.field] = property.custom? ?
+              property.type.dump(value, property) : value
           end
         end
 
@@ -180,7 +182,7 @@ module DataMapper
         record.each do |key, value|
           case key
             when DataMapper::Property
-              attributes[key.field] = key.to_mongo(value)
+              attributes[key.field] = key.custom? ? key.type.dump(value, key) : value
             when Embedments::Relationship
               attributes[key.name] = attributes_as_fields(value)
             end

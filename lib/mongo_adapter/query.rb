@@ -32,7 +32,7 @@ module DataMapper
       # @api semipublic
       def read
         setup_conditions_and_options
-        find.map{|record| typecast_record(record)}
+        find
       end
 
       # TODO: document
@@ -99,27 +99,6 @@ module DataMapper
       # @api private
       def find
         @conditions.filter_collection!(@collection.find(@statements, @options).to_a)
-      end
-
-      # Typecasts Date and DateTime properties in a record
-      #
-      # @param [Resource, Hash] record
-      #   A DataMapper resource, or a hash containing fields and values.
-      #
-      # @return [Resource, Hash]
-      #
-      # @api private
-      def typecast_record(record)
-        @query.model.properties.each do |property|
-          field = property.name.to_s
-          value = record[field]
-
-          if value
-            record[field] = property.from_mongo(value)
-          end
-        end
-
-        record
       end
 
       # Takes a condition and returns a Mongo-compatible hash

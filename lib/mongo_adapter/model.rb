@@ -26,6 +26,10 @@ module DataMapper
           type = DataMapper::Mongo::Types::EmbeddedArray
         elsif Hash == type
           type = DataMapper::Mongo::Types::EmbeddedHash
+        elsif DateTime == type
+          type = DataMapper::Mongo::Types::DateTime
+        elsif Date == type
+          type = DataMapper::Mongo::Types::Date
         end
 
         super(name, type, options)
