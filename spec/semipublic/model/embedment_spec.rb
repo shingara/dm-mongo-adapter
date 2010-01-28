@@ -3,13 +3,13 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'spec_hel
 describe DataMapper::Mongo::Model::Embedment do
 
   before(:all) do
-    class Address
+    class ::Address
       include DataMapper::Mongo::EmbeddedResource
       property :street, String
       property :city,   String, :field => 'conurbation'
     end
 
-    class User
+    class ::User
       include DataMapper::Mongo::Resource
       property :id, ObjectID
       embeds 1, :address

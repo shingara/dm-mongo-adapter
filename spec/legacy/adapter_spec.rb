@@ -1,5 +1,5 @@
-require File.join(File.dirname(__FILE__), 'spec_helper')
-require File.join(File.dirname(__FILE__), 'adapter_shared_spec')
+require File.expand_path(File.join(File.dirname(__FILE__), 'spec_helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), 'adapter_shared_spec'))
 
 describe DataMapper::Adapters::MongoAdapter do
   before :all do
@@ -110,7 +110,7 @@ describe DataMapper::Adapters::MongoAdapter do
 
   describe "embedded objects as properties" do
     before :all do
-      class Zoo
+      class ::Zoo
         include DataMapper::Mongo::Resource
 
         property :id, ObjectID

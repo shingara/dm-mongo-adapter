@@ -3,17 +3,17 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'spec_helper'))
 describe DataMapper::Mongo::Resource do
 
   before(:all) do
-    class CarType
+    class ::CarType
       include DataMapper::Mongo::EmbeddedResource
       property :name, String
     end
 
-    class Car
+    class ::Car
       include DataMapper::Mongo::Resource
       property :model, String
     end
 
-    class DMCar
+    class ::DMCar
       include DataMapper::Resource
       property :type, String
     end

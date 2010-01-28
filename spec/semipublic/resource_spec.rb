@@ -3,12 +3,12 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'spec_helper'))
 describe DataMapper::Mongo::Resource do
 
   before(:all) do
-    class Address
+    class ::Address
       include DataMapper::Mongo::EmbeddedResource
       property :city, String
     end
 
-    class User
+    class ::User
       include DataMapper::Mongo::Resource
       property  :id,        ObjectID
       property  :name,      String

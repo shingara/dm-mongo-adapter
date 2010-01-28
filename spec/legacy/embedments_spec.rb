@@ -1,11 +1,11 @@
-require File.join(File.dirname(__FILE__), 'spec_helper')
+require File.expand_path(File.join(File.dirname(__FILE__), 'spec_helper'))
 
 describe DataMapper::Mongo::Model::Embedment do
   before :all do
     # let's start with an empty collection
     $db.drop_collection('users')
 
-    class User
+    class ::User
       include Resource
 
       property :id,   ObjectID
@@ -13,7 +13,7 @@ describe DataMapper::Mongo::Model::Embedment do
       property :age,  Integer
     end
 
-    class Address
+    class ::Address
       include EmbeddedResource
 
       property :street,    String
@@ -21,7 +21,7 @@ describe DataMapper::Mongo::Model::Embedment do
       property :phone,     String
     end
 
-    class Car
+    class ::Car
       include EmbeddedResource
 
       property :name, String

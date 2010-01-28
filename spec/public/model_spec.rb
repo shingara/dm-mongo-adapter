@@ -3,7 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'spec_helper'))
 describe DataMapper::Mongo::Model do
 
   before(:all) do
-    class PropertyTest
+    class ::PropertyTest
       include DataMapper::Mongo::Resource
       property :array,     Array
       property :hash,      Hash

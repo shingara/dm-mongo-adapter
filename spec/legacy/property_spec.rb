@@ -1,10 +1,10 @@
-require File.join(File.dirname(__FILE__), 'spec_helper')
+require File.expand_path(File.join(File.dirname(__FILE__), 'spec_helper'))
 
 describe "Property" do
   before :all do
     ENV['TZ'] = 'UTC'
 
-    class User
+    class ::User
       include DataMapper::Mongo::Resource
 
       property :id, ObjectID

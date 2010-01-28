@@ -1,9 +1,9 @@
-require File.join(File.dirname(__FILE__), 'spec_helper')
+require File.expand_path(File.join(File.dirname(__FILE__), 'spec_helper'))
 
 describe "updates with mongodb modifiers" do
   before :all do
     $db.drop_collection("posts")
-    class Post
+    class ::Post
       include DataMapper::Mongo::Resource
       property :id, ObjectID
       property :comment_count, Integer

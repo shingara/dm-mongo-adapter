@@ -1,10 +1,10 @@
-require File.join(File.dirname(__FILE__), 'spec_helper')
+require File.expand_path(File.join(File.dirname(__FILE__), 'spec_helper'))
 
 describe "associations" do
   before :all do
     cleanup_models :User, :Group
 
-    class User
+    class ::User
       include DataMapper::Mongo::Resource
 
       property :id, ObjectID
@@ -13,14 +13,14 @@ describe "associations" do
       property :age, Integer
     end
 
-    class Group
+    class ::Group
       include DataMapper::Mongo::Resource
 
       property :id, ObjectID
       property :name, String
     end
 
-    class Friend
+    class ::Friend
       include DataMapper::Mongo::Resource
 
       property :id, ObjectID

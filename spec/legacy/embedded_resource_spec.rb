@@ -1,9 +1,9 @@
-require File.join(File.dirname(__FILE__), 'spec_helper')
+require File.expand_path(File.join(File.dirname(__FILE__), 'spec_helper'))
 
 describe DataMapper::Mongo::EmbeddedModel do
 
   before(:all) do
-    class User
+    class ::User
       include Resource
 
       property :id,   ObjectID
@@ -11,7 +11,7 @@ describe DataMapper::Mongo::EmbeddedModel do
       property :age,  Integer
     end
 
-    class Address
+    class ::Address
       include EmbeddedResource
 
       property :street,    String
@@ -19,7 +19,7 @@ describe DataMapper::Mongo::EmbeddedModel do
       property :phone,     String
     end
 
-    class Car
+    class ::Car
       include EmbeddedResource
 
       property :name, String
@@ -32,7 +32,7 @@ describe DataMapper::Mongo::EmbeddedModel do
   describe "#new" do
     it "should not need a key" do
       lambda {
-        class Thing
+        class ::Thing
           include DataMapper::Mongo::EmbeddedResource
           property :name, String
         end

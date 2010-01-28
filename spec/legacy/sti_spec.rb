@@ -1,8 +1,8 @@
-require File.join(File.dirname(__FILE__), 'spec_helper')
+require File.expand_path(File.join(File.dirname(__FILE__), 'spec_helper'))
 
 describe "Single Table Inheritance" do
   before(:all) do
-    class Person
+    class ::Person
       include DataMapper::Mongo::Resource
 
       property :id, ObjectID
@@ -11,9 +11,9 @@ describe "Single Table Inheritance" do
       property :type, Discriminator
     end
 
-    class Male < Person; end
-    class Father < Male; end
-    class Son < Male; end
+    class ::Male < Person; end
+    class ::Father < Male; end
+    class ::Son < Male; end
   end
 
   before(:each) do
