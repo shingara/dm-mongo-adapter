@@ -66,14 +66,52 @@ describe DataMapper::Mongo::Resource do
         User.all(:name => 'Two').should == [expected]
       end
 
-      describe 'including conditions for an embedded resource' do
-        it 'should return specific resources' do
+      describe 'including conditions for an embedded has 1 resource' do
+        before(:all) do
+          User.all.destroy!
           User.create(:name => 'Boston guy', :address => { :city => 'Boston' })
-          expected = User.create(:name => 'NY guy', :address => { :city => 'New York' })
-
-          User.all(:'address.city' => 'New York').should == [expected]
+          @expected = User.create(:name => 'NY guy', :address => { :city => 'New York' })
         end
-      end
+
+        it 'should return a collection' do
+          collection = User.all(:'address.city' => 'Washington')
+          collection.should be_kind_of(DataMapper::Collection)
+        end
+
+        it 'should return an empty collection when there are no matching resources' do
+          collection = User.all(:'address.city' => 'Washington')
+          collection.should be_empty
+        end
+
+        it 'should return specific resources' do
+          User.all(:'address.city' => 'New York').should == [@expected]
+        end
+      end # including conditions for an embedded has 1 resource
+
+      describe 'including conditions for an embedded has n resource' do
+        before(:all) do
+          User.all.destroy!
+          User.create(:name => 'Boston guy', :locations => [{ :city => 'Boston' }])
+          @expected = User.create(:name => 'NY guy', :locations => [{ :city => 'New York' }])
+        end
+
+        it 'should return a collection' do
+          collection = User.all(:'locations.city' => 'Washington')
+          collection.should be_kind_of(DataMapper::Collection)
+        end
+
+        it 'should return an empty collection when there are no matching resources' do
+          collection = User.all(:'locations.city' => 'Washington')
+          collection.should be_empty
+        end
+
+        it 'should return specific resources' do
+          pending "Embedded resource conditions don't appear to work on has(n, ...) at present" do
+            User.all(:'locations.city' => 'New York').should == [@expected]
+          end
+        end
+      end # including conditions for an embedded has n resource
+
     end
   end
 
@@ -125,7 +163,7 @@ describe DataMapper::Mongo::Resource do
       end
 
       Student.all.destroy!
-      
+
       @student_one   = Student.create(:school => 'School 1', :name => 'One',   :score => 3.0)
       @student_two   = Student.create(:school => 'School 2', :name => 'Two',   :score => 3.5)
       @student_three = Student.create(:school => 'School 2', :name => 'Three', :score => 4.5)
