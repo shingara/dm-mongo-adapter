@@ -193,6 +193,33 @@ describe DataMapper::Mongo::Resource do
     describe "#aggregate" do
 
       #
+      # simple aggregation without any operators
+      #
+
+      describe "without operators" do
+        describe "without conditions" do
+          it "should return array of hashes based on all records" do
+            result = Student.aggregate(:school, :score)
+
+            result.should == [
+              {:school => "School 1", :score => 3.0},
+              {:school => "School 2", :score => 3.5},
+              {:school => "School 2", :score => 4.5}]
+          end
+        end
+
+        describe "with conditions" do
+          it "should return array of hashes based on records that match conditions" do
+            result = Student.aggregate(:school, :score, :score.gt => 3.0)
+
+            result.should == [
+              {:school => "School 2", :score => 3.5},
+              {:school => "School 2", :score => 4.5}]
+          end
+        end
+      end
+
+      #
       # count
       #
 

@@ -68,14 +68,20 @@ module DataMapper
           end
         end
 
-        js_operation = JavaScript::Operation.new(operators)
+        if operators.blank?
+          initial  = {}
+          reduce   = JavaScript::Reduce.new.to_s
+          finalize = nil
+        else
+          js_operation = JavaScript::Operation.new(operators)
 
-        initial  = js_operation.initial
-        reduce   = js_operation.reduce
-        finalize = js_operation.finalize
+          initial  = js_operation.initial
+          reduce   = js_operation.reduce
+          finalize = js_operation.finalize
 
-        keys = keys - initial.keys
-
+          keys = keys - initial.keys
+        end
+        
         @collection.group(keys, @statements, initial, reduce, true, finalize).map do |records|
           records.to_mash.symbolize_keys.only(*property_names)
         end

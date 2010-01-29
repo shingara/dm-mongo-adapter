@@ -45,7 +45,7 @@ module DataMapper
 
           # TODO: document
           # @api semipublic
-          def initialize(fields)
+          def initialize(fields=[])
             @operations = {}
 
             fields.each do |field|
@@ -54,9 +54,15 @@ module DataMapper
           end
 
           # TODO: document
+          # @api public
+          def to_s
+            create
+          end
+
+          # TODO: document
           # @api semipublic
           def create(*args, &block)
-            @function ||= "function(#{args.join(', ')}) { #{yield.flatten.join(';')} }"
+            @function ||= "function(#{args.join(', ')}) { #{yield.flatten.join(';') if block_given?} }"
           end
         end
 
