@@ -8,18 +8,19 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name        = 'dm-mongo-adapter'
-    gem.summary     = 'Mongo DataMapper Adapter'
-    gem.description = 'An adapter the DataMapper ORM which adds support for MongoDB.'
-    gem.email       = "shane.hanna@gmail.com, piotr.solnica@gmail.com, lcarlson@rubyskills.com"
+    gem.summary     = 'MongoDB DataMapper Adapter'
+    gem.email       = "piotr.solnica@gmail.com"
     gem.homepage    = "http://github.com/solnic/dm-mongo-adapter"
-    gem.authors     = ['Shane Hanna', 'Piotr Solnica', 'Lance Carlson']
+    gem.authors     = ['Piotr Solnica']
 
     gem.has_rdoc    = false
 
     # Dependencies
-    gem.add_dependency 'dm-core', '~> 0.10.0'
-    gem.add_dependency 'mongo',   '~> 0.18.2'
-    gem.add_development_dependency 'rspec',     '>= 1.2.0'
+    gem.add_dependency 'dm-core', '~> 0.10.2'
+    gem.add_dependency 'dm-aggregates', '~> 0.10.2'
+    gem.add_dependency 'mongo',   '~> 0.18.3'
+    gem.add_dependency 'mongo_ext',   '~> 0.18.3'
+    gem.add_development_dependency 'rspec',     '>= 1.3.0'
     gem.add_development_dependency 'yard',      '>= 0.5'
     gem.add_development_dependency 'yardstick', '>= 0.1'
   end
