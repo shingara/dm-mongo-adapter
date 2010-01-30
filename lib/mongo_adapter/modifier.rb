@@ -1,25 +1,41 @@
 module DataMapper
   module Mongo
     module Modifier
+      # TODO: document
+      # @api public
       def increment(property, value)
-        modifier(:inc, {property => value})
         attribute_set(property, attribute_get(property) + value)
+
+        if modifier(:inc, property => value)
+          original_attributes.clear
+        end
       end
 
+      # TODO: document
+      # @api public
       def decrement(property, value)
-        modifier(:inc, {property => -value.abs})
         attribute_set(property, attribute_get(property) - value)
+
+        if modifier(:inc, property => -value.abs)
+          original_attributes.clear
+        end
       end
 
+      # TODO: document
+      # @api public
       def set(args)
         modifier(:set, args)
+
         args.keys.each do |key|
           attribute_set(key, args[key])
         end
       end
 
+      # TODO: document
+      # @api public
       def unset(*args)
         new_args = {}
+        
         args.each do |arg|
           new_args[arg] = 1
         end
@@ -27,32 +43,43 @@ module DataMapper
         modifier(:unset, new_args)
       end
 
+      # TODO: document
+      # @api public
       def push
+
       end
 
+      # TODO: document
+      # @api public
       def push_all
+
       end
 
+      # TODO: document
+      # @api public
       def pop
+
       end
 
+      # TODO: document
+      # @api public
       def pull
+
       end
 
+      # TODO: document
+      # @api public
       def pull_all
+
       end
 
-      def modifier(operation, properties)
-        operation = :pushAll if operation == :push_all
-        operation = :pullAll if operation == :pull_all
-        
-        operation = "$#{operation}"
-        document = {operation => properties}
+      private
 
-        repository.adapter.execute([self], {:_id => ::Mongo::ObjectID.from_string(self.id)}, document)
+      # TODO: document
+      # @api private
+      def modifier(operation, properties)
+        repository.adapter.execute([self], "$#{operation}" => properties)
       end
     end
   end
 end
-
-DataMapper::Resource.send(:include, DataMapper::Mongo::Modifier)

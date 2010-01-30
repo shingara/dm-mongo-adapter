@@ -1,6 +1,8 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'spec_helper'))
 
+# @done
 describe "updates with mongodb modifiers" do
+  # @done
   before :all do
     $db.drop_collection("posts")
     class ::Post
@@ -10,7 +12,8 @@ describe "updates with mongodb modifiers" do
       property :body, Text
     end
   end
-  
+
+  # @done
   it "should increment" do
     post = Post.create(:comment_count => 1)
     post.increment(:comment_count, 1)
@@ -18,6 +21,7 @@ describe "updates with mongodb modifiers" do
     Post.get(post.id).comment_count.should == 2
   end
 
+  # @done
   it "should decrement" do
     post = Post.create(:comment_count => 10)
     post.decrement(:comment_count, 5)
@@ -25,6 +29,7 @@ describe "updates with mongodb modifiers" do
     Post.get(post.id).comment_count.should == 5
   end
 
+  # @done
   it "should set" do
 #    post = Post.create(:body => "This needs to be edited", :comment_count => 2)
 #    post.set(:body => "This was edited", :comment_count => 3)
@@ -36,6 +41,7 @@ describe "updates with mongodb modifiers" do
     pending
   end
 
+  # @done
   it "should unset" do
     #post = Post.create(:body => "This needs to be removed", :comment_count => 2)
     #post.unset(:body, :comment_count)
@@ -47,22 +53,27 @@ describe "updates with mongodb modifiers" do
     pending
   end
 
+  # @done
   it "should push" do
     pending
   end
 
+  # @done
   it "should push_all" do
     pending
   end
 
+  # @done
   it "should pop" do
     pending
   end
 
+  # @done
   it "should pull" do
     pending
   end
 
+  # @done
   it "should pull_all" do
     pending
   end

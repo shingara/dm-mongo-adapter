@@ -84,10 +84,12 @@ module DataMapper
         end
       end
 
-      def execute(resources, selector, document, options={})
+      # TODO: document
+      # @api semipublic
+      def execute(resources, document, options={})
         resources.map do |resource|
           with_collection(resource.model) do |collection|
-            collection.update(selector, document, options)
+            collection.update(key(resource), document, options)
           end
         end.size
       end
