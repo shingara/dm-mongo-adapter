@@ -24,7 +24,7 @@ begin
     gem.add_development_dependency 'yard',      '>= 0.5'
     gem.add_development_dependency 'yardstick', '>= 0.1'
   end
-
+  Jeweler::GemcutterTasks.new
   FileList['tasks/**/*.rake'].each { |task| import task }
 rescue LoadError
   puts 'Jeweler (or a dependency) not available. Install it with: sudo gem ' \
