@@ -1,5 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'spec_helper'))
 
+# @done (in public/types/discriminator_spec.rb which is a modified copy from dm-core specs)
 describe "Single Table Inheritance" do
   before(:all) do
     class ::Person
