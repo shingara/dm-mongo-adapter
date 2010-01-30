@@ -1,7 +1,10 @@
-= DataMapper Mongo Adapter
+= DataMapper MongoDB Adapter
 
-* http://github.com/solnic/dm-mongo-adapter/tree/master
+Useful links:
+
+* http://github.com/solnic/dm-mongo-adapter
 * http://groups.google.com/group/dm-mongo-adapter
+* http://rdoc.info/projects/solnic/dm-mongo-adapter
 
 == Dependencies
 
@@ -9,24 +12,11 @@ Ruby gems
 
 * dm-core ~> 0.10.2
 * dm-aggregates ~> 0.10.2
-* mongo ~> 0.18.2
+* mongo ~> 0.18.3
 
 == Install
 
-* Via git:
-
-  git clone git://github.com/solnic/dm-mongo-adapter.git
-  rake install
-
-* With Rails:
-
-  Add this to your Gemfile file:
-
-  gem "mongo"
-  gem "mongo_ext"
-  gem "dm-core"
-  gem "dm-mongo-adapter", :lib => "mongo_adapter"
-  gem "rails3_datamapper"
+  gem install dm-mongo-adapter --pre
 
 == Synopsis
 
@@ -105,20 +95,35 @@ Ruby gems
 
 == DataMapper plugins
 
-Currently the adapter supports:
+Currently the adapter works with:
 
-  1. dm-timestamps
-  2. dm-validations
-  3. dm-aggregates
-  4. dm-pager
+1. dm-timestamps
+2. dm-validations
+3. dm-aggregates
+4. dm-pager
+5. dm-serializer
+6. dm-types
 
 and expect more of course :)
 
-== Contributing
+== Authors and contributors
 
- * Fork the project
- * Add a new feature or fix a bug
- * Send a pull request
+The adapter has been originally written by Shane Hanna (shanna). Project is currently maintained by Piotr Solnica (solnic).
+
+Contributors:
+
+* Anthony Williams (antw)
+* Lance Carlson (lancecarlson)
+
+== Note on Patches/Pull Requests
+
+* Fork the project.
+* Make your feature addition or bug fix.
+* Add tests for it. This is important so I don't break it in a
+  future version unintentionally.
+* Commit, do not mess with rakefile, version, or history.
+  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
+* Send me a pull request. Bonus points for topic branches.
 
 == Copyright
 
