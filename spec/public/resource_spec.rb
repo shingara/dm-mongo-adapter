@@ -8,7 +8,10 @@ describe DataMapper::Mongo::Resource do
       property :city, String
     end
 
-    class ::Location < Address; end
+    class ::Location
+      include DataMapper::Mongo::EmbeddedResource
+      property :country, String
+    end
 
     class ::User
       include DataMapper::Mongo::Resource
@@ -74,41 +77,39 @@ describe DataMapper::Mongo::Resource do
         end
 
         it 'should return a collection' do
-          collection = User.all(:'address.city' => 'Washington')
+          collection = User.all('address.city' => 'Washington')
           collection.should be_kind_of(DataMapper::Collection)
         end
 
         it 'should return an empty collection when there are no matching resources' do
-          collection = User.all(:'address.city' => 'Washington')
+          collection = User.all('address.city' => 'Washington')
           collection.should be_empty
         end
 
         it 'should return specific resources' do
-          User.all(:'address.city' => 'New York').should == [@expected]
+          User.all('address.city' => 'New York').should == [@expected]
         end
       end # including conditions for an embedded has 1 resource
 
       describe 'including conditions for an embedded has n resource' do
         before(:all) do
           User.all.destroy!
-          User.create(:name => 'Boston guy', :locations => [{ :city => 'Boston' }])
-          @expected = User.create(:name => 'NY guy', :locations => [{ :city => 'New York' }])
+          User.create(:name => 'Boston guy', :locations => [{ :country => 'Boston' }])
+          @expected = User.create(:name => 'NY guy', :locations => [{ :country => 'New York' }])
         end
 
         it 'should return a collection' do
-          collection = User.all(:'locations.city' => 'Washington')
+          collection = User.all('locations.country' => 'Washington')
           collection.should be_kind_of(DataMapper::Collection)
         end
 
         it 'should return an empty collection when there are no matching resources' do
-          collection = User.all(:'locations.city' => 'Washington')
+          collection = User.all('locations.country' => 'Washington')
           collection.should be_empty
         end
 
         it 'should return specific resources' do
-          pending "Embedded resource conditions don't appear to work on has(n, ...) at present" do
-            User.all(:'locations.city' => 'New York').should == [@expected]
-          end
+          User.all('locations.country' => 'New York').should == [@expected]
         end
       end # including conditions for an embedded has n resource
 
