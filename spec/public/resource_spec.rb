@@ -5,12 +5,14 @@ describe DataMapper::Mongo::Resource do
   before(:all) do
     class ::Address
       include DataMapper::Mongo::EmbeddedResource
-      property :city, String
+      property :city,  String
+      property :state, String
     end
 
     class ::Location
       include DataMapper::Mongo::EmbeddedResource
-      property :country, String
+      property :country,   String
+      property :continent, String
     end
 
     class ::User
@@ -94,22 +96,26 @@ describe DataMapper::Mongo::Resource do
       describe 'including conditions for an embedded has n resource' do
         before(:all) do
           User.all.destroy!
-          User.create(:name => 'Boston guy', :locations => [{ :country => 'Boston' }])
-          @expected = User.create(:name => 'NY guy', :locations => [{ :country => 'New York' }])
+          User.create(:name => 'Canada Guy', :locations => [{ :country => 'Canada' }])
+          
+          @expected = User.create(:name => 'John Kowalski', :locations => [
+            { :country => 'US',     :continent => 'North America' },
+            { :country => 'Poland', :continent => 'Europe' }])
         end
 
         it 'should return a collection' do
-          collection = User.all('locations.country' => 'Washington')
+          collection = User.all('locations.country' => 'Canada')
           collection.should be_kind_of(DataMapper::Collection)
         end
 
         it 'should return an empty collection when there are no matching resources' do
-          collection = User.all('locations.country' => 'Washington')
+          collection = User.all('locations.country' => 'Brazil')
           collection.should be_empty
         end
 
         it 'should return specific resources' do
-          User.all('locations.country' => 'New York').should == [@expected]
+          User.all('locations.country' => 'US').should == [@expected]
+          User.all('locations.country' => 'Poland', 'locations.continent' => 'Europe').should == [@expected]
         end
       end # including conditions for an embedded has n resource
 
