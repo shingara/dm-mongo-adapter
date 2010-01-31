@@ -70,7 +70,7 @@ module DataMapper
           #
           # @api private
           def collection_for(source, other_query=nil)
-            Collection.new(source)
+            Collection.new(source, target_model)
           end
         end
 
@@ -86,6 +86,9 @@ module DataMapper
           # @api semipublic
           attr_reader :source
 
+          # @api semipublic
+          attr_reader :target_model
+
           # Creates a new Collection instance
           #
           # @param [DataMapper::Mongo::Resource] source
@@ -93,8 +96,9 @@ module DataMapper
           #   belong.
           #
           # @api semipublic
-          def initialize(source)
+          def initialize(source, target_model)
             @source = source
+            @target_model = target_model
           end
 
           # Adds a new embedded resource to the collection
@@ -102,10 +106,30 @@ module DataMapper
           # @param [DataMapper::Mongo::EmbeddedResource] resource
           #   The embedded resource to be added.
           #
-          # @api semipublic
+          # @api public
           def <<(resource)
             resource.parent = source
             super(resource)
+          end
+
+          # TODO: document
+          # @api public
+          def dirty?
+            any? { |resource| resource.dirty? }
+          end
+
+          # TODO: document
+          # @api public
+          def save
+            source.save
+          end
+
+          # TODO: document
+          # @api public
+          def new(attributes={})
+            resource = target_model.new(attributes)
+            self. << resource
+            resource
           end
         end
 
