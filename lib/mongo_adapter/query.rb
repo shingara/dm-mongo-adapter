@@ -149,7 +149,7 @@ module DataMapper
       def comparison_statement_for_embedment(comparison, affirmative = true)
         embedment = @query.model.embedments.values.detect { |e| e.target_model == comparison.subject.model }
 
-        field = "#{embedment.name}.#{comparison.subject.field}"
+        field = "#{embedment.storage_name}.#{comparison.subject.field}"
 
        update_statements(comparison, field, affirmative)
       end

@@ -166,7 +166,7 @@ module DataMapper
               value = record.__send__(name)
 
               if embedment.kind_of?(Embedments::OneToMany::Relationship)
-                attributes[name] = value.map{ |resource| attributes_as_fields(resource) }
+                attributes[embedment.storage_name] = value.map{ |resource| attributes_as_fields(resource) }
               else
                 attributes[name] = attributes_as_fields(value)
               end
@@ -186,7 +186,7 @@ module DataMapper
             when DataMapper::Property
               attributes[key.field] = key.custom? ? key.type.dump(value, key) : value
             when Embedments::Relationship
-              attributes[key.name] = attributes_as_fields(value)
+              attributes[key.storage_name] = attributes_as_fields(value)
             end
         end
 

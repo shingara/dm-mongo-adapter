@@ -46,6 +46,10 @@ module DataMapper
             set!(source, target)
           end
 
+          # @api public
+          def storage_name
+            @storage_name ||= target_model.storage_name.singular
+          end
         end # Relationship
       end # OneToOne
     end # Embedments

@@ -9,8 +9,7 @@ describe DataMapper::Mongo::Resource do
       property :state, String
     end
 
-    class ::Location
-      include DataMapper::Mongo::EmbeddedResource
+    class ::Location < ::Address
       property :country,   String
       property :continent, String
     end

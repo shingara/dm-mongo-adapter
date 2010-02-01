@@ -59,6 +59,11 @@ module DataMapper
             get!(source).replace(targets)
           end
 
+          # @api public
+          def storage_name
+            @storage_name ||= target_model.storage_name
+          end
+
           private
 
           # Creates a new collection instance for the source resources.
