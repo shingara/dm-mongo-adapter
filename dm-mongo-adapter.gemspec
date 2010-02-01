@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Piotr Solnica"]
-  s.date = %q{2010-01-30}
+  s.date = %q{2010-02-01}
   s.default_executable = %q{console}
   s.email = %q{piotr.solnica@gmail.com}
   s.executables = ["console"]
@@ -25,7 +25,6 @@ Gem::Specification.new do |s|
      "Rakefile",
      "TODO",
      "VERSION.yml",
-     "bin/console",
      "dm-mongo-adapter.gemspec",
      "lib/mongo_adapter.rb",
      "lib/mongo_adapter/adapter.rb",
@@ -62,6 +61,7 @@ Gem::Specification.new do |s|
      "spec/legacy/sti_spec.rb",
      "spec/lib/cleanup_models.rb",
      "spec/lib/raw_connections.rb",
+     "spec/public/embedded_collection_spec.rb",
      "spec/public/embedded_resource_spec.rb",
      "spec/public/model/embedment_spec.rb",
      "spec/public/model_spec.rb",
@@ -83,6 +83,7 @@ Gem::Specification.new do |s|
      "tasks/yard.rake",
      "tasks/yardstick.rake"
   ]
+  s.has_rdoc = false
   s.homepage = %q{http://github.com/solnic/dm-mongo-adapter}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
@@ -102,6 +103,7 @@ Gem::Specification.new do |s|
      "spec/legacy/adapter_shared_spec.rb",
      "spec/legacy/associations_spec.rb",
      "spec/legacy/embedded_resource_spec.rb",
+     "spec/public/embedded_collection_spec.rb",
      "spec/public/model_spec.rb",
      "spec/public/model/embedment_spec.rb",
      "spec/public/shared/model_embedments_spec.rb",

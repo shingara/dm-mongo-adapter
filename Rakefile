@@ -23,6 +23,9 @@ begin
     gem.add_development_dependency 'rspec',     '>= 1.3.0'
     gem.add_development_dependency 'yard',      '>= 0.5'
     gem.add_development_dependency 'yardstick', '>= 0.1'
+
+    # Exclude files
+    gem.files.exclude "bin/console"
   end
   Jeweler::GemcutterTasks.new
   FileList['tasks/**/*.rake'].each { |task| import task }
