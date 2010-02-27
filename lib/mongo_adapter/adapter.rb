@@ -154,7 +154,8 @@ module DataMapper
         model.properties.each do |property|
           name = property.name
           if model.public_method_defined?(name)
-            value = record.__send__(name)
+            value = property.get(record)
+            
             attributes[property.field] = property.custom? ?
               property.type.dump(value, property) : value
           end

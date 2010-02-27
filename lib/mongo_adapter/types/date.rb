@@ -8,10 +8,6 @@ module DataMapper
           self.typecast(value, property)
         end
 
-        def self.dump(value, property)
-          self.typecast(value, property)
-        end
-
         def self.typecast(value, property)
           case value
           when ::Date
