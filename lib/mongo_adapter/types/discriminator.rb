@@ -16,7 +16,7 @@ module DataMapper
         def self.typecast(value, property)
           if value
             if value.is_a?(String)
-              Extlib::Inflection.constantize(value)
+              value.constantize
             else
               value
             end

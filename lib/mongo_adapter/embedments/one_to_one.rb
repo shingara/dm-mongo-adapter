@@ -48,7 +48,7 @@ module DataMapper
 
           # @api public
           def storage_name
-            @storage_name ||= target_model.storage_name.singular
+            @storage_name ||= target_model.storage_name.singularize
           end
         end # Relationship
       end # OneToOne

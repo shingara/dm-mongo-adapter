@@ -5,7 +5,7 @@ module DataMapper
       # (1 to 1, 1 to n) implements a subclass of this class with methods like
       # get and set overridden.
       class Relationship
-        include Extlib::Assertions
+        include DataMapper::Assertions
 
         # Relationship name
         #
@@ -236,7 +236,7 @@ module DataMapper
           elsif target_model.nil?
             # No model given, infer it from the name.
             @target_model_name =
-              Extlib::Inflection.camelize(name.to_s.singular).freeze
+              name.to_s.singularize.camelize.freeze
           else
             # We were likely given a string as the target model -- perhaps
             # because the user's app hasn't loaded yet; get the constant

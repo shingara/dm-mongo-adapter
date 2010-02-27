@@ -3,7 +3,7 @@ module DataMapper
     # This class is responsible for taking Query instances from DataMapper and
     # formatting the query such that it can be performed by the Mongo library.
     class Query
-      include Extlib::Assertions
+      include DataMapper::Assertions
       include DataMapper::Query::Conditions
 
       # Creates a new Query instance

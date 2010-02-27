@@ -19,9 +19,9 @@ module DataMapper
           when NilClass
             nil
           when Hash
-            value.to_mash.symbolize_keys
+            value.symbolize_keys
           when Array
-            value.empty? ? Mash.new : [value].to_mash.symbolize_keys
+            value.empty? ? {} : {value.first.to_sym => value.last}
           end
         end
       end #EmbeddedHash
