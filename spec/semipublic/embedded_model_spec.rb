@@ -10,7 +10,7 @@ describe DataMapper::Mongo::Resource do
 
     class ::Car
       include DataMapper::Mongo::Resource
-      property :model, String
+      property :car_model, String
     end
 
     class ::DMCar

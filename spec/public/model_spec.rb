@@ -5,21 +5,21 @@ describe DataMapper::Mongo::Model do
   before(:all) do
     class ::PropertyTest
       include DataMapper::Mongo::Resource
-      property :array,     Array
-      property :hash,      Hash
-      property :date,      Date
-      property :date_time, DateTime
+      property :array_attr, Array
+      property :hash_attr,  Hash
+      property :date,       Date
+      property :date_time,  DateTime
     end
   end
 
   describe '#property' do
     it 'should cast Array types to EmbeddedArray' do
-      prop = PropertyTest.properties[:array]
+      prop = PropertyTest.properties[:array_attr]
       prop.type.should == DataMapper::Mongo::Types::EmbeddedArray
     end
 
     it 'should cast Hash types to EmbeddedHash' do
-      prop = PropertyTest.properties[:hash]
+      prop = PropertyTest.properties[:hash_attr]
       prop.type.should == DataMapper::Mongo::Types::EmbeddedHash
     end
 

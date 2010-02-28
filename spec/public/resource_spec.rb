@@ -504,14 +504,12 @@ describe DataMapper::Mongo::Resource do
       it "should set the value of a property" do
         post = Post.create(:body => "This needs to be edited", :comment_count => 2)
 
-        pending "not implemented yet" do
-          post.set(:body => "This was edited", :comment_count => 3)
-          post.body.should == "This was edited"
-          post.comment_count.should == 3
-          fresh_post = Post.get(post.id)
-          fresh_post.body.should == "This was edited"
-          fresh_post.comment_count.should == 3
-        end
+        post.set(:body => "This was edited", :comment_count => 3)
+        post.body.should == "This was edited"
+        post.comment_count.should == 3
+        fresh_post = Post.get(post.id)
+        fresh_post.body.should == "This was edited"
+        fresh_post.comment_count.should == 3
       end
     end
 
