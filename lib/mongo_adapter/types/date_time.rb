@@ -9,16 +9,19 @@ module DataMapper
         end
 
         def self.dump(value, property)
-          self.typecast(value, property)
+          case value
+          when Time
+            value
+          when ::DateTime
+            value.to_time.utc
+          end
         end
 
         def self.typecast(value, property)
           case value
           when Time
             value.to_datetime
-          when ::DateTime
-            value.to_time.utc
-          when NilClass, Range
+          when ::DateTime, NilClass, Range
             value
           end
         end
