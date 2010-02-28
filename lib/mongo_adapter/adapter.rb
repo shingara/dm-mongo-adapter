@@ -152,25 +152,17 @@ module DataMapper
         model = record.model
 
         model.properties.each do |property|
-          name = property.name
-          if model.public_method_defined?(name)
-            value = property.get(record)
-            
-            attributes[property.field] = property.custom? ?
-              property.type.dump(value, property) : value
-          end
+          attributes[property.field] = property.value(property.get(record))
         end
 
         if model.respond_to?(:embedments)
           model.embedments.each do |name, embedment|
-            if model.public_method_defined?(name)
-              value = record.__send__(name)
+            value = record.__send__(name)
 
-              if embedment.kind_of?(Embedments::OneToMany::Relationship)
-                attributes[embedment.storage_name] = value.map{ |resource| attributes_as_fields(resource) }
-              else
-                attributes[name] = attributes_as_fields(value)
-              end
+            if embedment.kind_of?(Embedments::OneToMany::Relationship)
+              attributes[embedment.storage_name] = value.map{ |resource| attributes_as_fields(resource) }
+            else
+              attributes[name] = attributes_as_fields(value)
             end
           end
         end
