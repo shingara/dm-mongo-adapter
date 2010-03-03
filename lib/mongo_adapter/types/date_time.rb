@@ -13,7 +13,7 @@ module DataMapper
           when Time
             value
           when ::DateTime
-            value.to_time.utc
+            value.utc.to_time
           end
         end
 
