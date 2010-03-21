@@ -2,13 +2,6 @@ require 'pathname'
 require 'rubygems'
 require 'spec'
 
-# pull in local dm-core and dm-aggregates checkouts if present
-local_dm_core_lib = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'dm-core', 'lib'))
-$LOAD_PATH.unshift(local_dm_core_lib) if File.directory?(local_dm_core_lib)
-
-local_dm_aggregates_lib = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'dm-more', 'dm-aggregates', 'lib'))
-$LOAD_PATH.unshift(local_dm_aggregates_lib) if File.directory?(local_dm_aggregates_lib)
-
 MONGO_SPEC_ROOT = Pathname(__FILE__).dirname.expand_path
 $LOAD_PATH.unshift(MONGO_SPEC_ROOT.parent + 'lib')
 
