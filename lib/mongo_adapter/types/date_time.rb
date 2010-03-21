@@ -1,3 +1,5 @@
+require 'active_support/time'
+
 module DataMapper
   module Mongo
     module Types

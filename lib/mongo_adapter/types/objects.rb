@@ -1,3 +1,5 @@
+require 'active_support/core_ext/hash/keys'
+
 module DataMapper
   module Mongo
     module Types
