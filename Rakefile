@@ -16,10 +16,10 @@ begin
     gem.has_rdoc    = false
 
     # Dependencies
-    gem.add_dependency 'dm-core', '~> 0.10.2'
-    gem.add_dependency 'dm-aggregates', '~> 0.10.2'
-    gem.add_dependency 'mongo',   '~> 0.18.3'
-    gem.add_dependency 'mongo_ext',   '~> 0.18.3'
+    gem.add_dependency 'dm-core', '~> 0.10.3'
+    gem.add_dependency 'dm-aggregates', '~> 0.10.3'
+    gem.add_dependency 'mongo',   '~> 0.19'
+    gem.add_dependency 'mongo_ext',   '~> 0.19'
     gem.add_development_dependency 'rspec',     '>= 1.3.0'
     gem.add_development_dependency 'yard',      '>= 0.5'
     gem.add_development_dependency 'yardstick', '>= 0.1'
