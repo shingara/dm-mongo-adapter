@@ -9,8 +9,8 @@ group :runtime do
   gem 'activesupport', '~> 3.0.0.beta1', :git => 'git://github.com/rails/rails.git', :require => false
 
   # DataMapper libs
-  gem 'dm-core',       :git => 'git://github.com/datamapper/dm-core.git', :branch => 'next'
-  gem 'dm-aggregates', :git => 'git://github.com/snusnu/dm-more.git',     :branch => 'active_support'
+  gem 'dm-core',       :git => 'git://github.com/datamapper/dm-core.git'
+  gem 'dm-aggregates', :git => 'git://github.com/datamapper/dm-more.git'
 end
 
 group :development do
