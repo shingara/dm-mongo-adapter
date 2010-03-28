@@ -199,6 +199,7 @@ module DataMapper
           case comparison
             when EqualToComparison              then {'$ne'  => value}
             when InclusionComparison            then {'$nin' => value}
+            when RegexpComparison               then {'$not' => value}
           else
             raise NotImplementedError
           end

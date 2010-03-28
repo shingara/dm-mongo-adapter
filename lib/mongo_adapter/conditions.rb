@@ -70,7 +70,6 @@ module DataMapper
       # Comparisons not current supported are:
       #
       #   * $nin with range
-      #   * negated regexp comparison (see: http://jira.mongodb.org/browse/SERVER-251)
       #
       # @param [DataMapper::Query::Conditions::AbstractOperation, DataMapper::Query::Conditions::AbstractComparison] operand
       #   An operation to be made suitable for use with Mongo
@@ -82,10 +81,6 @@ module DataMapper
         case operand
         when OrOperation
           true
-        when RegexpComparison
-          if operand.negated?
-            true
-          end
         when InclusionComparison
           if operand.negated?
             true
