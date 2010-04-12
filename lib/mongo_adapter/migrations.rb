@@ -1,3 +1,5 @@
+require 'dm-migrations/auto_migration'
+
 module DataMapper
   module Migrations
     module SingletonMethods
