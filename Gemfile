@@ -2,15 +2,16 @@ source 'http://gemcutter.org'
 
 group :runtime do
   # MongoDB driver
-  gem 'mongo',     '~> 0.19'
-  gem 'mongo_ext', '~> 0.19'
+  gem 'mongo',     '= 0.19.3'
+  gem 'mongo_ext', '= 0.19.3'
 
   # ActiveSupport is preffered over Extlib
-  gem 'activesupport', '~> 3.0.0.beta1', :git => 'git://github.com/rails/rails.git', :require => false
+  gem 'activesupport', '~> 3.0.0.beta2', :require => false
 
   # DataMapper libs
   gem 'dm-core',       :git => 'git://github.com/datamapper/dm-core.git'
-  gem 'dm-aggregates', :git => 'git://github.com/datamapper/dm-more.git'
+  gem 'dm-aggregates', :git => 'git://github.com/datamapper/dm-aggregates.git'
+  gem 'dm-migrations', :git => 'git://github.com/datamapper/dm-migrations.git'
 end
 
 group :development do
