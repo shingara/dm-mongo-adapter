@@ -2,8 +2,8 @@ source 'http://gemcutter.org'
 
 group :runtime do
   # MongoDB driver
-  gem 'mongo',     '= 0.19.3'
-  gem 'mongo_ext', '= 0.19.3'
+  gem 'mongo',     '~> 0.20'
+  gem 'bson_ext',  '~> 0.20'
 
   # ActiveSupport is preffered over Extlib
   gem 'activesupport', '~> 3.0.0.beta2', :require => false

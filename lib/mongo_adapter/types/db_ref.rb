@@ -25,7 +25,7 @@ module DataMapper
         # Returns the DBRef as a Mongo ObjectID; suitable to be passed to the
         # Mongo library
         #
-        # @return [Mongo::ObjectID] The dumped ID.
+        # @return [BSON::ObjectID] The dumped ID.
         #
         # @api public
         def self.dump(value, property)
@@ -33,8 +33,8 @@ module DataMapper
           when NilClass
             nil
           when String
-            ::Mongo::ObjectID.from_string(value)
-          when ::Mongo::ObjectID
+            ::BSON::ObjectID.from_string(value)
+          when ::BSON::ObjectID
             value
           else
             raise ArgumentError.new('+value+ must be nil, String, ObjectID')
@@ -52,7 +52,7 @@ module DataMapper
             nil
           when String
             value
-          when ::Mongo::ObjectID
+          when ::BSON::ObjectID
             value.to_s
           else
             raise ArgumentError.new('+value+ must be nil, String, ObjectID')
