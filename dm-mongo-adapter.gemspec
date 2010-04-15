@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Piotr Solnica"]
-  s.date = %q{2010-04-12}
+  s.date = %q{2010-04-15}
   s.default_executable = %q{console}
   s.email = %q{piotr.solnica@gmail.com}
   s.executables = ["console"]
@@ -94,28 +94,28 @@ Gem::Specification.new do |s|
     "spec/semipublic/model/embedment_spec.rb",
      "spec/semipublic/resource_spec.rb",
      "spec/semipublic/embedded_model_spec.rb",
-     "spec/public/types/discriminator_spec.rb",
-     "spec/public/types/df_ref_spec.rb",
-     "spec/public/types/embedded_hash_spec.rb",
-     "spec/public/types/object_id_spec.rb",
-     "spec/public/types/embedded_array_spec.rb",
-     "spec/public/model/embedment_spec.rb",
-     "spec/public/resource_spec.rb",
-     "spec/public/shared/object_id_shared_spec.rb",
-     "spec/public/shared/model_embedments_spec.rb",
-     "spec/public/embedded_resource_spec.rb",
-     "spec/public/embedded_collection_spec.rb",
-     "spec/public/model_spec.rb",
-     "spec/legacy/property_spec.rb",
-     "spec/legacy/associations_spec.rb",
-     "spec/legacy/modifier_spec.rb",
-     "spec/legacy/adapter_shared_spec.rb",
-     "spec/legacy/embedded_resource_spec.rb",
+     "spec/spec_helper.rb",
      "spec/legacy/sti_spec.rb",
-     "spec/legacy/embedments_spec.rb",
+     "spec/legacy/property_spec.rb",
+     "spec/legacy/modifier_spec.rb",
      "spec/legacy/adapter_spec.rb",
      "spec/legacy/spec_helper.rb",
-     "spec/spec_helper.rb",
+     "spec/legacy/embedments_spec.rb",
+     "spec/legacy/adapter_shared_spec.rb",
+     "spec/legacy/associations_spec.rb",
+     "spec/legacy/embedded_resource_spec.rb",
+     "spec/public/embedded_collection_spec.rb",
+     "spec/public/model_spec.rb",
+     "spec/public/model/embedment_spec.rb",
+     "spec/public/shared/model_embedments_spec.rb",
+     "spec/public/shared/object_id_shared_spec.rb",
+     "spec/public/resource_spec.rb",
+     "spec/public/types/discriminator_spec.rb",
+     "spec/public/types/embedded_hash_spec.rb",
+     "spec/public/types/embedded_array_spec.rb",
+     "spec/public/types/df_ref_spec.rb",
+     "spec/public/types/object_id_spec.rb",
+     "spec/public/embedded_resource_spec.rb",
      "spec/lib/cleanup_models.rb",
      "spec/lib/raw_connections.rb"
   ]
@@ -125,27 +125,36 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<activesupport>, ["~> 3.0.0.beta3"])
       s.add_runtime_dependency(%q<dm-core>, ["~> 0.10.3"])
       s.add_runtime_dependency(%q<dm-aggregates>, ["~> 0.10.3"])
-      s.add_runtime_dependency(%q<mongo>, ["= 0.19.3"])
-      s.add_runtime_dependency(%q<mongo_ext>, ["= 0.19.3"])
+      s.add_runtime_dependency(%q<dm-migrations>, ["~> 0.10.3"])
+      s.add_runtime_dependency(%q<mongo>, ["~> 0.20"])
+      s.add_runtime_dependency(%q<bson>, ["~> 0.20"])
+      s.add_runtime_dependency(%q<bson_ext>, ["~> 0.20"])
       s.add_development_dependency(%q<rspec>, [">= 1.3.0"])
       s.add_development_dependency(%q<yard>, [">= 0.5"])
       s.add_development_dependency(%q<yardstick>, [">= 0.1"])
     else
+      s.add_dependency(%q<activesupport>, ["~> 3.0.0.beta3"])
       s.add_dependency(%q<dm-core>, ["~> 0.10.3"])
       s.add_dependency(%q<dm-aggregates>, ["~> 0.10.3"])
-      s.add_dependency(%q<mongo>, ["= 0.19.3"])
-      s.add_dependency(%q<mongo_ext>, ["= 0.19.3"])
+      s.add_dependency(%q<dm-migrations>, ["~> 0.10.3"])
+      s.add_dependency(%q<mongo>, ["~> 0.20"])
+      s.add_dependency(%q<bson>, ["~> 0.20"])
+      s.add_dependency(%q<bson_ext>, ["~> 0.20"])
       s.add_dependency(%q<rspec>, [">= 1.3.0"])
       s.add_dependency(%q<yard>, [">= 0.5"])
       s.add_dependency(%q<yardstick>, [">= 0.1"])
     end
   else
+    s.add_dependency(%q<activesupport>, ["~> 3.0.0.beta3"])
     s.add_dependency(%q<dm-core>, ["~> 0.10.3"])
     s.add_dependency(%q<dm-aggregates>, ["~> 0.10.3"])
-    s.add_dependency(%q<mongo>, ["= 0.19.3"])
-    s.add_dependency(%q<mongo_ext>, ["= 0.19.3"])
+    s.add_dependency(%q<dm-migrations>, ["~> 0.10.3"])
+    s.add_dependency(%q<mongo>, ["~> 0.20"])
+    s.add_dependency(%q<bson>, ["~> 0.20"])
+    s.add_dependency(%q<bson_ext>, ["~> 0.20"])
     s.add_dependency(%q<rspec>, [">= 1.3.0"])
     s.add_dependency(%q<yard>, [">= 0.5"])
     s.add_dependency(%q<yardstick>, [">= 0.1"])
