@@ -82,7 +82,7 @@ module DataMapper
           keys = keys - initial.keys
         end
         
-        @collection.group(keys, @statements, initial, reduce, true, finalize).map do |records|
+        @collection.group(keys, @statements, initial, reduce, finalize).map do |records|
           records.to_mash.symbolize_keys.only(*property_names)
         end
       end
