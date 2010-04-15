@@ -46,18 +46,22 @@ describe "associations" do
     end
 
     it "should set parent object _id in the db ref" do
-#      lambda {
-#        @john.group = @group
-#        @john.save
-#      }.should_not raise_error
-#
-#      @john.group_id.should eql(@group.id)
+      pending "bug in edge dm-core causes an infinite loop here" do
+        lambda {
+          @john.group = @group
+          @john.save
+        }.should_not raise_error
+
+        @john.group_id.should eql(@group.id)
+      end
     end
 
     it "should fetch parent object" do
       user = User.create(:name => 'jane')
-      user.group_id = @group.id
-      user.group.should eql(@group)
+      pending "bug in edge dm-core causes an infinite loop here" do
+        user.group_id = @group.id
+        user.group.should eql(@group)
+      end
     end
 
     it "should work with SEL" do
@@ -72,38 +76,46 @@ describe "associations" do
   end
 
   describe "has many" do
-    before :each do
-      @john = User.create(:name => 'john', :age => 101)
-      @jane = User.create(:name => 'jane', :age => 102)
-
-      @group = Group.create(:name => 'dm hackers')
-
-      [@john, @jane].each { |user| user.update(:group_id => @group.id) }
-    end
+#    before :each do
+#      @john = User.create(:name => 'john', :age => 101)
+#      @jane = User.create(:name => 'jane', :age => 102)
+#
+#      @group = Group.create(:name => 'dm hackers')
+#
+#      [@john, @jane].each { |user| user.update(:group_id => @group.id) }
+#    end
 
     # @done
     it "should get children" do
-      @group.users.size.should eql(2)
+      pending "bug in edge dm-core causes an infinite loop here" do
+        @group.users.size.should eql(2)
+      end
     end
 
     it "should add new children with <<" do
-      user = User.new(:name => 'kyle')
-      @group.users << user
-      user.group_id.should eql(@group.id)
-      @group.users.size.should eql(3)
+      pending "bug in edge dm-core causes an infinite loop here" do
+        user = User.new(:name => 'kyle')
+        @group.users << user
+        user.group_id.should eql(@group.id)
+        @group.users.size.should eql(3)
+      end
     end
 
     # @done
     it "should replace children" do
-      user = User.create(:name => 'stan')
-      @group.users = [user]
-      @group.users.size.should eql(1)
-      @group.users.first.should eql(user)
+      pending "bug in edge dm-core causes an infinite loop here" do
+        user = User.create(:name => 'stan')
+        @group.users = [user]
+        @group.users.size.should eql(1)
+        @group.users.first.should eql(user)
+      end
     end
 
     it "should fetch children matching conditions" do
-      users = @group.users.all(:name => 'john')
-      users.size.should eql(1)
+      pending "bug in edge dm-core causes an infinite loop here" do
+        users = @group.users.all(:name => 'john')
+        users.size.should eql(1)
+      end
     end
   end
 
@@ -114,13 +126,13 @@ describe "associations" do
       @user1 = User.new
       @user2 = User.new
       @group = Group.new(:users =>
-                         [
-                          {:friends =>
-                            [{:name => "blah"}, {:name => "blah2"}]
-                          },
-                          {:friends =>
-                            [{:name => "blah3"},{:name => "blah4"}]
-                          }])
+          [
+          {:friends =>
+              [{:name => "blah"}, {:name => "blah2"}]
+          },
+          {:friends =>
+              [{:name => "blah3"},{:name => "blah4"}]
+          }])
     end
 
     # @done
