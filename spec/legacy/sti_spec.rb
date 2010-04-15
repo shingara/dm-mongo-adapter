@@ -24,7 +24,6 @@ describe "Single Table Inheritance" do
   it "should have a type property that reflects the class" do
     [Person, Male, Father, Son].each_with_index do |model, i|
       object = model.create!(:name => "#{model} #{i}")
-      object.reload
       object.type.should == model
     end
   end
