@@ -87,11 +87,9 @@ share_examples_for 'An Adapter' do
 
       it 'should not alter other fields' do
         color = @heffalump.color
-        pending "bug in edge dm-core causes an infinite loop here" do
-          @heffalump.num_spots = 3
-          @heffalump.save
-          Heffalump.get(*@heffalump.key).color.should == color
-        end
+        @heffalump.num_spots = 3
+        @heffalump.save
+        Heffalump.get(*@heffalump.key).color.should == color
       end
     end
   else
