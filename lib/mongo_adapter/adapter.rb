@@ -117,7 +117,7 @@ module DataMapper
       #
       # @api private
       def key(resource)
-        resource.model.key(name).map{ |key| [key.field, key.value(resource.__send__(key.name))] }.to_hash
+        resource.model.key(name).map{ |key| [key.field, key.dump(resource.__send__(key.name))] }.to_hash
       end
 
       # Retrieves all of a records attributes and returns them as a Hash.
@@ -152,7 +152,7 @@ module DataMapper
         model = record.model
 
         model.properties.each do |property|
-          attributes[property.field] = property.value(property.get(record))
+          attributes[property.field] = property.dump(property.get(record))
         end
 
         if model.respond_to?(:embedments)
@@ -177,7 +177,7 @@ module DataMapper
         record.each do |key, value|
           case key
             when DataMapper::Property
-              attributes[key.field] = key.custom? ? key.type.dump(value, key) : value
+              attributes[key.field] = key.custom? ? key.dump(value) : value
             when Embedments::Relationship
               attributes[key.storage_name] = attributes_as_fields(value)
             end
