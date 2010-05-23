@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Piotr Solnica"]
-  s.date = %q{2010-04-15}
+  s.date = %q{2010-05-23}
   s.default_executable = %q{console}
   s.email = %q{piotr.solnica@gmail.com}
   s.executables = ["console"]
@@ -126,9 +126,9 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<activesupport>, ["~> 3.0.0.beta3"])
-      s.add_runtime_dependency(%q<dm-core>, ["~> 0.10.3"])
-      s.add_runtime_dependency(%q<dm-aggregates>, ["~> 0.10.3"])
-      s.add_runtime_dependency(%q<dm-migrations>, ["~> 0.10.3"])
+      s.add_runtime_dependency(%q<dm-core>, ["~> 1.0.0"])
+      s.add_runtime_dependency(%q<dm-aggregates>, ["~> 1.0.0"])
+      s.add_runtime_dependency(%q<dm-migrations>, ["~> 1.0.0"])
       s.add_runtime_dependency(%q<mongo>, ["~> 0.20"])
       s.add_runtime_dependency(%q<bson>, ["~> 0.20"])
       s.add_runtime_dependency(%q<bson_ext>, ["~> 0.20"])
@@ -137,9 +137,9 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<yardstick>, [">= 0.1"])
     else
       s.add_dependency(%q<activesupport>, ["~> 3.0.0.beta3"])
-      s.add_dependency(%q<dm-core>, ["~> 0.10.3"])
-      s.add_dependency(%q<dm-aggregates>, ["~> 0.10.3"])
-      s.add_dependency(%q<dm-migrations>, ["~> 0.10.3"])
+      s.add_dependency(%q<dm-core>, ["~> 1.0.0"])
+      s.add_dependency(%q<dm-aggregates>, ["~> 1.0.0"])
+      s.add_dependency(%q<dm-migrations>, ["~> 1.0.0"])
       s.add_dependency(%q<mongo>, ["~> 0.20"])
       s.add_dependency(%q<bson>, ["~> 0.20"])
       s.add_dependency(%q<bson_ext>, ["~> 0.20"])
@@ -149,9 +149,9 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<activesupport>, ["~> 3.0.0.beta3"])
-    s.add_dependency(%q<dm-core>, ["~> 0.10.3"])
-    s.add_dependency(%q<dm-aggregates>, ["~> 0.10.3"])
-    s.add_dependency(%q<dm-migrations>, ["~> 0.10.3"])
+    s.add_dependency(%q<dm-core>, ["~> 1.0.0"])
+    s.add_dependency(%q<dm-aggregates>, ["~> 1.0.0"])
+    s.add_dependency(%q<dm-migrations>, ["~> 1.0.0"])
     s.add_dependency(%q<mongo>, ["~> 0.20"])
     s.add_dependency(%q<bson>, ["~> 0.20"])
     s.add_dependency(%q<bson_ext>, ["~> 0.20"])

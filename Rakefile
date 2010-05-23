@@ -17,9 +17,9 @@ begin
 
     # Runtime deps
     gem.add_dependency 'activesupport', '~> 3.0.0.beta3'
-    gem.add_dependency 'dm-core',       '~> 0.10.3'
-    gem.add_dependency 'dm-aggregates', '~> 0.10.3'
-    gem.add_dependency 'dm-migrations', '~> 0.10.3'
+    gem.add_dependency 'dm-core',       '~> 1.0.0'
+    gem.add_dependency 'dm-aggregates', '~> 1.0.0'
+    gem.add_dependency 'dm-migrations', '~> 1.0.0'
     gem.add_dependency 'mongo',         '~> 0.20'
     gem.add_dependency 'bson',          '~> 0.20'
     gem.add_dependency 'bson_ext',      '~> 0.20'
