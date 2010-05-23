@@ -9,6 +9,7 @@ require dir / 'query' / 'java_script'
 require dir / 'conditions'
 
 require dir / 'property' / 'object_id'
+require dir / 'property' / 'db_ref'
 require dir / 'property' / 'array'
 require dir / 'property' / 'hash'
 
@@ -16,8 +17,6 @@ require dir / 'support' / 'class'
 require dir / 'support' / 'date'
 require dir / 'support' / 'date_time'
 require dir / 'support' / 'object'
-
-require dir / 'types' / 'db_ref'
 
 require dir / 'model' / 'embedment'
 require dir / 'model'
