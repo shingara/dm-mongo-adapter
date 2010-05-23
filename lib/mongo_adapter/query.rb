@@ -179,8 +179,13 @@ module DataMapper
 
       # TODO: document
       # @api private
-      def update_statements(comparison, field, affirmative = true)
-        value = comparison.value
+      def
+        update_statements(comparison, field, affirmative = true)
+        value = if comparison.value.kind_of?(Array)
+          comparison.value.map { |value| value.class.to_mongo(value) }
+        else
+          comparison.value.class.to_mongo(comparison.value)
+        end
 
         operator = if affirmative
           case comparison
@@ -224,7 +229,7 @@ module DataMapper
           {'$gte' => value.first, value.exclude_end? ? '$lt' : '$lte' => value.last}
         elsif comparison.kind_of?(InclusionComparison) && value.size == 1
           value.first
-        elsif comparison.subject.type == DataMapper::Mongo::Types::EmbeddedArray
+        elsif comparison.subject.type == DataMapper::Mongo::Property::Array
           value
         else
           {'$in'  => value}

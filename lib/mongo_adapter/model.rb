@@ -51,15 +51,6 @@ module DataMapper
       #
       # @api semipublic
       def load(records, query)
-        if discriminator = properties(query.repository.name).discriminator
-          records.each do |record|
-            discriminator_key   = discriminator.name.to_s
-            discriminator_value = discriminator.type.load(record[discriminator_key], discriminator)
-
-            record[discriminator_key] = discriminator_value
-          end
-        end
-
         resources = super
 
         # Load embedded resources

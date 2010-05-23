@@ -7,12 +7,16 @@ dir = Pathname(__FILE__).dirname.expand_path / 'mongo_adapter'
 require dir / 'query'
 require dir / 'query' / 'java_script'
 require dir / 'conditions'
+
 require dir / 'property' / 'object_id'
 require dir / 'property' / 'array'
 require dir / 'property' / 'hash'
-require dir / 'types' / 'discriminator'
-require dir / 'types' / 'date_time'
-require dir / 'types' / 'date'
+
+require dir / 'support' / 'class'
+require dir / 'support' / 'date'
+require dir / 'support' / 'date_time'
+require dir / 'support' / 'object'
+
 require dir / 'types' / 'db_ref'
 
 require dir / 'model' / 'embedment'

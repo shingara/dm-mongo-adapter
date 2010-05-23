@@ -37,7 +37,7 @@ module DataMapper
       # @api semipublic
       def read(query)
         with_collection(query.model) do |collection|
-          Query.new(collection, query).read
+          load_retrieved_fields!(Query.new(collection, query).read, query.model)
         end
       end
 
@@ -120,6 +120,20 @@ module DataMapper
         resource.model.key(name).map{ |key| [key.field, key.dump(resource.__send__(key.name))] }.to_hash
       end
 
+      # TODO: document
+      def load_retrieved_fields!(fields, model)
+        fields.each do |attributes|
+          if discriminator = model.properties.discriminator
+            attributes[discriminator.field] = Class.from_mongo(attributes[discriminator.field])
+          end
+
+          (discriminator ? attributes.except(discriminator.field) : attributes).each do |key, value|
+            attributes[key] = load_field_value(value)
+          end
+        end
+        fields
+      end
+
       # Retrieves all of a records attributes and returns them as a Hash.
       #
       # The resulting hash can then be used with the Mongo library for
@@ -152,7 +166,7 @@ module DataMapper
         model = record.model
 
         model.properties.each do |property|
-          attributes[property.field] = property.dump(property.get(record))
+          attributes[property.field] = dump_field_value(property.dump(property.get(record)))
         end
 
         if model.respond_to?(:embedments)
@@ -177,13 +191,25 @@ module DataMapper
         record.each do |key, value|
           case key
             when DataMapper::Property
-              attributes[key.field] = key.custom? ? key.dump(value) : value
+              attributes[key.field] = dump_field_value(key.dump(value))
             when Embedments::Relationship
               attributes[key.storage_name] = attributes_as_fields(value)
             end
         end
 
         attributes
+      end
+
+      # TODO: document
+      def dump_field_value(value)
+        return nil if value.nil?
+        value.class.to_mongo(value)
+      end
+
+      # TODO: document
+      def load_field_value(value)
+        return nil if value.nil?
+        value.class.from_mongo(value)
       end
 
       # Runs the given block within the context of a Mongo collection.
