@@ -23,9 +23,9 @@ module DataMapper
       # @api public
       def property(name, type, options = {})
         if Array == type
-          type = DataMapper::Mongo::Types::EmbeddedArray
+          type = DataMapper::Mongo::Property::Array
         elsif Hash == type
-          type = DataMapper::Mongo::Types::EmbeddedHash
+          type = DataMapper::Mongo::Property::Hash
         elsif DateTime == type
           type = DataMapper::Mongo::Types::DateTime
         elsif Date == type
