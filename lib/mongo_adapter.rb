@@ -1,8 +1,3 @@
-if defined?(gem)
-  gem 'dm-core', '~> 0.10.2'
-  gem 'mongo', '~> 0.18'
-end
-
 require 'dm-core'
 require 'dm-aggregates'
 require 'mongo'
@@ -12,10 +7,10 @@ dir = Pathname(__FILE__).dirname.expand_path / 'mongo_adapter'
 require dir / 'query'
 require dir / 'query' / 'java_script'
 require dir / 'conditions'
+require dir / 'property' / 'object_id'
 require dir / 'types' / 'discriminator'
 require dir / 'types' / 'date_time'
 require dir / 'types' / 'date'
-require dir / 'types' / 'object_id'
 require dir / 'types' / 'db_ref'
 require dir / 'types' / 'objects'
 
