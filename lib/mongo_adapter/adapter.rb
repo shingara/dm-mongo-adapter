@@ -1,6 +1,8 @@
 module DataMapper
   module Mongo
     class Adapter < DataMapper::Adapters::AbstractAdapter
+      include DataMapper::Mongo::Aggregates
+
       class ConnectionError < StandardError; end
 
       # Persists one or more new resources
