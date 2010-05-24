@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Piotr Solnica"]
-  s.date = %q{2010-05-23}
+  s.date = %q{2010-05-24}
   s.default_executable = %q{console}
   s.email = %q{piotr.solnica@gmail.com}
   s.executables = ["console"]
@@ -40,15 +40,17 @@ Gem::Specification.new do |s|
      "lib/mongo_adapter/model.rb",
      "lib/mongo_adapter/model/embedment.rb",
      "lib/mongo_adapter/modifier.rb",
+     "lib/mongo_adapter/property/array.rb",
+     "lib/mongo_adapter/property/db_ref.rb",
+     "lib/mongo_adapter/property/hash.rb",
+     "lib/mongo_adapter/property/object_id.rb",
      "lib/mongo_adapter/query.rb",
      "lib/mongo_adapter/query/java_script.rb",
      "lib/mongo_adapter/resource.rb",
-     "lib/mongo_adapter/types/date.rb",
-     "lib/mongo_adapter/types/date_time.rb",
-     "lib/mongo_adapter/types/db_ref.rb",
-     "lib/mongo_adapter/types/discriminator.rb",
-     "lib/mongo_adapter/types/object_id.rb",
-     "lib/mongo_adapter/types/objects.rb",
+     "lib/mongo_adapter/support/class.rb",
+     "lib/mongo_adapter/support/date.rb",
+     "lib/mongo_adapter/support/date_time.rb",
+     "lib/mongo_adapter/support/object.rb",
      "script/performance.rb",
      "spec/legacy/README",
      "spec/legacy/adapter_shared_spec.rb",
@@ -88,34 +90,34 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/solnic/dm-mongo-adapter}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{MongoDB DataMapper Adapter}
   s.test_files = [
     "spec/semipublic/model/embedment_spec.rb",
      "spec/semipublic/resource_spec.rb",
      "spec/semipublic/embedded_model_spec.rb",
-     "spec/spec_helper.rb",
-     "spec/legacy/sti_spec.rb",
-     "spec/legacy/property_spec.rb",
-     "spec/legacy/modifier_spec.rb",
-     "spec/legacy/adapter_spec.rb",
-     "spec/legacy/spec_helper.rb",
-     "spec/legacy/embedments_spec.rb",
-     "spec/legacy/adapter_shared_spec.rb",
-     "spec/legacy/associations_spec.rb",
-     "spec/legacy/embedded_resource_spec.rb",
+     "spec/public/types/discriminator_spec.rb",
+     "spec/public/types/df_ref_spec.rb",
+     "spec/public/types/embedded_hash_spec.rb",
+     "spec/public/types/object_id_spec.rb",
+     "spec/public/types/embedded_array_spec.rb",
+     "spec/public/model/embedment_spec.rb",
+     "spec/public/resource_spec.rb",
+     "spec/public/shared/object_id_shared_spec.rb",
+     "spec/public/shared/model_embedments_spec.rb",
+     "spec/public/embedded_resource_spec.rb",
      "spec/public/embedded_collection_spec.rb",
      "spec/public/model_spec.rb",
-     "spec/public/model/embedment_spec.rb",
-     "spec/public/shared/model_embedments_spec.rb",
-     "spec/public/shared/object_id_shared_spec.rb",
-     "spec/public/resource_spec.rb",
-     "spec/public/types/discriminator_spec.rb",
-     "spec/public/types/embedded_hash_spec.rb",
-     "spec/public/types/embedded_array_spec.rb",
-     "spec/public/types/df_ref_spec.rb",
-     "spec/public/types/object_id_spec.rb",
-     "spec/public/embedded_resource_spec.rb",
+     "spec/legacy/property_spec.rb",
+     "spec/legacy/associations_spec.rb",
+     "spec/legacy/modifier_spec.rb",
+     "spec/legacy/adapter_shared_spec.rb",
+     "spec/legacy/embedded_resource_spec.rb",
+     "spec/legacy/sti_spec.rb",
+     "spec/legacy/embedments_spec.rb",
+     "spec/legacy/adapter_spec.rb",
+     "spec/legacy/spec_helper.rb",
+     "spec/spec_helper.rb",
      "spec/lib/cleanup_models.rb",
      "spec/lib/raw_connections.rb"
   ]
@@ -124,7 +126,7 @@ Gem::Specification.new do |s|
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<activesupport>, ["~> 3.0.0.beta3"])
       s.add_runtime_dependency(%q<dm-core>, ["~> 1.0.0"])
       s.add_runtime_dependency(%q<dm-aggregates>, ["~> 1.0.0"])
