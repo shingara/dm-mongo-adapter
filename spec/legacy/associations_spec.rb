@@ -46,22 +46,18 @@ describe "associations" do
     end
 
     it "should set parent object _id in the db ref" do
-      pending "bug in edge dm-core causes an infinite loop here" do
-        lambda {
-          @john.group = @group
-          @john.save
-        }.should_not raise_error
+      lambda {
+        @john.group = @group
+        @john.save
+      }.should_not raise_error
 
-        @john.group_id.should eql(@group.id)
-      end
+      @john.group_id.should eql(@group.id)
     end
 
     it "should fetch parent object" do
       user = User.create(:name => 'jane')
-      pending "bug in edge dm-core causes an infinite loop here" do
-        user.group_id = @group.id
-        user.group.should eql(@group)
-      end
+      user.group_id = @group.id
+      user.group.should eql(@group)
     end
 
     it "should work with SEL" do
