@@ -17,7 +17,7 @@ module DataMapper
       class ObjectID < DataMapper::Property::Object
         include DataMapper::Property::PassThroughLoadDump
 
-        primitive ::BSON::ObjectID
+        primitive ::BSON::ObjectId
         key true
         field "_id"
         required false
@@ -30,7 +30,7 @@ module DataMapper
         def typecast_to_primitive(value)
           case value
           when ::String
-            ::BSON::ObjectID.from_string(value)
+            ::BSON::ObjectId.from_string(value)
           else
             raise ArgumentError.new('+value+ must String')
           end
