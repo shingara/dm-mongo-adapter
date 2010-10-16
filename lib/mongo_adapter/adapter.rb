@@ -2,6 +2,7 @@ module DataMapper
   module Mongo
     class Adapter < DataMapper::Adapters::AbstractAdapter
       include DataMapper::Mongo::Aggregates
+      include Migrations
 
       class ConnectionError < StandardError; end
 

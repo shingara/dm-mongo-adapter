@@ -18,6 +18,7 @@ require dir / 'support' / 'date'
 require dir / 'support' / 'date_time'
 require dir / 'support' / 'object'
 
+require dir / 'migrations'
 require dir / 'model'
 require dir / 'resource'
 require dir / 'migrations'

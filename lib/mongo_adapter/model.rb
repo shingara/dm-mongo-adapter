@@ -1,6 +1,8 @@
 module DataMapper
   module Mongo
     module Model
+      include Migrations::Model
+
       private
 
       # @api private

@@ -1,28 +1,8 @@
 require 'dm-migrations/auto_migration'
 
 module DataMapper
-  module Migrations
-    module SingletonMethods
-      private
-      
-      def repository_execute(method, repository_name)
-        DataMapper::Model.descendants.each do |model|
-          model.send(method, repository_name || model.default_repository_name)
-        end
-      end
-    end
-  end
-
   module Mongo
     module Migrations
-      def self.included(base)  
-        DataMapper.extend(DataMapper::Migrations::SingletonMethods)
- 
-        [ :Repository, :Model ].each do |name|
-          DataMapper.const_get(name).send(:include, DataMapper::Migrations.const_get(name))
-        end
-      end
-
       def storage_exists?(storage_name)
         database.collections.map(&:name).include?(storage_name)
       end
@@ -40,8 +20,20 @@ module DataMapper
         database.drop_collection(model.storage_name)
       end
 
-     end
+      module Model
+        def auto_migrate!(repository_name = self.repository_name)
+          adapter = repository(repository_name).adapter
+
+          return unless adapter.kind_of?(Mongo::Adapter)
+
+          adapter.destroy_model_storage(self)
+          adapter.create_model_storage(self)
+        end
+
+        def auto_upgrade!(repository_name = self.repository_name)
+          # noop
+        end
+      end
+    end
   end
 end
-
-DataMapper::Mongo.send(:include, DataMapper::Mongo::Migrations)
