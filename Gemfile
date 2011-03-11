@@ -16,9 +16,9 @@ end
 group :development do
   gem 'rake'
   gem 'rcov'
-  gem 'rspec', '~> 1.3'
-  gem 'jeweler'
-  gem 'yard',  '~> 0.5'
+  gem 'rspec',   '~> 1.3'
+  gem 'jeweler', '~> 1.5.1'
+  gem 'yard',    '~> 0.5'
 end
 
 group :quality do
