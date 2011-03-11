@@ -132,10 +132,12 @@ module DataMapper
             attributes[discriminator.field] = Class.from_mongo(attributes[discriminator.field])
           end
 
-          (discriminator ? attributes.except(discriminator.field) : attributes).each do |key, value|
+          attributes.each do |key, value|
+            next if discriminator && key == discriminator
             attributes[key] = load_field_value(value)
           end
         end
+
         fields
       end
 

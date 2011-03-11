@@ -6,6 +6,6 @@ class Class
 
   # @api public
   def self.from_mongo(value)
-    ActiveSupport::Inflector.classify(value)
+    DataMapper::Inflector.classify(value)
   end
 end # Class
