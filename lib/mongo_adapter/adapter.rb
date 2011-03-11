@@ -259,7 +259,7 @@ module DataMapper
       #
       # @api semipublic
       def connection
-        @connection ||= ::Mongo::Connection.new(*@options.values_at(:host, :port), :slave_ok => true)
+        @connection ||= ::Mongo::Connection.new(@options[:host], @options[:port], :slave_ok => true)
       end
     end # Adapter
   end # Mongo

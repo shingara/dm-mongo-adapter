@@ -35,7 +35,7 @@ module DataMapper
       # @api public
       def unset(*args)
         new_args = {}
-        
+
         args.each do |arg|
           new_args[arg] = 1
         end

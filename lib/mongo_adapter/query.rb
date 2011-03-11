@@ -81,7 +81,7 @@ module DataMapper
 
           keys = keys - initial.keys
         end
-        
+
         @collection.group(keys, @statements, initial, reduce, finalize).map do |records|
           records.to_mash.symbolize_keys.only(*property_names)
         end
@@ -93,7 +93,7 @@ module DataMapper
       # @api private
       def setup_conditions_and_options
         @options = {}
-        
+
         @options[:limit] = @query.limit  if @query.limit
         @options[:skip]  = @query.offset if @query.offset
         @options[:sort]  = sort_statement(@query.order) unless @query.order.nil?
@@ -168,33 +168,33 @@ module DataMapper
       def
         update_statements(comparison, field, affirmative = true)
         value = if comparison.value.kind_of?(Array)
-          comparison.value.map { |value| value.class.to_mongo(value) }
-        else
-          comparison.value.class.to_mongo(comparison.value)
-        end
+                  comparison.value.map { |value| value.class.to_mongo(value) }
+                else
+                  comparison.value.class.to_mongo(comparison.value)
+                end
 
         operator = if affirmative
-          case comparison
-            when EqualToComparison              then value
-            when GreaterThanComparison          then {'$gt'  => value}
-            when LessThanComparison             then {'$lt'  => value}
-            when GreaterThanOrEqualToComparison then {'$gte' => value}
-            when LessThanOrEqualToComparison    then {'$lte' => value}
-            when InclusionComparison            then inclusion_comparison_operator(comparison, value)
-            when RegexpComparison               then value
-            when LikeComparison                 then comparison.send(:expected)
-          else
-            raise NotImplementedError
-          end
-        else
-          case comparison
-            when EqualToComparison              then {'$ne'  => value}
-            when InclusionComparison            then {'$nin' => value}
-            when RegexpComparison               then {'$not' => value}
-          else
-            raise NotImplementedError
-          end
-        end
+                     case comparison
+                     when EqualToComparison              then value
+                     when GreaterThanComparison          then {'$gt'  => value}
+                     when LessThanComparison             then {'$lt'  => value}
+                     when GreaterThanOrEqualToComparison then {'$gte' => value}
+                     when LessThanOrEqualToComparison    then {'$lte' => value}
+                     when InclusionComparison            then inclusion_comparison_operator(comparison, value)
+                     when RegexpComparison               then value
+                     when LikeComparison                 then comparison.send(:expected)
+                     else
+                       raise NotImplementedError
+                     end
+                   else
+                     case comparison
+                     when EqualToComparison              then {'$ne'  => value}
+                     when InclusionComparison            then {'$nin' => value}
+                     when RegexpComparison               then {'$not' => value}
+                     else
+                       raise NotImplementedError
+                     end
+                   end
 
         operator.is_a?(Hash) ?
           (@statements[field.to_sym] ||= {}).merge!(operator) : @statements[field.to_sym] = operator
