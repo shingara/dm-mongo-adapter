@@ -1,7 +1,7 @@
 class DateTime
   # @api public
   def self.to_mongo(value)
-    value.to_time.utc
+    Time.new(value.year, value.month. value.day, value.minutes, value.seconds).utc
   end
 
   # @api public

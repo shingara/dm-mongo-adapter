@@ -32,7 +32,8 @@ describe "Property" do
       user = User.get(_id)
 
       user.date_time_field.class.should be(DateTime)
-      user.date_time_field.to_time.to_i.should == dt_now.to_time.to_i
+
+      Time.parse(user.date_time_field.to_s).to_i.should == Time.parse(dt_now.to_s).to_i
     end
   end
 
@@ -43,7 +44,7 @@ describe "Property" do
       _id = $db.collection('users').insert(:type => 'User', :date_field => Time.parse(today.to_s))
 
       user = User.get(_id)
-      
+
       user.date_field.class.should be(Date)
       Time.parse(user.date_field.to_s).should == Time.parse(today.to_s)
     end
