@@ -1,5 +1,4 @@
 share_examples_for 'An ObjectID Type' do
-
   describe '.load' do
     it 'should return nil when given nil' do
       @type_class.load(nil, nil).should be_nil
@@ -52,5 +51,4 @@ share_examples_for 'An ObjectID Type' do
       end
     end
   end
-
 end

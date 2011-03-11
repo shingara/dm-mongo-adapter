@@ -1,5 +1,3 @@
-require 'active_support/core_ext/hash/keys'
-
 module DataMapper
   module Mongo
     class Property
@@ -18,7 +16,7 @@ module DataMapper
           when NilClass
             nil
           when ::Hash
-            value.symbolize_keys
+            DataMapper::Ext::Hash.to_mash(value).symbolize_keys
           when ::Array
             value.empty? ? {} : {value.first.to_sym => value.last}
           end

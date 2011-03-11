@@ -120,7 +120,9 @@ module DataMapper
       #
       # @api private
       def key(resource)
-        resource.model.key(name).map{ |key| [key.field, key.dump(resource.__send__(key.name))] }.to_hash
+        DataMapper::Ext::Array.to_hash(resource.model.key(name).map do |key| 
+          [ key.field, key.dump(resource.__send__(key.name)) ]
+        end)
       end
 
       # TODO: document
@@ -159,7 +161,9 @@ module DataMapper
             attributes_from_properties_hash(record)
           end
 
-        attributes.except('_id') unless attributes.nil?
+        attributes.delete('_id') unless attributes.nil?
+
+        attributes
       end
 
       # TODO: document
