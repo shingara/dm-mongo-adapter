@@ -1,11 +1,13 @@
 source 'http://rubygems.org'
 
 group :runtime do
+  MONGO_VERSION = '~> 1.2.4'
+
   # MongoDB driver
-  gem 'mongo',     '~> 1.1'
+  gem 'mongo', MONGO_VERSION
 
   platforms :mri_18, :mri_19 do
-    gem 'bson_ext',  '~> 1.1'
+    gem 'bson_ext', MONGO_VERSION
   end
 
   # DataMapper libs
