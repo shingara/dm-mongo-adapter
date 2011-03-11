@@ -3,7 +3,10 @@ source 'http://rubygems.org'
 group :runtime do
   # MongoDB driver
   gem 'mongo',     '~> 1.1'
-  gem 'bson_ext',  '~> 1.1'
+
+  platforms :mri_18, :mri_19 do
+    gem 'bson_ext',  '~> 1.1'
+  end
 
   # DataMapper libs
   DM_VERSION = '~> 1.1.0.rc3'
