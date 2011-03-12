@@ -14,7 +14,7 @@ module DataMapper
       # @see http://www.mongodb.org/display/DOCS/Object+IDs
       #
       # @api public
-      class ObjectID < DataMapper::Property::Object
+      class ObjectId < DataMapper::Property::Object
         include DataMapper::Property::PassThroughLoadDump
 
         primitive ::BSON::ObjectId
@@ -22,7 +22,7 @@ module DataMapper
         field "_id"
         required false
 
-        # Returns the ObjectID as a string
+        # Returns the ObjectId as a string
         #
         # @return [String]
         #
@@ -41,7 +41,7 @@ module DataMapper
           value.nil? || primitive?(value)
         end
 
-      end # ObjectID
+      end # ObjectId
     end # Property
   end # Mongo
 end # DataMapper

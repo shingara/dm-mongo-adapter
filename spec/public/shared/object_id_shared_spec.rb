@@ -1,52 +1,31 @@
-share_examples_for 'An ObjectID Type' do
-  describe '.load' do
+share_examples_for 'An ObjectId Type' do
+  describe '#typecast' do
     it 'should return nil when given nil' do
-      @type_class.load(nil, nil).should be_nil
+      @property.typecast(nil).should be_nil
     end
 
-    it 'should return the argument when given a string' do
-      loaded = @type_class.load('avalue', nil)
-      loaded.should == 'avalue'
+    it 'should return BSON::ObjectId when given a valid string' do
+      value = '4d7b57618f9f1f12bd000002'
+      loaded = @property.typecast(value)
+      loaded.should == ::BSON::ObjectId.from_string(value)
     end
 
-    it 'should return a string when given a BSON::ObjectID' do
-      mongo_id = ::BSON::ObjectID.new
-      loaded = @type_class.load(mongo_id, nil)
-      loaded.should be_kind_of(String)
-      loaded.should == mongo_id.to_s
+    it 'should raise BSON::InvalidObjectId when give an invalid string' do
+      lambda {
+        @property.typecast('#invalid#')
+      }.should raise_error(::BSON::InvalidObjectId)
+    end
+
+    it 'should return the argument when given a BSON::ObjectId' do
+      mongo_id = ::BSON::ObjectId.new
+      loaded = @property.typecast(mongo_id)
+      loaded.should be(mongo_id)
     end
 
     it 'should raise an error when given anything else' do
       [ 0, 1, Object.new, true, false, [], {} ].each do |value|
         lambda {
-          @type_class.load(value, nil)
-        }.should raise_error(ArgumentError)
-      end
-    end
-  end
-
-  describe '.dump' do
-    it 'should return nil when given nil' do
-      @type_class.dump(nil, nil).should be_nil
-    end
-
-    it 'should return a BSON::ObjectID when given a string' do
-      mongo_id = ::BSON::ObjectID.new
-      dumped = @type_class.dump(mongo_id.to_s, nil)
-      dumped.should be_kind_of(::BSON::ObjectID)
-      dumped.to_s.should == mongo_id.to_s
-    end
-
-    it 'should return the argument when given a BSON::ObjectID' do
-      mongo_id = ::BSON::ObjectID.new
-      dumped = @type_class.dump(mongo_id, nil)
-      dumped.should == mongo_id
-    end
-
-    it 'should raise an error when given anything else' do
-      [ 0, 1, Object.new, true, false, [], {} ].each do |value|
-        lambda {
-          @type_class.dump(value, nil)
+          @property.typecast(value)
         }.should raise_error(ArgumentError)
       end
     end

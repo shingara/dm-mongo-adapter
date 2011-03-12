@@ -10,7 +10,7 @@ module DataMapper
       # @see http://www.mongodb.org/display/DOCS/DB+Ref
       #
       # @api public
-      class DBRef < DataMapper::Mongo::Property::ObjectID
+      class DBRef < DataMapper::Mongo::Property::ObjectId
       end # DBRef
     end # Property
   end # Mongo
