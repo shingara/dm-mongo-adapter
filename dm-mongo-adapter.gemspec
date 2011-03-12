@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Piotr Solnica"]
-  s.date = %q{2011-03-11}
+  s.date = %q{2011-03-12}
   s.default_executable = %q{console}
   s.email = %q{piotr.solnica@gmail.com}
   s.executables = ["console"]
@@ -50,20 +50,18 @@ Gem::Specification.new do |s|
     "spec/legacy/adapter_shared_spec.rb",
     "spec/legacy/adapter_spec.rb",
     "spec/legacy/associations_spec.rb",
-    "spec/legacy/modifier_spec.rb",
     "spec/legacy/property_spec.rb",
     "spec/legacy/spec_helper.rb",
     "spec/legacy/sti_spec.rb",
     "spec/lib/cleanup_models.rb",
     "spec/lib/raw_connections.rb",
+    "spec/public/aggregates_spec.rb",
     "spec/public/model_spec.rb",
+    "spec/public/modifier_spec.rb",
+    "spec/public/properties/db_ref_spec.rb",
+    "spec/public/properties/object_id_spec.rb",
     "spec/public/resource_spec.rb",
     "spec/public/shared/object_id_shared_spec.rb",
-    "spec/public/types/df_ref_spec.rb",
-    "spec/public/types/discriminator_spec.rb",
-    "spec/public/types/embedded_array_spec.rb",
-    "spec/public/types/embedded_hash_spec.rb",
-    "spec/public/types/object_id_spec.rb",
     "spec/rcov.opts",
     "spec/spec.opts",
     "spec/spec_helper.rb",
@@ -79,20 +77,18 @@ Gem::Specification.new do |s|
     "spec/legacy/adapter_shared_spec.rb",
     "spec/legacy/adapter_spec.rb",
     "spec/legacy/associations_spec.rb",
-    "spec/legacy/modifier_spec.rb",
     "spec/legacy/property_spec.rb",
     "spec/legacy/spec_helper.rb",
     "spec/legacy/sti_spec.rb",
     "spec/lib/cleanup_models.rb",
     "spec/lib/raw_connections.rb",
+    "spec/public/aggregates_spec.rb",
     "spec/public/model_spec.rb",
+    "spec/public/modifier_spec.rb",
+    "spec/public/properties/db_ref_spec.rb",
+    "spec/public/properties/object_id_spec.rb",
     "spec/public/resource_spec.rb",
     "spec/public/shared/object_id_shared_spec.rb",
-    "spec/public/types/df_ref_spec.rb",
-    "spec/public/types/discriminator_spec.rb",
-    "spec/public/types/embedded_array_spec.rb",
-    "spec/public/types/embedded_hash_spec.rb",
-    "spec/public/types/object_id_spec.rb",
     "spec/spec_helper.rb"
   ]
 
