@@ -216,7 +216,7 @@ module DataMapper
           {'$gte' => value.first, value.exclude_end? ? '$lt' : '$lte' => value.last}
         elsif comparison.kind_of?(InclusionComparison) && value.size == 1
           value.first
-        elsif comparison.subject.type == DataMapper::Mongo::Property::Array
+        elsif comparison.subject.kind_of?(DataMapper::Mongo::Property::Array)
           value
         else
           {'$in'  => value}
