@@ -7,7 +7,7 @@ describe "Property" do
     class ::User
       include DataMapper::Mongo::Resource
 
-      property :id, ObjectID
+      property :id, ObjectId
       property :date_time_field, DateTime
       property :date_field, Date
       property :type, Discriminator

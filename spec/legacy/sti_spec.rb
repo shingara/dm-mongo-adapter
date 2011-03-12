@@ -6,7 +6,7 @@ describe "Single Table Inheritance" do
     class ::Person
       include DataMapper::Mongo::Resource
 
-      property :id, ObjectID
+      property :id, ObjectId
       property :name, String
       property :job, String
       property :type, Discriminator

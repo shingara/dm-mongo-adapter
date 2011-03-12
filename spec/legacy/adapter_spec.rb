@@ -9,7 +9,7 @@ describe DataMapper::Adapters::MongoAdapter do
     class ::Heffalump
       include DataMapper::Mongo::Resource
 
-      property :id,        ObjectID
+      property :id,        ObjectId
       property :color,     String
       property :num_spots, Integer
       property :striped,   Boolean
@@ -113,7 +113,7 @@ describe DataMapper::Adapters::MongoAdapter do
       class ::Zoo
         include DataMapper::Mongo::Resource
 
-        property :id,      ObjectID
+        property :id,      ObjectId
         property :animals, Array
         property :address, Hash
       end

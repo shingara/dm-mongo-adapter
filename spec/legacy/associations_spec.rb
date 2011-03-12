@@ -7,7 +7,7 @@ describe "associations" do
     class ::User
       include DataMapper::Mongo::Resource
 
-      property :id, ObjectID
+      property :id, ObjectId
       property :group_id, DBRef
       property :name, String
       property :age, Integer
@@ -16,14 +16,14 @@ describe "associations" do
     class ::Group
       include DataMapper::Mongo::Resource
 
-      property :id, ObjectID
+      property :id, ObjectId
       property :name, String
     end
 
     class ::Friend
       include DataMapper::Mongo::Resource
 
-      property :id, ObjectID
+      property :id, ObjectId
       property :name, String
     end
 
