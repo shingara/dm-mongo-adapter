@@ -82,7 +82,12 @@ module DataMapper
           keys = keys - initial.keys
         end
 
-        @collection.group(keys, @statements, initial, reduce, finalize).map do |records|
+        opts = {
+          :key => keys, :cond => @statements, :initial => initial,
+          :reduce => reduce, :finalize => finalize
+        }
+
+        @collection.group(opts).map do |records|
           DataMapper::Ext::Hash.to_mash(records).symbolize_keys
         end
       end
