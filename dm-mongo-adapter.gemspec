@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Piotr Solnica"]
-  s.date = %q{2011-03-12}
+  s.date = %q{2011-03-19}
   s.default_executable = %q{console}
   s.email = %q{piotr.solnica@gmail.com}
   s.executables = ["console"]
@@ -71,7 +71,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{http://github.com/solnic/dm-mongo-adapter}
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.6.0}
+  s.rubygems_version = %q{1.6.2}
   s.summary = %q{MongoDB DataMapper Adapter}
   s.test_files = [
     "spec/legacy/adapter_shared_spec.rb",
@@ -98,9 +98,9 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<mongo>, ["~> 1.2.4"])
       s.add_runtime_dependency(%q<bson_ext>, ["~> 1.2.4"])
-      s.add_runtime_dependency(%q<dm-core>, ["~> 1.1.0.rc3"])
-      s.add_runtime_dependency(%q<dm-aggregates>, ["~> 1.1.0.rc3"])
-      s.add_runtime_dependency(%q<dm-migrations>, ["~> 1.1.0.rc3"])
+      s.add_runtime_dependency(%q<dm-core>, ["~> 1.1.0"])
+      s.add_runtime_dependency(%q<dm-aggregates>, ["~> 1.1.0"])
+      s.add_runtime_dependency(%q<dm-migrations>, ["~> 1.1.0"])
       s.add_development_dependency(%q<rake>, [">= 0"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
       s.add_development_dependency(%q<rspec>, ["~> 1.3"])
@@ -109,9 +109,9 @@ Gem::Specification.new do |s|
     else
       s.add_dependency(%q<mongo>, ["~> 1.2.4"])
       s.add_dependency(%q<bson_ext>, ["~> 1.2.4"])
-      s.add_dependency(%q<dm-core>, ["~> 1.1.0.rc3"])
-      s.add_dependency(%q<dm-aggregates>, ["~> 1.1.0.rc3"])
-      s.add_dependency(%q<dm-migrations>, ["~> 1.1.0.rc3"])
+      s.add_dependency(%q<dm-core>, ["~> 1.1.0"])
+      s.add_dependency(%q<dm-aggregates>, ["~> 1.1.0"])
+      s.add_dependency(%q<dm-migrations>, ["~> 1.1.0"])
       s.add_dependency(%q<rake>, [">= 0"])
       s.add_dependency(%q<rcov>, [">= 0"])
       s.add_dependency(%q<rspec>, ["~> 1.3"])
@@ -121,9 +121,9 @@ Gem::Specification.new do |s|
   else
     s.add_dependency(%q<mongo>, ["~> 1.2.4"])
     s.add_dependency(%q<bson_ext>, ["~> 1.2.4"])
-    s.add_dependency(%q<dm-core>, ["~> 1.1.0.rc3"])
-    s.add_dependency(%q<dm-aggregates>, ["~> 1.1.0.rc3"])
-    s.add_dependency(%q<dm-migrations>, ["~> 1.1.0.rc3"])
+    s.add_dependency(%q<dm-core>, ["~> 1.1.0"])
+    s.add_dependency(%q<dm-aggregates>, ["~> 1.1.0"])
+    s.add_dependency(%q<dm-migrations>, ["~> 1.1.0"])
     s.add_dependency(%q<rake>, [">= 0"])
     s.add_dependency(%q<rcov>, [">= 0"])
     s.add_dependency(%q<rspec>, ["~> 1.3"])
