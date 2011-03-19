@@ -6,10 +6,6 @@ group :runtime do
   # MongoDB driver
   gem 'mongo', MONGO_VERSION
 
-  platforms :mri_18, :mri_19 do
-    gem 'bson_ext', MONGO_VERSION
-  end
-
   # DataMapper libs
   DM_VERSION = '~> 1.1.0'
 
