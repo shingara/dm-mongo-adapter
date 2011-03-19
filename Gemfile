@@ -11,7 +11,7 @@ group :runtime do
   end
 
   # DataMapper libs
-  DM_VERSION = '~> 1.1.0.rc3'
+  DM_VERSION = '~> 1.1.0'
 
   gem 'dm-core',       DM_VERSION
   gem 'dm-aggregates', DM_VERSION
