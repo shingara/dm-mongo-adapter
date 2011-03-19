@@ -40,7 +40,7 @@ Ruby gems
   class Student
     include DataMapper::Mongo::Resource
 
-    property :id, ObjectID
+    property :id, ObjectId
     property :name, String
     property :age, Integer
   end
@@ -48,7 +48,7 @@ Ruby gems
   class Course
     include DataMapper::Mongo::Resource
 
-    property :id, ObjectID
+    property :id, ObjectId
     property :name, String
   end
 
@@ -63,7 +63,7 @@ Ruby gems
   class Zoo
     include DataMapper::Mongo::Resource
 
-    property :id, ObjectID
+    property :id, ObjectId
     property :opening_hours, Hash
     property :animals, Array
   end
