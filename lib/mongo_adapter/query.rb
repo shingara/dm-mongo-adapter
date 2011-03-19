@@ -83,8 +83,7 @@ module DataMapper
         end
 
         @collection.group(keys, @statements, initial, reduce, finalize).map do |records|
-          DataMapper::Ext::Hash.to_mash(
-            DataMapper::Ext::Hash.only(records, *property_names)).symbolize_keys
+          DataMapper::Ext::Hash.to_mash(records).symbolize_keys
         end
       end
 

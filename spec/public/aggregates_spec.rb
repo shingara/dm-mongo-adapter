@@ -36,14 +36,12 @@ describe DataMapper::Mongo::Model do
     describe "without operators" do
       describe "without conditions" do
         it "should return array of hashes based on all records" do
-          result = Student.aggregate(:school, :score)
+          result = Student.aggregate(:school, :score).to_a
 
-          pending do
-            result.should == [
-              {:school => "School 1", :score => 3.0},
-              {:school => "School 2", :score => 3.5},
-              {:school => "School 2", :score => 4.5}]
-          end
+          result.should == [
+            { :school => "School 1", :score => 3.0 },
+            { :school => "School 2", :score => 3.5 },
+            { :school => "School 2", :score => 4.5 }]
         end
       end
 
@@ -51,11 +49,9 @@ describe DataMapper::Mongo::Model do
         it "should return array of hashes based on records that match conditions" do
           result = Student.aggregate(:school, :score, :score.gt => 3.0)
 
-          pending do
-            result.should == [
-              {:school => "School 2", :score => 3.5},
-              {:school => "School 2", :score => 4.5}]
-          end
+          result.should == [
+            { :school => "School 2", :score => 3.5 },
+            { :school => "School 2", :score => 4.5 }]
         end
       end
     end
@@ -69,13 +65,11 @@ describe DataMapper::Mongo::Model do
 
           school_1, school_2 = result
 
-          pending do
-            school_1[:school].should == 'School 1'
-            school_2[:school].should == 'School 2'
+          school_1[:school].should == 'School 1'
+          school_2[:school].should == 'School 2'
 
-            school_1[:score].should == 1
-            school_2[:score].should   == 2
-          end
+          school_1[:score].should == 1
+          school_2[:score].should == 2
         end
       end
 
@@ -83,11 +77,9 @@ describe DataMapper::Mongo::Model do
         it "should get correct results based on records that match conditions" do
           result = Student.aggregate(:school, :score.count, :name => /two|three/i)
 
-          pending do
-            result.size.should == 1
-            result.first[:score].should == 2
-            result.first[:school].should == 'School 2'
-          end
+          result.size.should == 1
+          result.first[:score].should == 2
+          result.first[:school].should == 'School 2'
         end
       end
     end
@@ -104,13 +96,11 @@ describe DataMapper::Mongo::Model do
 
           school_1, school_2 = result
 
-          pending do
-            school_1[:school].should == 'School 1'
-            school_2[:school].should == 'School 2'
+          school_1[:school].should == 'School 1'
+          school_2[:school].should == 'School 2'
 
-            school_1[:score].should == 3.0
-            school_2[:score].should == 4.0
-          end
+          school_1[:score].should == 3.0
+          school_2[:score].should == 4.0
         end
       end
     end
@@ -127,13 +117,11 @@ describe DataMapper::Mongo::Model do
 
           school_1, school_2 = result
 
-          pending do
-            school_1[:school].should == 'School 1'
-            school_2[:school].should == 'School 2'
+          school_1[:school].should == 'School 1'
+          school_2[:school].should == 'School 2'
 
-            school_1[:score].should == 3.0
-            school_2[:score].should == 3.5
-          end
+          school_1[:score].should == 3.0
+          school_2[:score].should == 3.5
         end
       end
     end
@@ -150,13 +138,11 @@ describe DataMapper::Mongo::Model do
 
           school_1, school_2 = result
 
-          pending do
-            school_1[:school].should == 'School 1'
-            school_2[:school].should == 'School 2'
+          school_1[:school].should == 'School 1'
+          school_2[:school].should == 'School 2'
 
-            school_1[:score].should == 3.0
-            school_2[:score].should == 4.5
-          end
+          school_1[:score].should == 3.0
+          school_2[:score].should == 4.5
         end
       end
     end
@@ -173,13 +159,11 @@ describe DataMapper::Mongo::Model do
 
           school_1, school_2 = result
 
-          pending do
-            school_1[:school].should == 'School 1'
-            school_2[:school].should == 'School 2'
+          school_1[:school].should == 'School 1'
+          school_2[:school].should == 'School 2'
 
-            school_1[:score].should == 3.0
-            school_2[:score].should == 8.0
-          end
+          school_1[:score].should == 3.0
+          school_2[:score].should == 8.0
         end
       end
     end
