@@ -16,7 +16,7 @@ end
 
 group :development do
   gem 'rake'
-  gem 'rcov'
+  gem 'rcov',    '~> 0.9.9', :platforms => [ :mri_18 ]
   gem 'rspec',   '~> 1.3'
   gem 'jeweler', '~> 1.5.1'
   gem 'yard',    '~> 0.5'

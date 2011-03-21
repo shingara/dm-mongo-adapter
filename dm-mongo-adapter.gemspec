@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Piotr Solnica"]
-  s.date = %q{2011-03-19}
+  s.date = %q{2011-03-20}
   s.default_executable = %q{console}
   s.email = %q{piotr.solnica@gmail.com}
   s.executables = ["console"]
@@ -101,7 +101,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<dm-aggregates>, ["~> 1.1.0"])
       s.add_runtime_dependency(%q<dm-migrations>, ["~> 1.1.0"])
       s.add_development_dependency(%q<rake>, [">= 0"])
-      s.add_development_dependency(%q<rcov>, [">= 0"])
+      s.add_development_dependency(%q<rcov>, ["~> 0.9.9"])
       s.add_development_dependency(%q<rspec>, ["~> 1.3"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.5.1"])
       s.add_development_dependency(%q<yard>, ["~> 0.5"])
@@ -111,7 +111,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<dm-aggregates>, ["~> 1.1.0"])
       s.add_dependency(%q<dm-migrations>, ["~> 1.1.0"])
       s.add_dependency(%q<rake>, [">= 0"])
-      s.add_dependency(%q<rcov>, [">= 0"])
+      s.add_dependency(%q<rcov>, ["~> 0.9.9"])
       s.add_dependency(%q<rspec>, ["~> 1.3"])
       s.add_dependency(%q<jeweler>, ["~> 1.5.1"])
       s.add_dependency(%q<yard>, ["~> 0.5"])
@@ -122,7 +122,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<dm-aggregates>, ["~> 1.1.0"])
     s.add_dependency(%q<dm-migrations>, ["~> 1.1.0"])
     s.add_dependency(%q<rake>, [">= 0"])
-    s.add_dependency(%q<rcov>, [">= 0"])
+    s.add_dependency(%q<rcov>, ["~> 0.9.9"])
     s.add_dependency(%q<rspec>, ["~> 1.3"])
     s.add_dependency(%q<jeweler>, ["~> 1.5.1"])
     s.add_dependency(%q<yard>, ["~> 0.5"])
