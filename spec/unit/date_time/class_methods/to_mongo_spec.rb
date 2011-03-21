@@ -16,8 +16,8 @@ describe DateTime, '.to_mongo' do
     let(:offset) { 0  }
 
     context 'and the microseconds are equal to 0' do
-      let(:usec)  { 0                                                                                     }
-      let(:value) { DateTime.new(year, month, day, hour, minute, second + usec_in_seconds, offset).freeze }
+      let(:usec)  { 0                                                                              }
+      let(:value) { DateTime.new(year, month, day, hour, minute, second + usec_in_seconds, offset) }
 
       it { should == Time.utc(year, month, day, hour, minute, second, usec) }
     end
@@ -25,8 +25,8 @@ describe DateTime, '.to_mongo' do
     # rubinius 1.2.3 has problems with fractional seconds above 59
     unless defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx' && Rubinius::VERSION <= '1.2.3'
       context 'and the microseconds are greater than 0' do
-        let(:usec)  { 1                                                                                     }
-        let(:value) { DateTime.new(year, month, day, hour, minute, second + usec_in_seconds, offset).freeze }
+        let(:usec)  { 1                                                                              }
+        let(:value) { DateTime.new(year, month, day, hour, minute, second + usec_in_seconds, offset) }
 
         it { should == Time.utc(year, month, day, hour, minute, second, usec) }
       end
@@ -38,8 +38,8 @@ describe DateTime, '.to_mongo' do
     let(:offset) { Rational(-8, 24) }
 
     context 'and the microseconds are equal to 0' do
-      let(:usec)  { 0                                                                                     }
-      let(:value) { DateTime.new(year, month, day, hour, minute, second + usec_in_seconds, offset).freeze }
+      let(:usec)  { 0                                                                              }
+      let(:value) { DateTime.new(year, month, day, hour, minute, second + usec_in_seconds, offset) }
 
       it { should == Time.utc(year, month, day, 23, minute, second, usec) }
     end
@@ -47,12 +47,11 @@ describe DateTime, '.to_mongo' do
     # rubinius 1.2.3 has problems with fractional seconds above 59
     unless defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx' && Rubinius::VERSION <= '1.2.3'
       context 'and the microseconds are greater than 0' do
-        let(:usec)  { 1                                                                                     }
-        let(:value) { DateTime.new(year, month, day, hour, minute, second + usec_in_seconds, offset).freeze }
+        let(:usec)  { 1                                                                              }
+        let(:value) { DateTime.new(year, month, day, hour, minute, second + usec_in_seconds, offset) }
 
         it { should == Time.utc(year, month, day, 23, minute, second, usec) }
       end
     end
   end
-
 end
