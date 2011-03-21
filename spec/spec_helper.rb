@@ -2,7 +2,7 @@ require 'pathname'
 require 'spec'
 
 MONGO_SPEC_ROOT = Pathname(__FILE__).dirname.expand_path
-$LOAD_PATH.unshift(MONGO_SPEC_ROOT.parent + 'lib')
+$LOAD_PATH.unshift(MONGO_SPEC_ROOT.parent.join('lib').to_s)
 
 require 'mongo_adapter'
 
