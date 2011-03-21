@@ -65,6 +65,7 @@ Gem::Specification.new do |s|
     "spec/rcov.opts",
     "spec/spec.opts",
     "spec/spec_helper.rb",
+    "spec/unit/date_time/class_methods/to_mongo_spec.rb",
     "tasks/spec.rake",
     "tasks/yard.rake",
     "tasks/yardstick.rake"
@@ -89,7 +90,8 @@ Gem::Specification.new do |s|
     "spec/public/properties/object_id_spec.rb",
     "spec/public/resource_spec.rb",
     "spec/public/shared/object_id_shared_spec.rb",
-    "spec/spec_helper.rb"
+    "spec/spec_helper.rb",
+    "spec/unit/date_time/class_methods/to_mongo_spec.rb"
   ]
 
   if s.respond_to? :specification_version then
