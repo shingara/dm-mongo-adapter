@@ -120,9 +120,11 @@ module DataMapper
       #
       # @api private
       def key(resource)
-        DataMapper::Ext::Array.to_hash(resource.model.key(name).map do |key| 
-          [ key.field, key.dump(resource.__send__(key.name)) ]
-        end)
+        Hash[
+          resource.model.key(name).map do |key|
+            [ key.field, key.dump(resource.__send__(key.name)) ]
+          end
+        ]
       end
 
       # TODO: document
