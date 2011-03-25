@@ -21,14 +21,19 @@ module DataMapper
         end
       end
 
-      # TODO: document
+      ##
+      # Decrement the property with a value define. By default a decrement is
+      # only by one
+      #
+      # @params[String] property the property you want decrement
+      # @params[Integer] value the value you want decrement. This params is
+      #   optional and define by 1 in default value
+      #
+      # @return[Boolean]
+      #   if the decrement success or not
       # @api public
-      def decrement(property, value)
-        attribute_set(property, attribute_get(property) - value)
-
-        if modifier(:inc, property => -value.abs)
-          original_attributes.clear
-        end
+      def decrement(property, value=1)
+        increment(property, -value)
       end
 
       # TODO: document

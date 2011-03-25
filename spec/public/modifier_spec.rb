@@ -51,18 +51,36 @@ describe DataMapper::Mongo::Resource do
   describe "#decrement" do
     before :all do
       @post = Post.create(:comment_count => 10)
-      #@post.decrement(:comment_count, 5)
     end
 
-    it "should update the given property with the decremented value" do
-      pending "not implemented yet" do
+    context "with 2 args" do
+      before :all do
+        @post.decrement(:comment_count, 5)
+      end
+
+      it "should update the given property with the decremented value" do
         @post.comment_count.should == 5
         Post.get(@post.id).comment_count.should == 5
       end
+
+      it "should reload the updated resource" do
+        @post.dirty?.should be_false
+      end
     end
 
-    it "should reload the updated resource" do
-      @post.dirty?.should be_false
+    context "with 1 args" do
+      before :all do
+        @post.decrement(:comment_count)
+      end
+
+      it "should update the given property with the decremented value" do
+        @post.comment_count.should == 9
+        Post.get(@post.id).comment_count.should == 9
+      end
+
+      it "should reload the updated resource" do
+        @post.dirty?.should be_false
+      end
     end
   end
 
