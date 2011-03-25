@@ -16,18 +16,35 @@ describe DataMapper::Mongo::Resource do
   describe "#increment" do
     before :all do
       @post = Post.create(:comment_count => 1)
-      #@post.increment(:comment_count, 1)
     end
 
-    it "should update the given property with the incremented value" do
-      pending "not implemented yet" do
-        @post.comment_count.should == 2
-        Post.get(@post.id).comment_count.should == 2
+    context "with 2 args" do
+      before :all do
+        @post.increment(:comment_count, 2)
+      end
+
+      it "should update the given property with the incremented value" do
+        @post.comment_count.should == 3
+        Post.get(@post.id).comment_count.should == 3
+      end
+
+      it "should reload the updated resource" do
+        @post.dirty?.should be_false
       end
     end
 
-    it "should reload the updated resource" do
-      @post.dirty?.should be_false
+    context "with 1 arg" do
+      before :all do
+        @post.increment(:comment_count)
+      end
+      it "should update the given property with the incremented by one" do
+        @post.comment_count.should == 2
+        Post.get(@post.id).comment_count.should == 2
+      end
+
+      it "should reload the updated resource" do
+        @post.dirty?.should be_false
+      end
     end
   end
 

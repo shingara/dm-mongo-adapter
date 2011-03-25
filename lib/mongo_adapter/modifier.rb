@@ -1,13 +1,23 @@
 module DataMapper
   module Mongo
     module Modifier
-      # TODO: document
+      ##
+      # Increment the property with a value define. By default an increment is
+      # only by one
+      #
+      # @params[String] property the property you want increment
+      # @params[Integer] value the value you want increment. This params is
+      #   optional and define by 1 in default value
+      #
+      # @return[Boolean]
+      #   if the increment success or not
+      #
       # @api public
-      def increment(property, value)
+      def increment(property, value=1)
         attribute_set(property, attribute_get(property) + value)
 
         if modifier(:inc, property => value)
-          original_attributes.clear
+          self.persisted_state.original_attributes.clear
         end
       end
 
