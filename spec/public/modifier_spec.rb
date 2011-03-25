@@ -101,14 +101,12 @@ describe DataMapper::Mongo::Resource do
     it "should unset the value of a property" do
       post = Post.create(:body => "This needs to be removed", :comment_count => 2)
 
-      pending "not implemented yet" do
-        post.unset(:body, :comment_count)
-        post.body.should be_nil
-        post.comment_count.should be_nil
-        fresh_post = Post.get(post.id)
-        fresh_post.body.should be_nil
-        fresh_post.comment_count.should be_nil
-      end
+      post.unset(:body, :comment_count)
+      post.body.should be_nil
+      post.comment_count.should be_nil
+      fresh_post = Post.get(post.id)
+      fresh_post.body.should be_nil
+      fresh_post.comment_count.should be_nil
     end
   end
 

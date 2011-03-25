@@ -56,6 +56,10 @@ module DataMapper
         end
 
         modifier(:unset, new_args)
+
+        args.each do |key|
+          attribute_set(key, nil)
+        end
       end
 
       # TODO: document
