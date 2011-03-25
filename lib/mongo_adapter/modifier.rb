@@ -1,24 +1,39 @@
 module DataMapper
   module Mongo
     module Modifier
-      # TODO: document
+      ##
+      # Increment the property with a value define. By default an increment is
+      # only by one
+      #
+      # @params[String] property the property you want increment
+      # @params[Integer] value the value you want increment. This params is
+      #   optional and define by 1 in default value
+      #
+      # @return[Boolean]
+      #   if the increment success or not
+      #
       # @api public
-      def increment(property, value)
+      def increment(property, value=1)
         attribute_set(property, attribute_get(property) + value)
 
         if modifier(:inc, property => value)
-          original_attributes.clear
+          self.persisted_state.original_attributes.clear
         end
       end
 
-      # TODO: document
+      ##
+      # Decrement the property with a value define. By default a decrement is
+      # only by one
+      #
+      # @params[String] property the property you want decrement
+      # @params[Integer] value the value you want decrement. This params is
+      #   optional and define by 1 in default value
+      #
+      # @return[Boolean]
+      #   if the decrement success or not
       # @api public
-      def decrement(property, value)
-        attribute_set(property, attribute_get(property) - value)
-
-        if modifier(:inc, property => -value.abs)
-          original_attributes.clear
-        end
+      def decrement(property, value=1)
+        increment(property, -value)
       end
 
       # TODO: document
@@ -41,6 +56,10 @@ module DataMapper
         end
 
         modifier(:unset, new_args)
+
+        args.each do |key|
+          attribute_set(key, nil)
+        end
       end
 
       # TODO: document

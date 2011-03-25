@@ -16,36 +16,71 @@ describe DataMapper::Mongo::Resource do
   describe "#increment" do
     before :all do
       @post = Post.create(:comment_count => 1)
-      #@post.increment(:comment_count, 1)
     end
 
-    it "should update the given property with the incremented value" do
-      pending "not implemented yet" do
-        @post.comment_count.should == 2
-        Post.get(@post.id).comment_count.should == 2
+    context "with 2 args" do
+      before :all do
+        @post.increment(:comment_count, 2)
+      end
+
+      it "should update the given property with the incremented value" do
+        @post.comment_count.should == 3
+        Post.get(@post.id).comment_count.should == 3
+      end
+
+      it "should reload the updated resource" do
+        @post.dirty?.should be_false
       end
     end
 
-    it "should reload the updated resource" do
-      @post.dirty?.should be_false
+    context "with 1 arg" do
+      before :all do
+        @post.increment(:comment_count)
+      end
+      it "should update the given property with the incremented by one" do
+        @post.comment_count.should == 2
+        Post.get(@post.id).comment_count.should == 2
+      end
+
+      it "should reload the updated resource" do
+        @post.dirty?.should be_false
+      end
     end
   end
 
   describe "#decrement" do
     before :all do
       @post = Post.create(:comment_count => 10)
-      #@post.decrement(:comment_count, 5)
     end
 
-    it "should update the given property with the decremented value" do
-      pending "not implemented yet" do
+    context "with 2 args" do
+      before :all do
+        @post.decrement(:comment_count, 5)
+      end
+
+      it "should update the given property with the decremented value" do
         @post.comment_count.should == 5
         Post.get(@post.id).comment_count.should == 5
       end
+
+      it "should reload the updated resource" do
+        @post.dirty?.should be_false
+      end
     end
 
-    it "should reload the updated resource" do
-      @post.dirty?.should be_false
+    context "with 1 args" do
+      before :all do
+        @post.decrement(:comment_count)
+      end
+
+      it "should update the given property with the decremented value" do
+        @post.comment_count.should == 9
+        Post.get(@post.id).comment_count.should == 9
+      end
+
+      it "should reload the updated resource" do
+        @post.dirty?.should be_false
+      end
     end
   end
 
@@ -66,14 +101,12 @@ describe DataMapper::Mongo::Resource do
     it "should unset the value of a property" do
       post = Post.create(:body => "This needs to be removed", :comment_count => 2)
 
-      pending "not implemented yet" do
-        post.unset(:body, :comment_count)
-        post.body.should be_nil
-        post.comment_count.should be_nil
-        fresh_post = Post.get(post.id)
-        fresh_post.body.should be_nil
-        fresh_post.comment_count.should be_nil
-      end
+      post.unset(:body, :comment_count)
+      post.body.should be_nil
+      post.comment_count.should be_nil
+      fresh_post = Post.get(post.id)
+      fresh_post.body.should be_nil
+      fresh_post.comment_count.should be_nil
     end
   end
 
