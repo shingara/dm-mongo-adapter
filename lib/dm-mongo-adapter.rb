@@ -1,6 +1,7 @@
+require 'mongo'
+
 require 'dm-core'
 require 'dm-aggregates'
-require 'mongo'
 
 dir = Pathname(__FILE__).dirname.expand_path + 'dm-mongo-adapter'
 
