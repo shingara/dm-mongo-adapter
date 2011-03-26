@@ -6,7 +6,6 @@ dir = Pathname(__FILE__).dirname.expand_path + 'dm-mongo-adapter'
 
 require dir + 'query'
 require dir + 'query' + 'java_script'
-require dir + 'conditions'
 
 require dir + 'property' + 'object_id'
 require dir + 'property' + 'db_ref'

@@ -19,7 +19,6 @@ module DataMapper
         @collection = collection
         @query      = query
         @statements = {}
-        @conditions = Conditions.new(query.conditions)
       end
 
       # Applies the query to the collection
@@ -109,7 +108,7 @@ module DataMapper
       # TODO: document
       # @api private
       def find
-        @conditions.filter_collection!(@collection.find(@statements, @options).to_a)
+        @collection.find(@statements, @options).to_a
       end
 
       # Takes a condition and returns a Mongo-compatible hash
@@ -145,7 +144,7 @@ module DataMapper
         case operation
         when NotOperation then conditions_statement(operation.first, !affirmative)
         when AndOperation then operation.each{|op| conditions_statement(op, affirmative)}
-        when OrOperation  then operation.each{|op| conditions_statement(op, affirmative)}
+        when OrOperation  then or_statement(operation, affirmative)
         end
       end
 
@@ -168,9 +167,18 @@ module DataMapper
         update_statements(comparison, comparison.subject.field, affirmative)
       end
 
-      # TODO: document
       # @api private
-      def update_statements(comparison, field, affirmative = true)
+      def or_statement(operation, affirmative = true)
+        statement = { '$or' => [] }
+
+        operation.each do |operand|
+          statement['$or'] << { operand.subject.field => build_statement(operand, affirmative) }
+        end
+
+        @statements.merge!(statement)
+      end
+
+      def build_statement(comparison, affirmative)
         value = if comparison.value.kind_of?(Array)
                   comparison.value.map { |value| value.class.to_mongo(value) }
                 else
@@ -193,15 +201,29 @@ module DataMapper
                    else
                      case comparison
                      when EqualToComparison              then {'$ne'  => value}
-                     when InclusionComparison            then {'$nin' => value}
+                     when InclusionComparison            then inclusion_comparison_operator(comparison, value, affirmative)
                      when RegexpComparison               then {'$not' => value}
                      else
                        raise NotImplementedError
                      end
                    end
 
-        operator.is_a?(Hash) ?
-          (@statements[field.to_sym] ||= {}).merge!(operator) : @statements[field.to_sym] = operator
+        operator
+      end
+
+      # TODO: document
+      # @api private
+      def update_statements(comparison, field, affirmative = true)
+        operator = build_statement(comparison, affirmative)
+
+        case operator
+        when ::Hash
+          (@statements[field.to_sym] ||= {}).merge!(operator)
+        when ::Array
+          (@statements['$or'] ||= []).concat(operator.map { |conditions| { field => conditions } })
+        else
+          @statements[field.to_sym] = operator
+        end
       end
 
       # Creates Mongo's equivalent of an IN() condition
@@ -214,15 +236,19 @@ module DataMapper
       # @return [Hash]
       #
       # @api private
-      def inclusion_comparison_operator(comparison, value)
+      def inclusion_comparison_operator(comparison, value, affirmative = true)
         if value.kind_of?(Range)
-          {'$gte' => value.first, value.exclude_end? ? '$lt' : '$lte' => value.last}
+          if affirmative
+            { '$gte' => value.first, value.exclude_end? ? '$lt' : '$lte' => value.last }
+          else
+            [ { '$lt' => value.first }, { value.exclude_end? ? '$gte' : '$gt' => value.last } ]
+          end
         elsif comparison.kind_of?(InclusionComparison) && value.size == 1
           value.first
         elsif comparison.subject.kind_of?(DataMapper::Mongo::Property::Array)
           value
         else
-          {'$in'  => value}
+          { affirmative ? '$in' : '$nin' => value}
         end
       end
 
