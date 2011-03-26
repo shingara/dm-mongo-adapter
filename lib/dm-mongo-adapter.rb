@@ -2,7 +2,7 @@ require 'dm-core'
 require 'dm-aggregates'
 require 'mongo'
 
-dir = Pathname(__FILE__).dirname.expand_path + 'mongo_adapter'
+dir = Pathname(__FILE__).dirname.expand_path + 'dm-mongo-adapter'
 
 require dir + 'query'
 require dir + 'query' + 'java_script'

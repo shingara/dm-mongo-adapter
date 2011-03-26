@@ -4,7 +4,7 @@ require 'spec'
 MONGO_SPEC_ROOT = Pathname(__FILE__).dirname.expand_path
 $LOAD_PATH.unshift(MONGO_SPEC_ROOT.parent.join('lib').to_s)
 
-require 'mongo_adapter'
+require 'dm-mongo-adapter'
 
 Pathname.glob((MONGO_SPEC_ROOT + '{lib,*/shared}/**/*.rb').to_s).each { |file| require file }
 
