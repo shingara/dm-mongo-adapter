@@ -170,8 +170,7 @@ module DataMapper
 
       # TODO: document
       # @api private
-      def
-        update_statements(comparison, field, affirmative = true)
+      def update_statements(comparison, field, affirmative = true)
         value = if comparison.value.kind_of?(Array)
                   comparison.value.map { |value| value.class.to_mongo(value) }
                 else

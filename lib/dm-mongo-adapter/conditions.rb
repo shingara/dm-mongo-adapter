@@ -36,7 +36,8 @@ module DataMapper
       #
       # @api private
       def filter_collection!(collection)
-        @operation.operands.empty? ? collection : collection.delete_if {|record| !@operation.matches?(record)}
+        @operation.operands.empty? ?
+          collection : collection.delete_if { |record| !@operation.matches?(record) }
       end
 
       private
