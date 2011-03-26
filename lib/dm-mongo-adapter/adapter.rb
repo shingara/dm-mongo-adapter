@@ -196,14 +196,12 @@ module DataMapper
 
       # TODO: document
       def dump_field_value(value)
-        return nil if value.nil?
-        value.class.to_mongo(value)
+        value.class.to_mongo(value) unless value.nil?
       end
 
       # TODO: document
       def load_field_value(value)
-        return nil if value.nil?
-        value.class.from_mongo(value)
+        value.class.from_mongo(value) unless value.nil?
       end
 
       # Runs the given block within the context of a Mongo collection.
