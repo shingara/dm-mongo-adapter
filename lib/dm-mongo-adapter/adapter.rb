@@ -87,7 +87,19 @@ module DataMapper
         end
       end
 
-      # TODO: document
+      # Execute some update directly on the Mongo-ruby-driver
+      #
+      # @params [Array] resources
+      #   A list of ressources where you want do execute
+      # @params [Hash] document
+      #   Hash representing the update query you want do
+      # @params[Hash] options
+      #   Option pass to this update, like :upsert or :multi. See
+      #   option on the Mongo::Collection#update methode
+      #
+      # @return[Integer]
+      #   The number of resources you update
+      #
       # @api semipublic
       def execute(resources, document, options={})
         resources.map do |resource|
